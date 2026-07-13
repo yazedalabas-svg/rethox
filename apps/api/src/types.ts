@@ -1,0 +1,14 @@
+export type Role = "CUSTOMER" | "ADMIN";
+export type User = { id:string; name:string; email:string; phone?:string; passwordHash:string; role:Role; theme:"light"|"dark"; createdAt:string; oauthProvider?:"google"|"supabase"; oauthSubject?:string };
+export type TokenTiming = { id:string; text:string; position:number; startMs:number; endMs:number; confidence:number };
+export type Sentence = { id:string; position:number; text:string; summary?:string; tokens:TokenTiming[] };
+export type Chapter = { id:string; bookId:string; title:string; position:number; durationMs:number; isSample:boolean; sentences:Sentence[]; sentenceCount?:number; contentFile?:string };
+export type Book = { id:string; slug:string; title:string; author:string; synopsis:string; priceMinor:number; currency:string; genre:string; tags:string[]; coverTheme:string; coverUrl?:string; status:"PUBLISHED"|"DRAFT"; rating:number; chapters:Chapter[]; documentFile?:string; pageCount?:number };
+export type Order = { id:string; userId:string; bookIds:string[]; totalMinor:number; currency:string; status:"COMPLETED"; createdAt:string };
+export type Progress = { userId:string; bookId:string; chapterId:string; sentenceId?:string; positionMs:number; percentage:number; updatedAt:string };
+export type Bookmark = { id:string; userId:string; bookId:string; chapterId:string; sentenceId:string; createdAt:string };
+export type Review = { id:string; userId:string; bookId:string; rating:number; body:string; spoiler:boolean; provider?:"google"|"email"; createdAt:string; updatedAt:string };
+export type ChapterComment = { id:string; userId:string; chapterId:string; rating:number; body:string; spoiler:boolean; parentId?:string; provider?:"google"|"email"; createdAt:string; updatedAt:string };
+export type ReadingListItem = { userId:string; bookId:string; createdAt:string };
+export type ContentReport = { id:string; userId:string; bookId:string; chapterId:string; sentenceId?:string; message:string; status:"OPEN"|"RESOLVED"; createdAt:string; updatedAt:string };
+export type Store = { users:User[]; books:Book[]; orders:Order[]; entitlements:{userId:string;bookId:string}[]; progress:Progress[]; bookmarks:Bookmark[]; readingList:ReadingListItem[]; reports:ContentReport[]; reviews:Review[]; chapterComments:ChapterComment[]; refreshTokens:{userId:string;hash:string;expiresAt:string}[]; auditLogs:{id:string;userId:string;action:string;createdAt:string}[] };

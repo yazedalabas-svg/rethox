@@ -1,0 +1,25 @@
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+enum Role { CUSTOMER ADMIN }
+enum BookStatus { DRAFT PUBLISHED ARCHIVED }
+enum OrderStatus { PENDING COMPLETED CANCELLED }
+
+model User { id String @id @default(cuid()); email String @unique; name String; passwordHash String; role Role @default(CUSTOMER); locale String @default("ar"); theme String @default("light"); createdAt DateTime @default(now()); orders Order[]; entitlements Entitlement[]; progress ReadingProgress[]; bookmarks Bookmark[]; reviews Review[]; refreshTokens RefreshToken[]; auditLogs AdminAuditLog[] }
+model Book { id String @id @default(cuid()); slug String @unique; title String; normalizedTitle String; author String; synopsis String; priceMinor Int; currency String @default("SAR"); coverKey String?; genre String; status BookStatus @default(DRAFT); rating Float @default(0); chapters Chapter[]; tags BookTag[]; reviews Review[]; orderItems OrderItem[]; entitlements Entitlement[] }
+model Chapter { id String @id @default(cuid()); bookId String; book Book @relation(fields:[bookId],references:[id],onDelete:Cascade); title String; position Int; durationMs Int @default(0); isSample Boolean @default(false); sentences Sentence[]; audioAssets AudioAsset[]; progress ReadingProgress[]; @@unique([bookId,position]) }
+model Sentence { id String @id @default(cuid()); chapterId String; chapter Chapter @relation(fields:[chapterId],references:[id],onDelete:Cascade); position Int; text String; tokens Token[]; summaries Summary[]; bookmarks Bookmark[]; @@unique([chapterId,position]) }
+model Token { id String @id @default(cuid()); sentenceId String; sentence Sentence @relation(fields:[sentenceId],references:[id],onDelete:Cascade); position Int; text String; startMs Int; endMs Int; confidence Float; @@unique([sentenceId,position]) }
+model AudioAsset { id String @id @default(cuid()); chapterId String; chapter Chapter @relation(fields:[chapterId],references:[id],onDelete:Cascade); objectKey String; manifestKey String?; codec String; durationMs Int; createdAt DateTime @default(now()) }
+model Tag { id String @id @default(cuid()); name String; slug String @unique; books BookTag[] }
+model BookTag { bookId String; tagId String; book Book @relation(fields:[bookId],references:[id],onDelete:Cascade); tag Tag @relation(fields:[tagId],references:[id],onDelete:Cascade); @@id([bookId,tagId]) }
+model Order { id String @id @default(cuid()); userId String; user User @relation(fields:[userId],references:[id]); status OrderStatus @default(PENDING); totalMinor Int; currency String; createdAt DateTime @default(now()); items OrderItem[]; payments Payment[] }
+model OrderItem { id String @id @default(cuid()); orderId String; bookId String; priceMinor Int; order Order @relation(fields:[orderId],references:[id],onDelete:Cascade); book Book @relation(fields:[bookId],references:[id]) }
+model Payment { id String @id @default(cuid()); orderId String; order Order @relation(fields:[orderId],references:[id]); provider String; status String; amountMinor Int; externalId String?; createdAt DateTime @default(now()) }
+model Entitlement { userId String; bookId String; user User @relation(fields:[userId],references:[id],onDelete:Cascade); book Book @relation(fields:[bookId],references:[id],onDelete:Cascade); grantedAt DateTime @default(now()); @@id([userId,bookId]) }
+model ReadingProgress { userId String; bookId String; chapterId String; sentenceId String?; positionMs Int; percentage Float; updatedAt DateTime @updatedAt; user User @relation(fields:[userId],references:[id],onDelete:Cascade); chapter Chapter @relation(fields:[chapterId],references:[id],onDelete:Cascade); @@id([userId,bookId]) }
+model Bookmark { id String @id @default(cuid()); userId String; bookId String; chapterId String; sentenceId String; user User @relation(fields:[userId],references:[id],onDelete:Cascade); sentence Sentence @relation(fields:[sentenceId],references:[id],onDelete:Cascade); createdAt DateTime @default(now()) }
+model Review { id String @id @default(cuid()); userId String; bookId String; user User @relation(fields:[userId],references:[id]); book Book @relation(fields:[bookId],references:[id]); rating Int; body String; status String @default("PENDING"); createdAt DateTime @default(now()) }
+model Summary { id String @id @default(cuid()); sentenceId String; sentence Sentence @relation(fields:[sentenceId],references:[id],onDelete:Cascade); provider String; model String; content String; status String; costMinor Int @default(0); createdAt DateTime @default(now()) }
+model RefreshToken { id String @id @default(cuid()); userId String; user User @relation(fields:[userId],references:[id],onDelete:Cascade); tokenHash String @unique; expiresAt DateTime; createdAt DateTime @default(now()) }
+model AdminAuditLog { id String @id @default(cuid()); userId String; user User @relation(fields:[userId],references:[id]); action String; metadata Json?; createdAt DateTime @default(now()) }

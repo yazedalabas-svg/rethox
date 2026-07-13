@@ -1,0 +1,11 @@
+export type User={id:string;name:string;email:string;phone?:string;role:"CUSTOMER"|"ADMIN";theme:string;avatarUrl?:string;oauthProvider?:string};
+export type Book={id:string;slug:string;title:string;author:string;synopsis:string;priceMinor:number;currency:string;genre:string;tags:string[];coverTheme:string;coverUrl?:string;rating:number;chapterCount?:number;sampleChapterId?:string;chapters?:ChapterMeta[];pdfUrl?:string;pageCount?:number};
+export type ChapterMeta={id:string;title:string;position:number;durationMs:number;isSample:boolean;locked?:boolean;sentenceCount?:number;rating?:number};
+export type TokenTiming={id:string;text:string;position:number;startMs:number;endMs:number;confidence:number};
+export type Sentence={id:string;position:number;text:string;summary?:string;tokens:TokenTiming[]};
+export type Chapter=ChapterMeta&{bookId:string;sentences:Sentence[]};
+export type CommunityUser={id:string;name:string;avatarUrl?:string};
+export type Review={id:string;bookId:string;rating:number;body:string;spoiler:boolean;provider?:string;createdAt:string;verifiedAccount?:boolean;user:CommunityUser};
+export type ChapterComment={id:string;chapterId:string;rating:number;body:string;spoiler:boolean;parentId?:string;provider?:string;createdAt:string;verifiedAccount?:boolean;user:CommunityUser};
+export type Progress={bookId:string;chapterId:string;sentenceId?:string;positionMs:number;percentage:number;updatedAt:string};
+export type ContentReport={id:string;bookId:string;chapterId:string;sentenceId?:string;message:string;status:"OPEN"|"RESOLVED";createdAt:string;updatedAt:string;bookTitle?:string;chapterTitle?:string;user?:User};

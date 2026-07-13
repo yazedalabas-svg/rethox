@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /account
+Disallow: /cart
+
+Sitemap: https://rethox.onrender.com/sitemap.xml

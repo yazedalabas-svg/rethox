@@ -1,0 +1,14 @@
+import type { Book, Sentence, Store } from "./types.js";
+
+const timed = (sentenceId:string, text:string, offset:number): Sentence => {
+  const words = text.split(/\s+/);
+  return { id:sentenceId, position:Number(sentenceId.split("-").pop())||0, text, tokens:words.map((word,index)=>({ id:`${sentenceId}-t${index}`, text:word, position:index, startMs:offset+index*520, endMs:offset+index*520+440, confidence:.98 })) };
+};
+
+const books: Book[] = [
+  { id:"book-mirrors", slug:"city-of-mirrors", title:"مدينة المرايا", author:"ليان السامر", synopsis:"مدينة لا تعكس المرايا فيها الوجوه، بل القرارات التي نخشى اتخاذها. تصل نور إلى الحي القديم بحثًا عن رسالة تركها والدها، فتجد حارسًا يعرف اسمها قبل أن تنطق به.", priceMinor:2900, currency:"SAR", genre:"فانتازيا", tags:["غموض","فانتازيا","مغامرة"], coverTheme:"indigo", status:"PUBLISHED", rating:4.8, chapters:[{ id:"ch-mirrors-1", bookId:"book-mirrors", title:"الفصل الأول: الباب الذي لا يطرق", position:1, durationMs:24500, isSample:true, sentences:[timed("s-m-1","حين وصلت نور إلى السور القديم، كانت المدينة تجمع آخر خيوط المساء.",0),timed("s-m-2","لم يكن في الطريق أحد، ومع ذلك سمعت خطوات تمشي على مهل خلفها.",6500),timed("s-m-3","التفتت، فرأت مرآة طويلة تستند إلى جدار لم يكن موجودًا قبل لحظة.",13500),timed("s-m-4","قال الحارس من خلف الزجاج: تأخرتِ كثيرًا يا نور.",20500)] }] },
+  { id:"book-orbit", slug:"last-orbit", title:"المدار الأخير", author:"سامي نديم", synopsis:"بعد مئة عام من الصمت، تبث محطة مهجورة إشارة تحمل صوتًا بشريًا واحدًا. مهندسة اتصالات شابة تقرر الرد، رغم أن المحطة سقطت من المدار منذ عقود.", priceMinor:3400, currency:"SAR", genre:"خيال علمي", tags:["فضاء","خيال علمي","تشويق"], coverTheme:"ember", status:"PUBLISHED", rating:4.6, chapters:[{ id:"ch-orbit-1", bookId:"book-orbit", title:"الفصل الأول: الإشارة", position:1, durationMs:18000, isSample:true, sentences:[timed("s-o-1","جاءت الإشارة في الثالثة وسبع عشرة دقيقة بعد منتصف الليل.",0),timed("s-o-2","كانت ضعيفة، لكنها نادت اسم مريم بوضوح لا يحتمل الصدفة.",7000)] }] },
+  { id:"book-rain", slug:"paper-rain", title:"مطر من ورق", author:"هالة منصور", synopsis:"في مكتبة صغيرة على أطراف المدينة، تسقط من سقفها كل ليلة صفحة من كتاب لم يُكتب بعد. كل صفحة تصف يومًا من حياة زائر قادم.", priceMinor:2400, currency:"SAR", genre:"أدب", tags:["أدب","واقعية سحرية","قصيرة"], coverTheme:"sage", status:"PUBLISHED", rating:4.9, chapters:[{ id:"ch-rain-1", bookId:"book-rain", title:"الفصل الأول: الصفحة الأولى", position:1, durationMs:15000, isSample:true, sentences:[timed("s-r-1","كانت الصفحة الأولى بيضاء، إلا من جملة واحدة كتبت بحبر أزرق.",0),timed("s-r-2","غدًا سيدخل رجل يبحث عن نهاية مختلفة.",8000)] }] }
+];
+
+export const emptyStore = ():Store => ({ users:[], books, orders:[], entitlements:[], progress:[], bookmarks:[], readingList:[], reports:[], reviews:[], chapterComments:[], refreshTokens:[], auditLogs:[] });

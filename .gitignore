@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.env
+.env.local
+apps/api/data/books/القس المجنون/*.pdf
+tools/__pycache__/
+.env.*.local
+*.log
+apps/api/data/runtime-store.json
+.vite/
+.dev.pid
+apps/api/data/*.json
+apps/api/data/*.tmp
+!apps/api/data/deploy-seed.json
+
+apps/api/data/tts-cache/
+
+.tmp-*/
+.prod-*
+*.tsbuildinfo
+data/runtime-store.json
+.env.production
+*claude-proxy*/

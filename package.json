@@ -1,0 +1,15 @@
+{
+  "name": "rethox",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "prebuild": "node tools/install-edge-tts.mjs",
+    "dev": "concurrently -n api,web -c blue,magenta \"npm run dev -w @rethox/api\" \"npm run dev -w @rethox/web\"",
+    "build": "npm run build -w @rethox/api && npm run build -w @rethox/web",
+    "test": "npm run test -w @rethox/api && npm run test -w @rethox/web"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

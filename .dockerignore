@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.env
+.env.local
+.env.*.local
+apps/api/data/runtime-store.json
+apps/api/data/tts-cache
+apps/api/data/books/**/*.pdf
+*.log
