@@ -7,5 +7,5 @@ export type Chapter=ChapterMeta&{bookId:string;sentences:Sentence[]};
 export type CommunityUser={id:string;name:string;avatarUrl?:string};
 export type Review={id:string;bookId:string;rating:number;body:string;spoiler:boolean;provider?:string;createdAt:string;verifiedAccount?:boolean;user:CommunityUser};
 export type ChapterComment={id:string;chapterId:string;rating:number;body:string;spoiler:boolean;parentId?:string;provider?:string;createdAt:string;verifiedAccount?:boolean;user:CommunityUser};
-export type Progress={bookId:string;chapterId:string;sentenceId?:string;positionMs:number;percentage:number;updatedAt:string};
+export type Progress={bookId:string;chapterId:string;sentenceId?:string;wordId?:string;positionMs:number;percentage:number;updatedAt:string};
 export type ContentReport={id:string;bookId:string;chapterId:string;sentenceId?:string;message:string;status:"OPEN"|"RESOLVED";createdAt:string;updatedAt:string;bookTitle?:string;chapterTitle?:string;user?:User};

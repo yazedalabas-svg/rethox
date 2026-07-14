@@ -1,0 +1,20 @@
+create index if not exists admin_audit_logs_user_id_idx on public.admin_audit_logs (user_id);
+create index if not exists book_tags_tag_id_idx on public.book_tags (tag_id);
+create index if not exists bookmarks_book_id_idx on public.bookmarks (book_id);
+create index if not exists bookmarks_chapter_id_idx on public.bookmarks (chapter_id);
+create index if not exists cart_items_book_id_idx on public.cart_items (book_id);
+create index if not exists chapter_progress_chapter_id_idx on public.chapter_progress (chapter_id);
+create index if not exists content_reports_book_id_idx on public.content_reports (book_id);
+create index if not exists content_reports_chapter_id_idx on public.content_reports (chapter_id);
+create index if not exists content_reports_handled_by_idx on public.content_reports (handled_by);
+create index if not exists content_reports_user_id_idx on public.content_reports (user_id);
+create index if not exists entitlements_book_id_idx on public.entitlements (book_id);
+create index if not exists entitlements_order_id_idx on public.entitlements (order_id);
+create index if not exists order_items_book_id_idx on public.order_items (book_id);
+create index if not exists payments_order_id_idx on public.payments (order_id);
+create index if not exists reading_list_book_id_idx on public.reading_list (book_id);
+create index if not exists reading_progress_book_id_idx on public.reading_progress (book_id);
+create index if not exists reading_progress_chapter_id_idx on public.reading_progress (chapter_id);
+create index if not exists reading_sessions_book_id_idx on public.reading_sessions (book_id);
+create index if not exists reading_sessions_chapter_id_idx on public.reading_sessions (chapter_id);
+-- Applied migration version: 20260713030002

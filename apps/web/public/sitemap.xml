@@ -6,13 +6,13 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://rethox.onrender.com/login</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <loc>https://rethox.onrender.com/book/rezero-arc-6-arabic</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://rethox.onrender.com/register</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <loc>https://rethox.onrender.com/book/reverend-insanity-arabic</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
 </urlset>

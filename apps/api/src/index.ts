@@ -2,7 +2,7 @@ import "./env.js";
 import argon2 from "argon2";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { type Response } from "express";
+import express, { type ErrorRequestHandler, type Response } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import getMp3Duration from "get-mp3-duration";
@@ -26,10 +26,18 @@ import {
   tokenHash,
   type AuthRequest,
 } from "./auth.js";
-import { connectRemoteStore, db, save } from "./store.js";
+import {
+  connectRemoteStore,
+  db,
+  persistenceStatus,
+  save,
+  saveProgressCheckpoint,
+} from "./store.js";
 import type { Book, Chapter, Role, Sentence, User } from "./types.js";
 import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
+import { createRelationalBackup, startBackupScheduler } from "./backup-service.js";
 import { summaryProvider } from "./summary-provider.js";
+import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4181);
@@ -85,6 +93,24 @@ const summaryLimit = rateLimit({
 const ttsLimit = rateLimit({
   windowMs: 60_000,
   limit: 80,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const orderLimit = rateLimit({
+  windowMs: 10 * 60_000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const communityWriteLimit = rateLimit({
+  windowMs: 60_000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const progressWriteLimit = rateLimit({
+  windowMs: 60_000,
+  limit: 180,
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -292,7 +318,7 @@ const BookPatch = BookInput.partial().extend({
   pageCount: z.number().int().positive().optional(),
 });
 
-const issueSession = (res: Response, user: { id: string; role: Role }) => {
+const issueSession = async (res: Response, user: { id: string; role: Role }) => {
   const refresh = refreshValue();
   db().refreshTokens.push({
     userId: user.id,
@@ -306,11 +332,12 @@ const issueSession = (res: Response, user: { id: string; role: Role }) => {
     maxAge: 30 * 864e5,
     path: "/api/auth",
   });
-  save();
+  await save();
   return accessToken(user.id, user.role);
 };
 
-app.get("/api/health", (_req, res) =>
+app.get("/api/health", (_req, res) => {
+  const persistence = persistenceStatus();
   res.json({
     ok: true,
     mode: "demo-persistent",
@@ -318,11 +345,14 @@ app.get("/api/health", (_req, res) =>
     // data (accounts, comments) survives deploys; "container-local" means it
     // is wiped on every deploy/restart.
     storage: process.env.DATA_DIR ? "persistent-disk" : "container-local",
-    durableStorage: supabaseAdmin
-      ? "supabase"
+    durableStorage: persistence.relationalEnabled
+      ? "supabase-relational"
+      : persistence.remoteConnected
+        ? "supabase-legacy"
       : process.env.DATA_DIR
         ? "persistent-disk"
         : "not-configured",
+    persistenceHealthy: !persistence.lastRemoteErrorAt,
     googleAuth: googleClientId && googleClientSecret
       ? "oauth-code-and-gsi"
       : "google-identity-services",
@@ -331,8 +361,8 @@ app.get("/api/health", (_req, res) =>
       !chapter.contentFile || existsSync(resolve(process.cwd(), "data", chapter.contentFile)),
     )) ? "ready" : "missing",
     time: new Date().toISOString(),
-  }),
-);
+  });
+});
 app.get("/api/integrations/status", async (_req, res) => {
   try {
     res.json(await integrationStatus());
@@ -466,7 +496,7 @@ app.post("/api/auth/register", authLimit, async (req, res) => {
     createdAt: new Date().toISOString(),
   };
   db().users.push(user);
-  const token = issueSession(res, user);
+  const token = await issueSession(res, user);
   res.status(201).json({ accessToken: token, user: publicUser(user.id) });
 });
 app.post("/api/auth/login", authLimit, async (req, res) => {
@@ -484,7 +514,7 @@ app.post("/api/auth/login", authLimit, async (req, res) => {
           ? "استخدم زر «المتابعة باستخدام Google» لهذا الحساب"
           : "البريد أو كلمة المرور غير صحيحة",
     });
-  const token = issueSession(res, user);
+  const token = await issueSession(res, user);
   res.json({ accessToken: token, user: publicUser(user.id) });
 });
 const phoneStartLimit = rateLimit({
@@ -572,7 +602,7 @@ app.post("/api/auth/phone/verify", phoneVerifyLimit, async (req, res) => {
     user.oauthProvider = "supabase";
     user.oauthSubject = data.user.id;
   }
-  const access = issueSession(res, user);
+  const access = await issueSession(res, user);
   res.json({ accessToken: access, user: publicUser(user.id) });
 });
 const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
@@ -581,9 +611,13 @@ const googleAudience = googleClientId || "";
 // Behind Render's proxy the real host/protocol arrive in forwarded headers.
 app.set("trust proxy", 1);
 const googleRedirectUri = (req: AuthRequest) => {
-  const base = (
-    process.env.PUBLIC_SITE_URL || `${req.protocol}://${req.get("host")}`
-  ).replace(/\/$/, "");
+  // Keep one deterministic callback per environment. Using the current host made
+  // Google receive LAN/temporary-tunnel origins (for example 192.168.x.x), which
+  // caused recurring origin/redirect mismatches whenever the local URL changed.
+  const configuredBase = process.env.NODE_ENV === "production"
+    ? process.env.PUBLIC_SITE_URL
+    : process.env.GOOGLE_LOCAL_SITE_URL || `http://127.0.0.1:${port}`;
+  const base = (configuredBase || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
   return `${base}/api/auth/google/callback`;
 };
 const safeReturnPath = (value: unknown) => {
@@ -692,7 +726,7 @@ app.post("/api/auth/google/id-token", authLimit, async (req, res) => {
       user.oauthSubject = claims.sub;
     }
     */
-    const token = issueSession(res, verifiedUser);
+    const token = await issueSession(res, verifiedUser);
     res.json({ accessToken: token, user: publicUser(verifiedUser.id) });
   } catch (error) {
     logger.warn({ error: String(error) }, "Google ID token login failed");
@@ -786,14 +820,14 @@ app.get("/api/auth/google/callback", async (req, res) => {
       user.oauthSubject = claims.sub;
     }
     */
-    issueSession(res, verifiedUser);
+    await issueSession(res, verifiedUser);
     res.redirect(returnTo);
   } catch (error) {
     logger.warn({ error: String(error) }, "google oauth failed");
     fail("google");
   }
 });
-app.post("/api/auth/refresh", authLimit, (req, res) => {
+app.post("/api/auth/refresh", authLimit, async (req, res) => {
   const value = req.cookies.rethox_refresh;
   if (!value) return res.status(401).json({ message: "لا توجد جلسة" });
   const hash = tokenHash(value);
@@ -804,16 +838,16 @@ app.post("/api/auth/refresh", authLimit, (req, res) => {
   const old = db().refreshTokens.splice(index, 1)[0];
   const user = db().users.find((u) => u.id === old.userId);
   if (!user) return res.status(401).json({ message: "المستخدم غير موجود" });
-  res.json({ accessToken: issueSession(res, user), user: publicUser(user.id) });
+  res.json({ accessToken: await issueSession(res, user), user: publicUser(user.id) });
 });
-app.post("/api/auth/logout", (req, res) => {
+app.post("/api/auth/logout", async (req, res) => {
   const value = req.cookies.rethox_refresh;
   if (value)
     db().refreshTokens = db().refreshTokens.filter(
       (t) => t.hash !== tokenHash(value),
     );
   res.clearCookie("rethox_refresh", { path: "/api/auth" });
-  save();
+  await save();
   res.status(204).end();
 });
 app.get("/api/auth/me", auth, (req: AuthRequest, res) =>
@@ -973,7 +1007,7 @@ app.get("/api/recommendations", (_req, res) =>
   }),
 );
 
-app.post("/api/orders", auth, (req: AuthRequest, res) => {
+app.post("/api/orders", orderLimit, auth, async (req: AuthRequest, res) => {
   const ids = z.array(z.string()).min(1).safeParse(req.body.bookIds);
   if (!ids.success)
     return res.status(400).json({ message: "اختر كتابًا واحدًا على الأقل" });
@@ -983,16 +1017,33 @@ app.post("/api/orders", auth, (req: AuthRequest, res) => {
     const books = db().books.filter((b) => ids.data.includes(b.id) && b.status === "PUBLISHED");
   if (books.length !== new Set(ids.data).size)
     return res.status(400).json({ message: "أحد المنتجات غير متاح للشراء" });
+  const requestedOrderId = randomUUID();
+  const idempotencyKey = `demo:${req.user!.id}:${books.map((book) => book.id).sort().join(",")}`;
+  let persistedOrder: any = null;
+  if (supabaseAdmin) {
+    const { data, error } = await supabaseAdmin.rpc("complete_demo_order", {
+      p_order_id: requestedOrderId,
+      p_public_number: `RX-${requestedOrderId.replace(/-/g, "").slice(0, 8).toUpperCase()}`,
+      p_user_id: req.user!.id,
+      p_book_ids: books.map((book) => book.id),
+      p_idempotency_key: idempotencyKey,
+    });
+    if (error) {
+      logger.error({ error: error.message }, "atomic checkout failed");
+      return res.status(503).json({ message: "تعذر إكمال الطلب بأمان الآن، حاول مجددًا" });
+    }
+    persistedOrder = data;
+  }
   const order = {
-    id: randomUUID(),
+    id: persistedOrder?.id || requestedOrderId,
     userId: req.user!.id,
     bookIds: books.map((b) => b.id),
-    totalMinor: books.reduce((s, b) => s + b.priceMinor, 0),
-    currency: "SAR",
+    totalMinor: persistedOrder?.total_minor ?? books.reduce((s, b) => s + b.priceMinor, 0),
+    currency: persistedOrder?.currency || "SAR",
     status: "COMPLETED" as const,
-    createdAt: new Date().toISOString(),
+    createdAt: persistedOrder?.created_at || new Date().toISOString(),
   };
-  db().orders.push(order);
+  if (!db().orders.some((item) => item.id === order.id)) db().orders.push(order);
   books.forEach((b) => {
     if (
       !db().entitlements.some(
@@ -1001,7 +1052,7 @@ app.post("/api/orders", auth, (req: AuthRequest, res) => {
     )
       db().entitlements.push({ userId: req.user!.id, bookId: b.id });
   });
-  save();
+  await save({ skipRelational: Boolean(supabaseAdmin) });
   res
     .status(201)
     .json({ order, message: "تم الشراء التجريبي، لم يُخصم أي مبلغ" });
@@ -1032,7 +1083,7 @@ app.get("/api/reading-list", auth, (req: AuthRequest, res) =>
       .map((item) => item.bookId),
   }),
 );
-app.post("/api/reading-list/:bookId", auth, (req: AuthRequest, res) => {
+app.post("/api/reading-list/:bookId", auth, async (req: AuthRequest, res) => {
   const book = db().books.find((item) => item.id === req.params.bookId && item.status === "PUBLISHED");
   if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });
   const existing = db().readingList.find(
@@ -1040,25 +1091,27 @@ app.post("/api/reading-list/:bookId", auth, (req: AuthRequest, res) => {
   );
   if (!existing) {
     db().readingList.push({ userId: req.user!.id, bookId: book.id, createdAt: new Date().toISOString() });
-    save();
+    await save();
   }
   res.status(existing ? 200 : 201).json({ saved: true, bookId: book.id });
 });
-app.delete("/api/reading-list/:bookId", auth, (req: AuthRequest, res) => {
+app.delete("/api/reading-list/:bookId", auth, async (req: AuthRequest, res) => {
   db().readingList = db().readingList.filter(
     (item) => !(item.userId === req.user!.id && item.bookId === req.params.bookId),
   );
-  save();
+  await save();
   res.status(204).end();
 });
 
-app.put("/api/progress/:bookId", auth, (req: AuthRequest, res) => {
+app.put("/api/progress/:bookId", progressWriteLimit, auth, async (req: AuthRequest, res) => {
   const body = z
     .object({
-      chapterId: z.string(),
-      sentenceId: z.string().optional(),
-      positionMs: z.number().nonnegative(),
+      chapterId: z.string().min(1).max(200),
+      sentenceId: z.string().min(1).max(200).optional(),
+      wordId: z.string().min(1).max(200).optional(),
+      positionMs: z.number().nonnegative().max(7 * 24 * 60 * 60 * 1000),
       percentage: z.number().min(0).max(100),
+      clientUpdatedAt: z.string().datetime().optional(),
     })
     .safeParse(req.body);
   if (!body.success)
@@ -1068,22 +1121,59 @@ app.put("/api/progress/:bookId", auth, (req: AuthRequest, res) => {
   const chapter = book?.chapters.find((item) => item.id === body.data.chapterId);
   if (!book || !chapter)
     return res.status(404).json({ message: "الكتاب أو الفصل غير موجود" });
-  const overallPercentage = Math.min(
-    100,
-    ((chapter.position - 1 + body.data.percentage / 100) / Math.max(1, book.chapters.length)) * 100,
+  const ownsBook = db().entitlements.some(
+    (item) => item.userId === req.user!.id && item.bookId === bookId,
+  );
+  if (!chapter.isSample && !ownsBook)
+    return res.status(403).json({ message: "اشترِ الكتاب لحفظ التقدم في هذا الفصل" });
+  const overallPercentage = weightedBookProgress(
+    book.chapters,
+    chapter.id,
+    body.data.percentage,
   );
   const index = db().progress.findIndex(
     (p) => p.userId === req.user!.id && p.bookId === bookId,
   );
+  const updatedAt = safeClientTimestamp(body.data.clientUpdatedAt);
+  const { clientUpdatedAt: _clientUpdatedAt, ...progressInput } = body.data;
   const value = {
     userId: req.user!.id,
     bookId,
-    ...body.data,
+    ...progressInput,
     percentage: overallPercentage,
-    updatedAt: new Date().toISOString(),
+    updatedAt,
   };
+  if (supabaseAdmin) {
+    const { data, error } = await supabaseAdmin.rpc("save_reading_progress", {
+      p_user_id: req.user!.id,
+      p_book_id: bookId,
+      p_chapter_id: body.data.chapterId,
+      p_sentence_id: body.data.sentenceId || null,
+      p_word_id: body.data.wordId || null,
+      p_position_ms: Math.max(0, Math.round(body.data.positionMs)),
+      p_book_percentage: overallPercentage,
+      p_chapter_percentage: body.data.percentage,
+      p_client_updated_at: updatedAt,
+    });
+    if (error) {
+      logger.error({ error: error.message }, "progress persistence failed");
+      return res.status(503).json({ message: "تعذر حفظ موضع القراءة الآن، حاول مجددًا" });
+    }
+    if (data?.accepted === false) {
+      return res.json({
+        progress: index >= 0 ? db().progress[index] : null,
+        ignoredAsStale: true,
+      });
+    }
+    const storedProgress = data?.progress;
+    if (storedProgress) {
+      value.percentage = Number(storedProgress.percentage);
+      value.updatedAt = storedProgress.updated_at || value.updatedAt;
+    }
+  }
   index >= 0 ? (db().progress[index] = value) : db().progress.push(value);
-  save();
+  if (supabaseAdmin) await saveProgressCheckpoint();
+  else await save({ skipRelational: true });
   res.json({ progress: value });
 });
 app.get("/api/progress/:bookId", auth, (req: AuthRequest, res) =>
@@ -1094,7 +1184,7 @@ app.get("/api/progress/:bookId", auth, (req: AuthRequest, res) =>
       ) || null,
   }),
 );
-app.post("/api/bookmarks", auth, (req: AuthRequest, res) => {
+app.post("/api/bookmarks", auth, async (req: AuthRequest, res) => {
   const parsed = z
     .object({
       bookId: z.string(),
@@ -1115,20 +1205,20 @@ app.post("/api/bookmarks", auth, (req: AuthRequest, res) => {
     createdAt: new Date().toISOString(),
   };
   db().bookmarks.push(bookmark);
-  save();
+  await save();
   res.status(201).json({ bookmark });
 });
-app.delete("/api/bookmarks/:id", auth, (req: AuthRequest, res) => {
+app.delete("/api/bookmarks/:id", auth, async (req: AuthRequest, res) => {
   db().bookmarks = db().bookmarks.filter(
     (b) => !(
       (b.id === req.params.id || b.sentenceId === req.params.id) &&
       b.userId === req.user!.id
     ),
   );
-  save();
+  await save();
   res.status(204).end();
 });
-app.post("/api/reports", auth, (req: AuthRequest, res) => {
+app.post("/api/reports", communityWriteLimit, auth, async (req: AuthRequest, res) => {
   const parsed = z.object({
     bookId: z.string().min(1),
     chapterId: z.string().min(1),
@@ -1151,7 +1241,7 @@ app.post("/api/reports", auth, (req: AuthRequest, res) => {
     updatedAt: now,
   };
   db().reports.push(report);
-  save();
+  await save();
   res.status(201).json({ report });
 });
 app.post(
@@ -1184,7 +1274,7 @@ app.post(
       }
     }
     sentence.summary = summary;
-    if (!context.chapter.contentFile) save();
+    if (!context.chapter.contentFile) await save();
     res.json({ summary, cached: false });
   },
 );
@@ -1206,7 +1296,7 @@ app.get("/api/reviews/:bookId", (req, res) => {
   const average = weightedAverage(reviews.map((review) => review.rating));
   res.json({ reviews, average, count: reviews.length });
 });
-app.post("/api/reviews", auth, (req: AuthRequest, res) => {
+app.post("/api/reviews", communityWriteLimit, auth, async (req: AuthRequest, res) => {
   const parsed = z
     .object({
       bookId: z.string().min(1),
@@ -1235,16 +1325,33 @@ app.post("/api/reviews", auth, (req: AuthRequest, res) => {
     };
     db().reviews.push(review);
   }
-  save();
+  await save();
   const { provider: _provider, ...publicReview } = review;
   res.status(201).json({ review: { ...publicReview, user: publicAuthor(review.userId) } });
 });
-app.delete("/api/reviews/:bookId", auth, (req: AuthRequest, res) => {
+app.delete("/api/reviews/:bookId", communityWriteLimit, auth, async (req: AuthRequest, res) => {
   const bookId = String(req.params.bookId);
-  db().reviews = db().reviews.filter(
-    (review) => !(review.userId === req.user!.id && review.bookId === bookId),
+  const initiallyMatchedIds = new Set(
+    db().reviews
+      .filter((review) => review.userId === req.user!.id && review.bookId === bookId)
+      .map((review) => review.id),
   );
-  save();
+  if (supabaseAdmin) {
+    const { data, error } = await supabaseAdmin
+      .from("book_reviews")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("user_id", req.user!.id)
+      .eq("book_id", bookId)
+      .is("deleted_at", null)
+      .select("id");
+    if (error) {
+      logger.error({ error: error.message }, "review deletion persistence failed");
+      return res.status(503).json({ message: "تعذر حذف التقييم الآن، حاول مجددًا" });
+    }
+    for (const item of data || []) initiallyMatchedIds.add(item.id);
+  }
+  db().reviews = db().reviews.filter((review) => !initiallyMatchedIds.has(review.id));
+  await save({ skipRelational: Boolean(supabaseAdmin) });
   res.status(204).end();
 });
 app.get("/api/chapters/:id/comments", (req, res) => {
@@ -1260,7 +1367,7 @@ app.get("/api/chapters/:id/comments", (req, res) => {
   const average = weightedAverage(ratings.map((comment) => comment.rating));
   res.json({ comments, average, count: comments.length, ratingCount: ratings.length });
 });
-app.post("/api/chapters/:id/comments", auth, (req: AuthRequest, res) => {
+app.post("/api/chapters/:id/comments", communityWriteLimit, auth, async (req: AuthRequest, res) => {
   const chapterId = String(req.params.id);
   const chapterExists = db().books.some((book) =>
     book.chapters.some((chapter) => chapter.id === chapterId),
@@ -1313,17 +1420,35 @@ app.post("/api/chapters/:id/comments", auth, (req: AuthRequest, res) => {
     db().chapterComments.push(newComment);
     comment = newComment;
   }
-  save();
+  await save();
   const { provider: _provider, ...publicComment } = comment;
   res.status(201).json({ comment: { ...publicComment, user: publicAuthor(comment.userId) } });
 });
-app.delete("/api/chapters/:id/comments", auth, (req: AuthRequest, res) => {
+app.delete("/api/chapters/:id/comments", communityWriteLimit, auth, async (req: AuthRequest, res) => {
   const chapterId = String(req.params.id);
-  db().chapterComments = db().chapterComments.filter(
-    (comment) =>
-      !(comment.userId === req.user!.id && comment.chapterId === chapterId),
+  const initiallyMatchedIds = new Set(
+    db().chapterComments
+      .filter((comment) => comment.userId === req.user!.id && comment.chapterId === chapterId)
+      .map((comment) => comment.id),
   );
-  save();
+  if (supabaseAdmin) {
+    const { data, error } = await supabaseAdmin
+      .from("chapter_comments")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("user_id", req.user!.id)
+      .eq("chapter_id", chapterId)
+      .is("deleted_at", null)
+      .select("id");
+    if (error) {
+      logger.error({ error: error.message }, "comment deletion persistence failed");
+      return res.status(503).json({ message: "تعذر حذف التعليق الآن، حاول مجددًا" });
+    }
+    for (const item of data || []) initiallyMatchedIds.add(item.id);
+  }
+  db().chapterComments = db().chapterComments.filter(
+    (comment) => !initiallyMatchedIds.has(comment.id),
+  );
+  await save({ skipRelational: Boolean(supabaseAdmin) });
   res.status(204).end();
 });
 
@@ -1331,7 +1456,7 @@ app.post(
   "/api/admin/books",
   auth,
   requireRole("ADMIN"),
-  (req: AuthRequest, res) => {
+  async (req: AuthRequest, res) => {
     const parsed = BookInput.safeParse(req.body);
     if (!parsed.success)
       return res
@@ -1357,7 +1482,7 @@ app.post(
       action: `CREATE_BOOK:${book.id}`,
       createdAt: new Date().toISOString(),
     });
-    save();
+    await save();
     res.status(201).json({ book });
   },
 );
@@ -1365,38 +1490,51 @@ app.patch(
   "/api/admin/books/:id",
   auth,
   requireRole("ADMIN"),
-  (req: AuthRequest, res) => {
+  async (req: AuthRequest, res) => {
     const book = db().books.find((b) => b.id === req.params.id);
     if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });
     const parsed = BookPatch.safeParse(req.body);
     if (!parsed.success)
       return res.status(400).json({ message: "بيانات التعديل غير صحيحة" });
     Object.assign(book, parsed.data);
-    save();
+    await save();
     res.json({ book });
   },
 );
-app.delete("/api/admin/books/:id", auth, requireRole("ADMIN"), (req, res) => {
+app.delete("/api/admin/books/:id", auth, requireRole("ADMIN"), async (req, res) => {
   const book = db().books.find((b) => b.id === req.params.id);
   if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });
   book.status = "DRAFT";
-  save();
+  await save();
   res.status(204).end();
 });
 const persistentProfiles = async () => {
-  if (!supabase) return [];
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id,display_name,role,theme,avatar_url,provider,created_at")
+  if (!supabaseAdmin) return [];
+  const { data, error } = await supabaseAdmin
+    .from("app_users")
+    .select("id,email,phone,role,status,created_at,profiles(display_name,avatar_url),user_settings(theme),user_identities(provider)")
+    .neq("status", "DELETED")
     .order("created_at", { ascending: false });
   if (error) {
     logger.warn({ error: error.message }, "persistent profiles unavailable");
     return [];
   }
-  return (data || []).map((profile) => ({
+  const normalized = (data || []).map((user: any) => ({
+    id: user.id,
+    display_name: user.profiles?.display_name,
+    email: user.email,
+    phone: user.phone,
+    role: user.role,
+    theme: user.user_settings?.theme,
+    avatar_url: user.profiles?.avatar_url,
+    provider: user.user_identities?.[0]?.provider,
+    created_at: user.created_at,
+  }));
+  return normalized.map((profile) => ({
     id: profile.id,
     name: profile.display_name || "قارئ rethox",
-    email: "",
+    email: profile.email || "",
+    phone: profile.phone || undefined,
     role: profile.role === "ADMIN" ? "ADMIN" : "CUSTOMER",
     theme: profile.theme === "dark" ? "dark" : "light",
     createdAt: profile.created_at,
@@ -1414,13 +1552,13 @@ app.patch(
   "/api/admin/users/:id/role",
   auth,
   requireRole("ADMIN"),
-  (req, res) => {
+  async (req, res) => {
     const role = z.enum(["CUSTOMER", "ADMIN"]).safeParse(req.body.role);
     const user = db().users.find((u) => u.id === req.params.id);
     if (!role.success || !user)
       return res.status(400).json({ message: "الطلب غير صحيح" });
     user.role = role.data;
-    save();
+    await save();
     res.json({ user: publicUser(user.id) });
   },
 );
@@ -1437,7 +1575,7 @@ app.get("/api/admin/reports", auth, requireRole("ADMIN"), (_req, res) => {
       })),
   });
 });
-app.patch("/api/admin/reports/:id", auth, requireRole("ADMIN"), (req: AuthRequest, res) => {
+app.patch("/api/admin/reports/:id", auth, requireRole("ADMIN"), async (req: AuthRequest, res) => {
   const status = z.enum(["OPEN", "RESOLVED"]).safeParse(req.body.status);
   const report = db().reports.find((item) => item.id === req.params.id);
   if (!status.success || !report)
@@ -1445,7 +1583,7 @@ app.patch("/api/admin/reports/:id", auth, requireRole("ADMIN"), (req: AuthReques
   report.status = status.data;
   report.updatedAt = new Date().toISOString();
   db().auditLogs.push({ id: randomUUID(), userId: req.user!.id, action: `report:${report.id}:${report.status}`, createdAt: report.updatedAt });
-  save();
+  await save();
   res.json({ report });
 });
 app.get("/api/admin/overview", auth, requireRole("ADMIN"), async (_req, res) => {
@@ -1462,6 +1600,28 @@ app.get("/api/admin/overview", auth, requireRole("ADMIN"), async (_req, res) => 
     orders: db().orders.slice(-10).reverse(),
   });
 });
+app.get("/api/admin/backups", auth, requireRole("ADMIN"), async (_req, res) => {
+  if (!supabaseAdmin)
+    return res.status(503).json({ message: "قاعدة البيانات غير متصلة" });
+  const { data, error } = await supabaseAdmin
+    .from("backup_runs")
+    .select("id,kind,period_key,status,object_path,byte_size,row_counts,created_at,completed_at,error_message")
+    .order("created_at", { ascending: false })
+    .limit(50);
+  if (error) return res.status(503).json({ message: "تعذر تحميل النسخ الاحتياطية" });
+  res.json({ backups: data || [] });
+});
+app.post("/api/admin/backups", auth, requireRole("ADMIN"), async (_req, res) => {
+  if (!supabaseAdmin)
+    return res.status(503).json({ message: "قاعدة البيانات غير متصلة" });
+  try {
+    const backup = await createRelationalBackup(supabaseAdmin, "MANUAL");
+    res.status(201).json({ backup });
+  } catch (error) {
+    logger.error({ error: String(error) }, "manual backup failed");
+    res.status(503).json({ message: "تعذر إنشاء النسخة الاحتياطية" });
+  }
+});
 
 const webDist = resolve(rootDir, "apps/web/dist");
 if (existsSync(webDist))
@@ -1477,17 +1637,79 @@ if (existsSync(webDist))
       },
     }),
   );
+
+const staticSpaPaths = new Set([
+  "/",
+  "/login",
+  "/register",
+  "/cart",
+  "/settings",
+  "/account",
+  "/admin",
+]);
+
+const decodePathSegment = (value: string) => {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return null;
+  }
+};
+
+const isKnownSpaPath = (requestPath: string) => {
+  const normalizedPath =
+    requestPath.length > 1 ? requestPath.replace(/\/+$/, "") : requestPath;
+  if (staticSpaPaths.has(normalizedPath)) return true;
+
+  const bookMatch = normalizedPath.match(/^\/book\/([^/]+)$/);
+  if (bookMatch) {
+    const slug = decodePathSegment(bookMatch[1]);
+    return !!slug && db().books.some(
+      (book) => book.slug === slug && book.status === "PUBLISHED",
+    );
+  }
+
+  const readerMatch = normalizedPath.match(/^\/reader\/([^/]+)$/);
+  if (readerMatch) {
+    const chapterId = decodePathSegment(readerMatch[1]);
+    return !!chapterId && db().books.some(
+      (book) =>
+        book.status === "PUBLISHED" &&
+        book.chapters.some((chapter) => chapter.id === chapterId),
+    );
+  }
+
+  return false;
+};
+
 app.use((req, res) => {
-  if (req.method === "GET" && !req.path.startsWith("/api/") && existsSync(webDist)) {
+  const servesSpa = req.method === "GET" || req.method === "HEAD";
+  if (
+    servesSpa &&
+    !req.path.startsWith("/api/") &&
+    isKnownSpaPath(req.path) &&
+    existsSync(webDist)
+  ) {
     res.setHeader("Cache-Control", "no-store");
     return res.sendFile(resolve(webDist, "index.html"));
   }
+  if (servesSpa && !req.path.startsWith("/api/")) {
+    res.setHeader("X-Robots-Tag", "noindex");
+    return res.status(404).type("text/plain").send("Not Found");
+  }
   res.status(404).json({ message: "المسار غير موجود" });
 });
+const apiErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
+  logger.error({ method: req.method, path: req.path, error: String(error) }, "request failed");
+  if (res.headersSent) return;
+  res.status(500).json({ message: "تعذر حفظ العملية بأمان، حاول مجددًا" });
+};
+app.use(apiErrorHandler);
 
 const bootstrap = async () => {
   try {
     await connectRemoteStore(supabaseAdmin);
+    if (supabaseAdmin) startBackupScheduler(supabaseAdmin);
   } catch (error) {
     logger.error({ error: String(error) }, "persistent Supabase store unavailable");
   }
@@ -1507,7 +1729,7 @@ const bootstrap = async () => {
       theme: "dark",
       createdAt: new Date().toISOString(),
     });
-    save();
+    await save();
   }
   app.listen(port, "0.0.0.0", () =>
     console.log(`rethox API http://0.0.0.0:${port}`),

@@ -3,5 +3,7 @@ Allow: /
 Disallow: /admin
 Disallow: /account
 Disallow: /cart
+Disallow: /settings
+Disallow: /reader/
 
 Sitemap: https://rethox.onrender.com/sitemap.xml

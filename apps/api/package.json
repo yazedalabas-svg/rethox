@@ -9,6 +9,7 @@
     "build": "tsc -p tsconfig.json",
     "prestart": "node ../../tools/install-edge-tts.mjs",
     "start": "node dist/index.js",
+    "migrate:relational": "tsx src/migrate-relational.ts",
     "test": "vitest run"
   },
   "dependencies": {
