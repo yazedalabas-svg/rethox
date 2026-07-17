@@ -11,6 +11,7 @@ Set-Location $root
 # This file is intentionally local-only.  It may contain a Render deploy-hook URL.
 $localConfig = Join-Path $PSScriptRoot "deploy.local.ps1"
 if (Test-Path $localConfig) { . $localConfig }
+$siteUrl = if ($siteUrl) { $siteUrl.TrimEnd('/') } else { 'https://rethox.onrender.com' }
 
 function Run-Git([string[]]$Arguments) {
   & git @Arguments
@@ -20,6 +21,7 @@ function Run-Git([string[]]$Arguments) {
 try {
   $branch = (& git branch --show-current).Trim()
   if (-not $branch) { throw "Open the rethox Git repository first." }
+  if (-not $deployHook) { throw "Render Deploy Hook is required. Open the publisher and save it in Render settings first." }
 
   $changed = & git status --porcelain
   if (-not $changed) {
@@ -38,6 +40,12 @@ try {
     throw "Remove those files from Git before publishing."
   }
 
+  # A unique public build marker lets us prove the live site received this exact update.
+  $buildId = [guid]::NewGuid().ToString('N')
+  $buildMarker = Join-Path $root 'apps\web\public\deployment.json'
+  $marker = @{ buildId = $buildId; createdAt = (Get-Date).ToUniversalTime().ToString('o') } | ConvertTo-Json -Compress
+  [System.IO.File]::WriteAllText($buildMarker, $marker, [System.Text.UTF8Encoding]::new($false))
+
   Write-Host "Checking build..." -ForegroundColor Cyan
   & npm run build
   if ($LASTEXITCODE -ne 0) { throw "Build failed. Nothing was uploaded." }
@@ -51,14 +59,23 @@ try {
   $commit = (& git rev-parse --short HEAD).Trim()
   Write-Host "GitHub updated: $commit" -ForegroundColor Green
 
-  # A deploy hook is optional; Render auto-deploy is used when it is not configured.
-  if ($deployHook) {
-    Write-Host "Requesting Render deploy..." -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $deployHook -Method Post -UseBasicParsing | Out-Null
-    Write-Host "Render deploy requested." -ForegroundColor Green
-  } else {
-    Write-Host "Render auto-deploy will publish this commit. To force it, add a deploy hook to tools/deploy.local.ps1." -ForegroundColor Yellow
+  Write-Host "Requesting Render deploy..." -ForegroundColor Cyan
+  $deployResponse = Invoke-WebRequest -Uri $deployHook -Method Post -UseBasicParsing
+  if ($deployResponse.StatusCode -lt 200 -or $deployResponse.StatusCode -ge 300) {
+    throw "Render rejected the deploy request (HTTP $($deployResponse.StatusCode))."
   }
+  Write-Host "Render accepted the deployment. Verifying the live site..." -ForegroundColor Cyan
+  $isLive = $false
+  for ($try = 1; $try -le 48; $try++) {
+    Start-Sleep -Seconds 10
+    try {
+      $live = Invoke-RestMethod -Uri "$siteUrl/deployment.json?build=$buildId" -TimeoutSec 15
+      if ($live.buildId -eq $buildId) { $isLive = $true; break }
+    } catch { }
+    Write-Host "Waiting for Render ($try/48)..."
+  }
+  if (-not $isLive) { throw "Render accepted the request but the new version did not appear within 8 minutes." }
+  Write-Host "Live site verified: $siteUrl" -ForegroundColor Green
   $exitCode = 0
 } catch {
   Write-Host $_.Exception.Message -ForegroundColor Red

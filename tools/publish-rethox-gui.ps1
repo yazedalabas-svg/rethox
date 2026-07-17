@@ -3,11 +3,14 @@ Add-Type -AssemblyName System.Drawing
 
 $root = Split-Path -Parent $PSScriptRoot
 $publishScript = Join-Path $PSScriptRoot 'publish-rethox.ps1'
+$localConfig = Join-Path $PSScriptRoot 'deploy.local.ps1'
+$deployHook = ''
+if (Test-Path $localConfig) { . $localConfig }
 
 $form = New-Object System.Windows.Forms.Form
 $form.Text = 'Rethox Publisher'
-$form.Size = New-Object System.Drawing.Size(760, 520)
-$form.MinimumSize = New-Object System.Drawing.Size(650, 440)
+$form.Size = New-Object System.Drawing.Size(760, 600)
+$form.MinimumSize = New-Object System.Drawing.Size(650, 510)
 $form.StartPosition = 'CenterScreen'
 $form.BackColor = [System.Drawing.Color]::FromArgb(23, 21, 33)
 $form.ForeColor = [System.Drawing.Color]::White
@@ -47,19 +50,38 @@ $publishButton.Font = New-Object System.Drawing.Font('Segoe UI Semibold', 11)
 $publishButton.FlatStyle = 'Flat'
 $publishButton.BackColor = [System.Drawing.Color]::FromArgb(112, 76, 224)
 $publishButton.ForeColor = [System.Drawing.Color]::White
-$publishButton.Location = New-Object System.Drawing.Point(30, 174)
+$hookLabel = New-Object System.Windows.Forms.Label
+$hookLabel.Text = 'Render Deploy Hook (required)'
+$hookLabel.AutoSize = $true
+$hookLabel.Location = New-Object System.Drawing.Point(30, 174)
+$form.Controls.Add($hookLabel)
+
+$hookBox = New-Object System.Windows.Forms.TextBox
+$hookBox.Text = $deployHook
+$hookBox.Location = New-Object System.Drawing.Point(30, 198)
+$hookBox.Size = New-Object System.Drawing.Size(540, 30)
+$hookBox.Anchor = 'Top,Left,Right'
+$form.Controls.Add($hookBox)
+
+$saveHookButton = New-Object System.Windows.Forms.Button
+$saveHookButton.Text = 'حفظ الرابط'
+$saveHookButton.Location = New-Object System.Drawing.Point(580, 197)
+$saveHookButton.Size = New-Object System.Drawing.Size(130, 32)
+$form.Controls.Add($saveHookButton)
+
+$publishButton.Location = New-Object System.Drawing.Point(30, 250)
 $publishButton.Size = New-Object System.Drawing.Size(210, 42)
 $form.Controls.Add($publishButton)
 
 $siteButton = New-Object System.Windows.Forms.Button
 $siteButton.Text = 'فتح الموقع'
-$siteButton.Location = New-Object System.Drawing.Point(252, 174)
+$siteButton.Location = New-Object System.Drawing.Point(252, 250)
 $siteButton.Size = New-Object System.Drawing.Size(130, 42)
 $form.Controls.Add($siteButton)
 
 $githubButton = New-Object System.Windows.Forms.Button
 $githubButton.Text = 'فتح GitHub'
-$githubButton.Location = New-Object System.Drawing.Point(394, 174)
+$githubButton.Location = New-Object System.Drawing.Point(394, 250)
 $githubButton.Size = New-Object System.Drawing.Size(130, 42)
 $form.Controls.Add($githubButton)
 
@@ -67,7 +89,7 @@ $status = New-Object System.Windows.Forms.Label
 $status.Text = 'جاهز للنشر'
 $status.AutoSize = $true
 $status.ForeColor = [System.Drawing.Color]::FromArgb(117, 220, 170)
-$status.Location = New-Object System.Drawing.Point(30, 235)
+$status.Location = New-Object System.Drawing.Point(30, 311)
 $form.Controls.Add($status)
 
 $log = New-Object System.Windows.Forms.TextBox
@@ -78,15 +100,31 @@ $log.BackColor = [System.Drawing.Color]::FromArgb(14, 13, 20)
 $log.ForeColor = [System.Drawing.Color]::FromArgb(230, 226, 240)
 $log.BorderStyle = 'FixedSingle'
 $log.Font = New-Object System.Drawing.Font('Cascadia Mono', 9)
-$log.Location = New-Object System.Drawing.Point(30, 263)
-$log.Size = New-Object System.Drawing.Size(680, 180)
+$log.Location = New-Object System.Drawing.Point(30, 339)
+$log.Size = New-Object System.Drawing.Size(680, 160)
 $log.Anchor = 'Top,Bottom,Left,Right'
 $form.Controls.Add($log)
 
 $siteButton.Add_Click({ Start-Process 'https://rethox.onrender.com/' })
 $githubButton.Add_Click({ Start-Process 'https://github.com/yazedalabas-svg/rethox' })
+$saveHookButton.Add_Click({
+  $hook = $hookBox.Text.Trim()
+  if (-not $hook -or -not $hook.StartsWith('https://')) {
+    [System.Windows.Forms.MessageBox]::Show('ألصق رابط Deploy Hook من Render، ويجب أن يبدأ بـ https://', 'Rethox Publisher')
+    return
+  }
+  $safeHook = $hook.Replace("'", "''")
+  [System.IO.File]::WriteAllText($localConfig, "`$deployHook = '$safeHook'`r`n`$siteUrl = 'https://rethox.onrender.com'`r`n", [System.Text.UTF8Encoding]::new($true))
+  $status.Text = 'تم حفظ رابط Render محليًا.'
+  $status.ForeColor = [System.Drawing.Color]::FromArgb(117, 220, 170)
+})
 
 $publishButton.Add_Click({
+  if (-not $hookBox.Text.Trim() -or -not $hookBox.Text.Trim().StartsWith('https://')) {
+    [System.Windows.Forms.MessageBox]::Show('أضف رابط Deploy Hook واحفظه أولًا. الأداة لن تدّعي نجاح النشر بدونه.', 'Rethox Publisher')
+    return
+  }
+  $saveHookButton.PerformClick()
   $publishButton.Enabled = $false
   $status.Text = 'جارٍ الفحص والبناء والنشر… لا تغلق النافذة.'
   $status.ForeColor = [System.Drawing.Color]::FromArgb(255, 202, 87)
