@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
-  [string]$Message = "Update rethox"
+  [string]$Message = "Update rethox",
+  [switch]$NoPause
 )
 
 $ErrorActionPreference = "Stop"
@@ -23,7 +24,7 @@ try {
   $changed = & git status --porcelain
   if (-not $changed) {
     Write-Host "No changes to publish." -ForegroundColor Yellow
-    Read-Host "Press Enter to close"
+    if (-not $NoPause) { Read-Host "Press Enter to close" }
     exit 0
   }
 
@@ -58,8 +59,11 @@ try {
   } else {
     Write-Host "Render auto-deploy will publish this commit. To force it, add a deploy hook to tools/deploy.local.ps1." -ForegroundColor Yellow
   }
+  $exitCode = 0
 } catch {
   Write-Host $_.Exception.Message -ForegroundColor Red
+  $exitCode = 1
 }
 
-Read-Host "Press Enter to close"
+if (-not $NoPause) { Read-Host "Press Enter to close" }
+exit $exitCode
