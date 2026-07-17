@@ -105,26 +105,26 @@ $log.Size = New-Object System.Drawing.Size(680, 160)
 $log.Anchor = 'Top,Bottom,Left,Right'
 $form.Controls.Add($log)
 
-$activeProcess = $null
+$script:publisherProcess = $null
 $publishTimer = New-Object System.Windows.Forms.Timer
 $publishTimer.Interval = 500
 $publishTimer.Add_Tick({
-  if (-not $activeProcess -or -not $activeProcess.HasExited) { return }
+  if (-not $script:publisherProcess -or -not $script:publisherProcess.HasExited) { return }
   $publishTimer.Stop()
   $publishButton.Enabled = $true
-  if ($activeProcess.ExitCode -eq 0) {
+  if ($script:publisherProcess.ExitCode -eq 0) {
     $status.Text = 'تم التحقق من GitHub وRender والموقع العام.'
     $status.ForeColor = [System.Drawing.Color]::FromArgb(117, 220, 170)
   } else {
     $status.Text = 'لم يكتمل النشر؛ راجع السجل أعلاه.'
     $status.ForeColor = [System.Drawing.Color]::FromArgb(255, 112, 112)
   }
-  $activeProcess = $null
+  $script:publisherProcess = $null
 })
 
 $form.Add_FormClosing({
   param($sender, $event)
-  if ($activeProcess -and -not $activeProcess.HasExited) {
+  if ($script:publisherProcess -and -not $script:publisherProcess.HasExited) {
     $event.Cancel = $true
     [System.Windows.Forms.MessageBox]::Show('النشر ما زال يعمل. انتظر حتى تظهر النتيجة داخل النافذة.', 'Rethox Publisher')
   }
@@ -169,7 +169,7 @@ $publishButton.Add_Click({
   $process.StartInfo = $psi
   $process.add_OutputDataReceived({ param($sender, $event) if ($event.Data) { $form.BeginInvoke([Action]{ $log.AppendText($event.Data + [Environment]::NewLine) }) } })
   $process.add_ErrorDataReceived({ param($sender, $event) if ($event.Data) { $form.BeginInvoke([Action]{ $log.AppendText('ERROR: ' + $event.Data + [Environment]::NewLine) }) } })
-  $activeProcess = $process
+  $script:publisherProcess = $process
   [void]$process.Start()
   $process.BeginOutputReadLine()
   $process.BeginErrorReadLine()
