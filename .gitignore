@@ -7,6 +7,7 @@ apps/api/data/books/القس المجنون/*.pdf
 tools/__pycache__/
 .env.*.local
 tools/deploy.local.ps1
+tools/.publisher/
 *.log
 apps/api/data/runtime-store.json
 .vite/

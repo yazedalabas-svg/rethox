@@ -1,0 +1,61 @@
+name: Deploy rethox to Render
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: rethox-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out the exact revision
+        uses: actions/checkout@v4
+
+      - name: Read the expected build marker
+        id: marker
+        shell: bash
+        run: |
+          BUILD_ID="$(node -p "require('./apps/web/public/deployment.json').buildId")"
+          test -n "$BUILD_ID"
+          echo "build_id=$BUILD_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Trigger the Render service
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        shell: bash
+        run: |
+          test -n "$RENDER_DEPLOY_HOOK" || {
+            echo "RENDER_DEPLOY_HOOK is not configured."
+            exit 1
+          }
+          curl --fail --silent --show-error \
+            --retry 3 --retry-all-errors --max-time 30 \
+            "$RENDER_DEPLOY_HOOK" > /dev/null
+
+      - name: Verify the exact version is live
+        env:
+          EXPECTED_BUILD_ID: ${{ steps.marker.outputs.build_id }}
+        shell: bash
+        run: |
+          for attempt in $(seq 1 72); do
+            LIVE_BUILD_ID="$(curl --fail --silent --show-error \
+              --max-time 15 \
+              "https://rethox.onrender.com/deployment.json?attempt=$attempt" \
+              | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(JSON.parse(s).buildId||'')}catch{}})" \
+              || true)"
+            if [ "$LIVE_BUILD_ID" = "$EXPECTED_BUILD_ID" ]; then
+              echo "The expected rethox build is live."
+              exit 0
+            fi
+            echo "Waiting for Render ($attempt/72)..."
+            sleep 10
+          done
+          echo "Render did not publish the expected build within 12 minutes."
+          exit 1
