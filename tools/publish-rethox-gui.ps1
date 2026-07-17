@@ -105,6 +105,31 @@ $log.Size = New-Object System.Drawing.Size(680, 160)
 $log.Anchor = 'Top,Bottom,Left,Right'
 $form.Controls.Add($log)
 
+$activeProcess = $null
+$publishTimer = New-Object System.Windows.Forms.Timer
+$publishTimer.Interval = 500
+$publishTimer.Add_Tick({
+  if (-not $activeProcess -or -not $activeProcess.HasExited) { return }
+  $publishTimer.Stop()
+  $publishButton.Enabled = $true
+  if ($activeProcess.ExitCode -eq 0) {
+    $status.Text = 'تم التحقق من GitHub وRender والموقع العام.'
+    $status.ForeColor = [System.Drawing.Color]::FromArgb(117, 220, 170)
+  } else {
+    $status.Text = 'لم يكتمل النشر؛ راجع السجل أعلاه.'
+    $status.ForeColor = [System.Drawing.Color]::FromArgb(255, 112, 112)
+  }
+  $activeProcess = $null
+})
+
+$form.Add_FormClosing({
+  param($sender, $event)
+  if ($activeProcess -and -not $activeProcess.HasExited) {
+    $event.Cancel = $true
+    [System.Windows.Forms.MessageBox]::Show('النشر ما زال يعمل. انتظر حتى تظهر النتيجة داخل النافذة.', 'Rethox Publisher')
+  }
+})
+
 $siteButton.Add_Click({ Start-Process 'https://rethox.onrender.com/' })
 $githubButton.Add_Click({ Start-Process 'https://github.com/yazedalabas-svg/rethox' })
 $saveHookButton.Add_Click({
@@ -144,22 +169,11 @@ $publishButton.Add_Click({
   $process.StartInfo = $psi
   $process.add_OutputDataReceived({ param($sender, $event) if ($event.Data) { $form.BeginInvoke([Action]{ $log.AppendText($event.Data + [Environment]::NewLine) }) } })
   $process.add_ErrorDataReceived({ param($sender, $event) if ($event.Data) { $form.BeginInvoke([Action]{ $log.AppendText('ERROR: ' + $event.Data + [Environment]::NewLine) }) } })
-  $process.add_Exited({
-    $form.BeginInvoke([Action]{
-      $publishButton.Enabled = $true
-      if ($process.ExitCode -eq 0) {
-        $status.Text = 'اكتمل رفع التحديث. راقب Render حتى يكتمل النشر.'
-        $status.ForeColor = [System.Drawing.Color]::FromArgb(117, 220, 170)
-      } else {
-        $status.Text = 'لم يكتمل النشر؛ راجع السجل أعلاه.'
-        $status.ForeColor = [System.Drawing.Color]::FromArgb(255, 112, 112)
-      }
-    })
-  })
-  $process.EnableRaisingEvents = $true
+  $activeProcess = $process
   [void]$process.Start()
   $process.BeginOutputReadLine()
   $process.BeginErrorReadLine()
+  $publishTimer.Start()
 })
 
 [void]$form.ShowDialog()
