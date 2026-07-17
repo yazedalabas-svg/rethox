@@ -114,10 +114,14 @@ const progressWriteLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+// Google Cloud is opt-in. Keeping Edge as the default prevents local trials
+// from changing the public narrator when the same code is deployed.
+const ttsProvider = process.env.TTS_PROVIDER === "google-cloud" ? "google-cloud" : "edge";
+const googleCloudVoice = process.env.GOOGLE_TTS_VOICE?.trim() || "ar-XA-Chirp3-HD-Aoede";
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const ttsScript = resolve(rootDir, "tools/tts_edge.py");
 const pythonCommand = process.platform === "win32" ? "python" : "python3";
-if (spawnSync(pythonCommand, ["-c", "import edge_tts"], { stdio: "ignore" }).status !== 0) {
+if (ttsProvider === "edge" && spawnSync(pythonCommand, ["-c", "import edge_tts"], { stdio: "ignore" }).status !== 0) {
   spawnSync(
     pythonCommand,
     ["-m", "pip", "install", "--user", "--break-system-packages", "--disable-pip-version-check", "--no-cache-dir", "edge-tts==7.2.7"],
@@ -221,6 +225,68 @@ const generateGoogleNarration = async (
   writeFileSync(metaPath, JSON.stringify(metadata), "utf8");
   return metadata;
 };
+
+// Local Google Cloud TTS trial. The API key is read only by this server and is
+// never sent to the browser. Word timings are distributed from the real audio
+// duration because the synchronous Cloud TTS API does not return word marks.
+const generateGoogleCloudNarration = async (
+  text: string,
+  audioPath: string,
+  metaPath: string,
+) => {
+  const apiKey = process.env.GOOGLE_TTS_API_KEY?.trim();
+  if (!apiKey) throw new Error("GOOGLE_TTS_API_KEY is missing for the local Google Cloud TTS trial");
+
+  const buffers: Buffer[] = [];
+  const boundaries: { text: string; startMs: number; endMs: number }[] = [];
+  let timelineMs = 0;
+  for (const chunk of splitTtsText(text, 700)) {
+    const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(apiKey)}`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        input: { text: chunk },
+        voice: { languageCode: "ar-XA", name: googleCloudVoice },
+        audioConfig: { audioEncoding: "MP3", speakingRate: 1 },
+      }),
+      signal: AbortSignal.timeout(30_000),
+    });
+    if (!response.ok) {
+      const detail = (await response.text()).slice(0, 180);
+      throw new Error(`Google Cloud TTS returned ${response.status}: ${detail}`);
+    }
+    const result = await response.json() as { audioContent?: string };
+    if (!result.audioContent) throw new Error("Google Cloud TTS returned no audio");
+    const buffer = Buffer.from(result.audioContent, "base64");
+    if (buffer.length < 500) throw new Error("Google Cloud TTS returned empty audio");
+    buffers.push(buffer);
+
+    const durationMs = Math.max(1, getMp3Duration(buffer));
+    const words = chunk.split(/\s+/).filter(Boolean);
+    const totalWeight = words.reduce((sum, word) => sum + Math.max(2, word.length), 0) || 1;
+    let cursorMs = timelineMs;
+    words.forEach((word, index) => {
+      const endMs = index === words.length - 1
+        ? timelineMs + durationMs
+        : cursorMs + Math.max(1, Math.round(durationMs * Math.max(2, word.length) / totalWeight));
+      boundaries.push({ text: word, startMs: cursorMs, endMs });
+      cursorMs = endMs;
+    });
+    timelineMs += durationMs;
+  }
+
+  writeFileSync(audioPath, Buffer.concat(buffers));
+  const metadata = {
+    provider: "google-cloud",
+    voice: googleCloudVoice,
+    rate: "+0%",
+    pitch: "+0Hz",
+    durationMs: timelineMs,
+    boundaries,
+  };
+  writeFileSync(metaPath, JSON.stringify(metadata), "utf8");
+  return metadata;
+};
 app.use(
   "/api/tts/audio",
   express.static(ttsCache, {
@@ -301,6 +367,10 @@ const UserInput = z.object({
 const LoginInput = z.object({
   email: z.string().min(3).max(180),
   password: z.string().min(1),
+});
+const ProfileInput = z.object({
+  name: z.string().trim().min(2).max(60),
+  avatarUrl: z.union([z.string().url().max(1000), z.literal("")]).optional(),
 });
 const BookInput = z.object({
   title: z.string().min(2),
@@ -385,18 +455,20 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
     .trim();
   if (!narrationText || narrationText.includes("\uFFFD"))
     return res.status(400).json({ message: "ترميز النص غير صالح" });
-  const voice = "ar-SA-HamedNeural";
+  const voice = ttsProvider === "google-cloud" ? googleCloudVoice : "ar-SA-HamedNeural";
   const rate = "+0%";
   const pitch = "+0Hz";
   const key = createHash("sha256")
-    .update(`utf8-v7-hamed-word-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
+    .update(`utf8-v8-${ttsProvider}-word-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
     .digest("hex")
     .slice(0, 32);
   const audioPath = resolve(ttsCache, `${key}.mp3`);
   const metaPath = resolve(ttsCache, `${key}.json`);
   try {
     if (!existsSync(audioPath) || !existsSync(metaPath)) {
-      {
+      if (ttsProvider === "google-cloud") {
+        await generateGoogleCloudNarration(narrationText, audioPath, metaPath);
+      } else {
         let lastError: unknown;
         for (let attempt = 0; attempt < 3; attempt += 1) {
           try {
@@ -853,6 +925,26 @@ app.post("/api/auth/logout", async (req, res) => {
 app.get("/api/auth/me", auth, (req: AuthRequest, res) =>
   res.json({ user: publicUser(req.user!.id) }),
 );
+app.patch("/api/auth/profile", auth, async (req: AuthRequest, res) => {
+  const parsed = ProfileInput.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ message: "بيانات الملف الشخصي غير صالحة" });
+  const user = db().users.find((item) => item.id === req.user!.id);
+  if (!user) return res.status(404).json({ message: "الحساب غير موجود" });
+  const avatarUrl = parsed.data.avatarUrl?.trim() || undefined;
+  if (supabaseAdmin) {
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .upsert({ user_id: user.id, display_name: parsed.data.name, avatar_url: avatarUrl || null }, { onConflict: "user_id" });
+    if (error) {
+      logger.error({ error: error.message }, "profile update persistence failed");
+      return res.status(503).json({ message: "تعذر حفظ الملف الشخصي الآن، حاول مجددًا" });
+    }
+  }
+  user.name = parsed.data.name;
+  user.avatarUrl = avatarUrl;
+  await save({ skipRelational: Boolean(supabaseAdmin) });
+  res.json({ user: publicUser(user.id) });
+});
 
 app.get("/api/books", (req, res) => {
   let books = db().books.filter((b) => b.status === "PUBLISHED");
@@ -1424,17 +1516,19 @@ app.post("/api/chapters/:id/comments", communityWriteLimit, auth, async (req: Au
   const { provider: _provider, ...publicComment } = comment;
   res.status(201).json({ comment: { ...publicComment, user: publicAuthor(comment.userId) } });
 });
-app.delete("/api/chapters/:id/comments", communityWriteLimit, auth, async (req: AuthRequest, res) => {
+app.delete("/api/chapters/:id/comments/:commentId", communityWriteLimit, auth, async (req: AuthRequest, res) => {
   const chapterId = String(req.params.id);
-  const initiallyMatchedIds = new Set(
-    db().chapterComments
-      .filter((comment) => comment.userId === req.user!.id && comment.chapterId === chapterId)
-      .map((comment) => comment.id),
+  const commentId = z.string().uuid().safeParse(req.params.commentId);
+  if (!commentId.success) return res.status(400).json({ message: "معرّف التعليق غير صالح" });
+  const ownedComment = db().chapterComments.find(
+    (comment) => comment.id === commentId.data && comment.userId === req.user!.id && comment.chapterId === chapterId,
   );
+  if (!ownedComment) return res.status(404).json({ message: "التعليق غير موجود أو لا تملك حذفه" });
   if (supabaseAdmin) {
     const { data, error } = await supabaseAdmin
       .from("chapter_comments")
       .update({ deleted_at: new Date().toISOString() })
+      .eq("id", commentId.data)
       .eq("user_id", req.user!.id)
       .eq("chapter_id", chapterId)
       .is("deleted_at", null)
@@ -1443,10 +1537,10 @@ app.delete("/api/chapters/:id/comments", communityWriteLimit, auth, async (req: 
       logger.error({ error: error.message }, "comment deletion persistence failed");
       return res.status(503).json({ message: "تعذر حذف التعليق الآن، حاول مجددًا" });
     }
-    for (const item of data || []) initiallyMatchedIds.add(item.id);
+    if (!data?.length) return res.status(404).json({ message: "التعليق غير موجود أو حُذف مسبقًا" });
   }
   db().chapterComments = db().chapterComments.filter(
-    (comment) => !initiallyMatchedIds.has(comment.id),
+    (comment) => comment.id !== commentId.data,
   );
   await save({ skipRelational: Boolean(supabaseAdmin) });
   res.status(204).end();

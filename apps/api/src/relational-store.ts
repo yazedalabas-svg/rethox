@@ -168,6 +168,7 @@ export const syncRelationalStore = async (
     state.users.map((user) => ({
       user_id: user.id,
       display_name: user.name || "قارئ rethox",
+      avatar_url: user.avatarUrl || null,
     })),
     "user_id",
   );
@@ -551,6 +552,7 @@ export const loadRelationalStore = async (
           passwordHash: credentialMap.get(user.id)?.password_hash || "",
           role: user.role,
           theme: preference?.theme || "light",
+          avatarUrl: profile?.avatar_url || undefined,
           createdAt: user.created_at,
           oauthProvider:
             identity?.provider === "google"

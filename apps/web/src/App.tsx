@@ -25,7 +25,6 @@ import {
   Navigate,
   Outlet,
   useNavigate,
-  useLocation,
   useParams,
   useSearchParams,
 } from "react-router-dom";
@@ -57,7 +56,6 @@ import {
   Pause,
   Play,
   Search,
-  Settings,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
@@ -80,6 +78,7 @@ const saveReview = (input: { bookId: string; rating: number; body: string; spoil
     method: "POST",
     body: JSON.stringify(input),
   }).then((r) => r.review);
+const deleteReview = (bookId: string) => api(`/reviews/${bookId}`, { method: "DELETE" });
 const fetchChapterComments = (chapterId: string) =>
   api<{ comments: ChapterComment[] }>(`/chapters/${chapterId}/comments`).then((r) => r.comments);
 const saveChapterComment = ({
@@ -90,14 +89,13 @@ const saveChapterComment = ({
     method: "POST",
     body: JSON.stringify(input),
   }).then((r) => r.comment);
+const deleteChapterComment = (chapterId: string, commentId: string) =>
+  api(`/chapters/${chapterId}/comments/${commentId}`, { method: "DELETE" });
 const saveReadingProgress = ({
   bookId,
   ...input
-}: { bookId: string; chapterId: string; sentenceId?: string; wordId?: string; positionMs: number; percentage: number }) =>
-  api(`/progress/${bookId}`, {
-    method: "PUT",
-    body: JSON.stringify({ ...input, clientUpdatedAt: new Date().toISOString() }),
-  });
+}: { bookId: string; chapterId: string; sentenceId?: string; positionMs: number; percentage: number }) =>
+  api(`/progress/${bookId}`, { method: "PUT", body: JSON.stringify(input) });
 const setBookmark = (input: { bookId: string; chapterId: string; sentenceId: string; saved: boolean }) =>
   input.saved
     ? api("/bookmarks", {
@@ -113,30 +111,6 @@ const formatReadingDuration = (milliseconds: number) => {
   const hours = Math.floor(minutes / 60);
   const rest = minutes % 60;
   return rest ? `${hours} س ${rest} د` : `${hours} ساعة`;
-};
-const chapterReadingPercentage = (
-  chapter: Pick<Chapter, "sentences"> | null,
-  sentenceIndex: number,
-  activeWordId = "",
-  completed = false,
-) => {
-  if (!chapter?.sentences.length) return 0;
-  if (completed) return 100;
-  const safeSentenceIndex = Math.min(
-    chapter.sentences.length - 1,
-    Math.max(0, sentenceIndex),
-  );
-  const tokens = chapter.sentences[safeSentenceIndex]?.tokens || [];
-  const activeTokenIndex = activeWordId
-    ? tokens.findIndex((token) => token.id === activeWordId)
-    : -1;
-  const sentenceFraction = activeTokenIndex >= 0 && tokens.length
-    ? activeTokenIndex / tokens.length
-    : 0;
-  return Math.min(
-    100,
-    Math.max(0, ((safeSentenceIndex + sentenceFraction) / chapter.sentences.length) * 100),
-  );
 };
 const regionNames = new Intl.DisplayNames(["ar"], { type: "region" });
 const CountryFlag = ({ country }: { country: CountryCode }) => {
@@ -177,6 +151,7 @@ type AuthValue = {
   googleLogin: (credential: string) => Promise<void>;
   startPhoneLogin: (phone: string) => Promise<void>;
   verifyPhoneLogin: (phone: string, token: string) => Promise<void>;
+  updateProfile: (input: { name: string; avatarUrl?: string }) => Promise<void>;
   logout: () => Promise<void>;
 };
 type VoiceResult = {
@@ -389,9 +364,16 @@ function AuthProvider({ children }: { children: ReactNode }) {
     setToken(null);
     setUser(null);
   };
+  const updateProfile = async (input: { name: string; avatarUrl?: string }) => {
+    const r = await api<{ user: User }>("/auth/profile", {
+      method: "PATCH",
+      body: JSON.stringify(input),
+    });
+    setUser(r.user);
+  };
   return (
     <AuthContext.Provider value={{
-      user, ready, login, register, googleLogin, startPhoneLogin, verifyPhoneLogin, logout,
+       user, ready, login, register, googleLogin, startPhoneLogin, verifyPhoneLogin, updateProfile, logout,
     }}>
       {children}
     </AuthContext.Provider>
@@ -490,29 +472,9 @@ function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function RouteSeo() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    const privateRoute = /^\/(?:login|register|account|cart|settings|admin|reader)(?:\/|$)/.test(pathname);
-    const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
-    if (robots) robots.content = privateRoute
-      ? "noindex,nofollow"
-      : "index,follow,max-image-preview:large";
-    const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (canonical && !privateRoute) canonical.href = `https://rethox.onrender.com${pathname || "/"}`;
-    if (pathname === "/") document.title = "rethox — اقرأها. اسمعها. عشها.";
-  }, [pathname]);
-  return null;
-}
-
 function App() {
-  useEffect(() => {
-    document.documentElement.dataset.identity = "studio";
-    localStorage.removeItem("rethox-identity");
-  }, []);
   return (
     <ThemeProvider>
-      <RouteSeo />
       <AuthProvider>
         <CartProvider>
           <Routes>
@@ -522,7 +484,6 @@ function App() {
               <Route path="login" element={<AuthPage />} />
               <Route path="register" element={<AuthPage register />} />
               <Route path="cart" element={<CartPage />} />
-              <Route path="settings" element={<SettingsPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="account" element={<AccountPage />} />
               </Route>
@@ -547,8 +508,7 @@ function Shell() {
       <header>
         <div className="wrap nav">
           <Link to="/" className="brand">
-            <img className="brand-mark brand-mark-light" src="/rethox-mark.png" alt="" />
-            <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.png" alt="" />
+            <span>R</span>
             <b>
               rethox<small>READ · LISTEN · LIVE</small>
             </b>
@@ -562,14 +522,6 @@ function Shell() {
             )}
           </nav>
           <div className="nav-actions">
-            <NavLink
-              to="/settings"
-              className="settings-link"
-              aria-label="إعدادات القراءة والصوت"
-              title="الإعدادات"
-            >
-              <Settings size={18} />
-            </NavLink>
             {user ? (
               <Link to="/account" className="user-link">
                 <UserRound size={17} />
@@ -602,8 +554,7 @@ function Shell() {
         <div className="wrap footer">
           <div>
             <Link to="/" className="brand footer-brand">
-              <img className="brand-mark brand-mark-light" src="/rethox-mark.png" alt="" />
-              <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.png" alt="" />
+              <span>R</span>
               <b>rethox</b>
             </Link>
             <p>
@@ -616,11 +567,10 @@ function Shell() {
             <Link to="/">المكتبة</Link>
             <a href="/#features">كيف تعمل؟</a>
             <Link to="/account">حسابي</Link>
-            <Link to="/settings">الإعدادات</Link>
           </div>
           <div>
             <b>الخصوصية أولًا</b>
-            <p>خيارات القراءة والصوت محفوظة على جهازك.</p>
+            <p>إعدادات الحساب والبيانات.</p>
           </div>
         </div>
       </footer>
@@ -635,13 +585,6 @@ function Home() {
   const [genre, setGenre] = useState("الكل");
   useEffect(() => {
     api<{ books: Book[] }>("/books").then((r) => setBooks(r.books));
-    const description = "rethox مكتبة عربية للروايات الرقمية والقراءة الصوتية التفاعلية، مع مزامنة النص وحفظ تقدم القراءة.";
-    const descriptionMeta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    const ogTitle = document.querySelector<HTMLMetaElement>('meta[property="og:title"]');
-    const ogDescription = document.querySelector<HTMLMetaElement>('meta[property="og:description"]');
-    if (descriptionMeta) descriptionMeta.content = description;
-    if (ogTitle) ogTitle.content = "rethox — اقرأها. اسمعها. عشها.";
-    if (ogDescription) ogDescription.content = description;
     try {
       setLastRead(JSON.parse(localStorage.getItem("rethox-last-read") || "null"));
     } catch {
@@ -918,17 +861,6 @@ function BookPage() {
     }).catch(() => setReviews([]));
   }, [book?.id]);
   useEffect(() => {
-    if (!book) return;
-    document.title = `${book.title} — rethox`;
-    const description = book.synopsis.slice(0, 155);
-    const descriptionMeta = document.querySelector<HTMLMetaElement>('meta[name="description"]');
-    const ogTitle = document.querySelector<HTMLMetaElement>('meta[property="og:title"]');
-    const ogDescription = document.querySelector<HTMLMetaElement>('meta[property="og:description"]');
-    if (descriptionMeta) descriptionMeta.content = description;
-    if (ogTitle) ogTitle.content = `${book.title} — rethox`;
-    if (ogDescription) ogDescription.content = description;
-  }, [book?.id]);
-  useEffect(() => {
     if (!book || !user) {
       setProgress(null);
       setReadingLater(false);
@@ -971,6 +903,19 @@ function BookPage() {
       setReviewBody("");
       setReviewSpoiler(false);
       setReviewMessage("تم نشر تقييمك");
+    } catch (error) {
+      setReviewMessage((error as Error).message);
+    }
+  };
+  const removeReview = async () => {
+    if (!book || !user || !window.confirm("حذف تقييمك نهائيًا؟")) return;
+    try {
+      await deleteReview(book.id);
+      setReviews((current) => {
+        const next = current.filter((review) => review.user.id !== user.id);
+        setReviewAverage(weightedRating(next));
+        return next;
+      });
     } catch (error) {
       setReviewMessage((error as Error).message);
     }
@@ -1046,7 +991,7 @@ function BookPage() {
             )}
             <span>
               <Clock size={14} />
-              نحو {formatReadingDuration(totalReadingMs)}
+              نحو {formatReadingDuration(totalReadingMs)} لإنهائها
             </span>
           </div>
           <p>{book.synopsis}</p>
@@ -1196,6 +1141,7 @@ function BookPage() {
                   </div>
                   <span className="rating-stars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
                 </header>
+                {user?.id === review.user.id && <button className="comment-delete review-delete" type="button" onClick={() => void removeReview()}><Trash2 size={14} /> حذف تقييمي</button>}
                 {review.body && (review.spoiler ? <SpoilerCurtain text={review.body} /> : <p dir="auto">{review.body}</p>)}
               </div>
             ))}
@@ -1207,13 +1153,76 @@ function BookPage() {
   );
 }
 
+let googleScriptPromise: Promise<void> | null = null;
+const loadGoogleIdentity = () => {
+  if (googleScriptPromise) return googleScriptPromise;
+  googleScriptPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector<HTMLScriptElement>("script[data-rethox-google]");
+    if (existing) {
+      if ((window as any).google?.accounts?.id) resolve();
+      else {
+        existing.addEventListener("load", () => resolve(), { once: true });
+        existing.addEventListener("error", () => reject(new Error("تعذر تحميل Google")), { once: true });
+      }
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://accounts.google.com/gsi/client";
+    script.async = true;
+    script.defer = true;
+    script.dataset.rethoxGoogle = "true";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("تعذر تحميل Google"));
+    document.head.appendChild(script);
+  });
+  return googleScriptPromise;
+};
+
 function GoogleSignIn({ returnTo, className = "" }: { returnTo: string; className?: string }) {
-  const googleUrl = `/api/auth/google?returnTo=${encodeURIComponent(returnTo)}`;
+  const auth = useAuth();
+  const nav = useNavigate();
+  const host = useRef<HTMLDivElement>(null);
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    let active = true;
+    api<{ clientId: string }>("/auth/google/config", undefined, false)
+      .then(async ({ clientId }) => {
+        await loadGoogleIdentity();
+        if (!active || !host.current) return;
+        const google = (window as any).google;
+        google.accounts.id.initialize({
+          client_id: clientId,
+          callback: async ({ credential }: { credential?: string }) => {
+            if (!credential) return setMessage("لم يصل رد صالح من Google");
+            try {
+              setMessage("");
+              await auth.googleLogin(credential);
+              nav(returnTo, { replace: true });
+            } catch (error) {
+              setMessage((error as Error).message);
+            }
+          },
+        });
+        host.current.replaceChildren();
+        google.accounts.id.renderButton(host.current, {
+          type: "standard",
+          shape: "rectangular",
+          theme: "outline",
+          text: "continue_with",
+          size: "large",
+          logo_alignment: "left",
+          width: Math.min(360, host.current.clientWidth || 360),
+          locale: "ar",
+        });
+      })
+      .catch((error) => active && setMessage((error as Error).message));
+    return () => { active = false; };
+  }, [auth, nav, returnTo]);
   return (
-    <a className={`google-oauth-button ${className}`} href={googleUrl}>
-      <span className="google-mark" aria-hidden="true">G</span>
-      <span>المتابعة باستخدام Google</span>
-    </a>
+    <div className={`google-gsi-shell ${className}`}>
+      <div ref={host} dir="ltr" />
+      {message && <small className="error">{message}</small>}
+    </div>
   );
 }
 
@@ -1573,12 +1582,12 @@ function CartPage() {
   const checkout = async () => {
     if (!user) return nav("/login");
     try {
-      const result = await api<{ order: { id: string } }>("/orders", {
+      await api("/orders", {
         method: "POST",
         body: JSON.stringify({ bookIds: ids }),
       });
       clear();
-      nav(`/account?order=${encodeURIComponent(result.order.id)}`);
+      nav("/account");
     } catch (e) {
       setError((e as Error).message);
     }
@@ -1645,81 +1654,62 @@ function CartPage() {
   );
 }
 
-function SettingsPage() {
-  const [settings, setSettings] = useState<ReadingSettings>(readSettings);
-  const [notice, setNotice] = useState("");
-  const updateSetting = <K extends keyof ReadingSettings>(key: K, value: ReadingSettings[K]) => {
-    const next = { ...settings, [key]: value };
-    setSettings(next);
-    saveSettings(next);
-    setNotice("حُفظ التغيير");
-    window.setTimeout(() => setNotice(""), 1400);
-  };
-  const clearHistory = () => {
-    localStorage.removeItem("rethox-reading-history");
-    setNotice("تم مسح سجل القراءة من هذا الجهاز");
-  };
-  return (
-    <section className="inner-page wrap standalone-settings">
-      <header className="settings-page-head">
-        <span className="settings-page-icon"><Settings /></span>
-        <div>
-          <span className="kicker">الإعدادات</span>
-          <h1>اضبط تجربتك كما تحب</h1>
-          <p>تُطبّق اختيارات القراءة والصوت مباشرة على جميع الفصول.</p>
-        </div>
-      </header>
-      {notice && <div className="settings-notice" role="status"><Check /> {notice}</div>}
-      <div className="settings-layout">
-        <article className="settings-panel">
-          <header><div><span className="kicker">القراءة</span><h2>النص والصفحة</h2></div></header>
-          <label><span>حجم الخط <b>{settings.fontSize}</b></span><input type="range" min="20" max="38" step="2" value={settings.fontSize} onChange={(e) => updateSetting("fontSize", Number(e.target.value))} /></label>
-          <label><span>تباعد السطور <b>{settings.lineHeight.toFixed(1)}</b></span><input type="range" min="1.7" max="2.8" step="0.1" value={settings.lineHeight} onChange={(e) => updateSetting("lineHeight", Number(e.target.value))} /></label>
-          <label className="setting-toggle"><span><b>إشعارات التقدم</b><small>تنبيه هادئ عند إنهاء الفصل</small></span><input type="checkbox" checked={settings.notifications} onChange={(e) => updateSetting("notifications", e.target.checked)} /></label>
-        </article>
-        <article className="settings-panel">
-          <header><div><span className="kicker">الصوت</span><h2>السرد والتشغيل</h2></div></header>
-          <label><span>سرعة الصوت <b>{settings.playbackSpeed}×</b></span><input type="range" min="0.5" max="4" step="0.25" value={settings.playbackSpeed} onChange={(e) => updateSetting("playbackSpeed", Number(e.target.value))} /></label>
-          <label><span>مستوى الصوت <b>{Math.round(settings.volume * 100)}%</b></span><input type="range" min="0" max="1" step="0.05" value={settings.volume} onChange={(e) => updateSetting("volume", Number(e.target.value))} /></label>
-          <label className="setting-toggle"><span><b>تشغيل السرد تلقائيًا</b><small>يبدأ عند فتح الفصل عندما يسمح المتصفح</small></span><input type="checkbox" checked={settings.autoNarration} onChange={(e) => updateSetting("autoNarration", e.target.checked)} /></label>
-        </article>
-        <article className="settings-panel settings-privacy-panel">
-          <header><div><span className="kicker">الخصوصية</span><h2>السجل على جهازك</h2></div></header>
-          <label className="setting-toggle"><span><b>سجل خاص</b><small>لا يظهر سجل القراءة لزوار ملفك</small></span><input type="checkbox" checked={settings.privateHistory} onChange={(e) => updateSetting("privateHistory", e.target.checked)} /></label>
-          <button className="history-clear" onClick={clearHistory}><Trash2 /> مسح سجل القراءة من هذا الجهاز</button>
-        </article>
-      </div>
-    </section>
-  );
-}
-
 function AccountPage() {
-  const { user, ready, logout } = useAuth();
-  const [accountParams] = useSearchParams();
-  const completedOrderId = accountParams.get("order");
+  const { user, ready, logout, updateProfile } = useAuth();
   const [orders, setOrders] = useState<any[]>([]);
   const [bookIds, setBookIds] = useState<string[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [readingListIds, setReadingListIds] = useState<string[]>([]);
-  const [history] = useState<ReadingHistoryItem[]>(readHistory);
+  const [settings, setSettings] = useState<ReadingSettings>(readSettings);
+  const [history, setHistory] = useState<ReadingHistoryItem[]>(readHistory);
+  const [profileName, setProfileName] = useState("");
+  const [profileAvatar, setProfileAvatar] = useState("");
+  const [profileMessage, setProfileMessage] = useState("");
   const totalReadingSeconds = history.reduce((total, item) => total + (item.seconds || 0), 0);
   const completedCount = (() => {
     try { return JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]").length; }
     catch { return 0; }
   })();
+  const updateSetting = <K extends keyof ReadingSettings>(key: K, value: ReadingSettings[K]) => {
+    const next = { ...settings, [key]: value };
+    setSettings(next);
+    saveSettings(next);
+  };
   useEffect(() => {
-    if (!user) return;
-    api<{ orders: any[] }>("/orders").then((result) => setOrders(result.orders)).catch(() => setOrders([]));
-    api<{ bookIds: string[] }>("/entitlements").then((result) => setBookIds(result.bookIds)).catch(() => setBookIds([]));
-    api<{ books: Book[] }>("/books").then((result) => setBooks(result.books)).catch(() => setBooks([]));
-    api<{ bookIds: string[] }>("/reading-list").then((result) => setReadingListIds(result.bookIds)).catch(() => setReadingListIds([]));
-  }, [user, completedOrderId]);
+    if (user) {
+      setProfileName(user.name);
+      setProfileAvatar(user.avatarUrl || "");
+    }
+  }, [user?.id]);
+  useEffect(() => {
+    if (user)
+      Promise.all([
+        api<{ orders: any[] }>("/orders"),
+        api<{ bookIds: string[] }>("/entitlements"),
+        api<{ books: Book[] }>("/books"),
+        api<{ bookIds: string[] }>("/reading-list"),
+      ]).then(([o, e, b, readingList]) => {
+        setOrders(o.orders);
+        setBookIds(e.bookIds);
+        setBooks(b.books);
+        setReadingListIds(readingList.bookIds);
+      });
+  }, [user]);
+  const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    try {
+      await updateProfile({ name: profileName.trim(), avatarUrl: profileAvatar.trim() || undefined });
+      setProfileMessage("تم حفظ الملف الشخصي");
+    } catch (error) {
+      setProfileMessage((error as Error).message);
+    }
+  };
   if (!ready) return <Loading />;
   if (!user) return <Navigate to="/login" />;
   return (
     <section className="inner-page wrap">
       <div className="account-head">
-        <div className="avatar">{user.name[0]}</div>
+        {user.avatarUrl ? <img className="avatar" src={user.avatarUrl} alt="" referrerPolicy="no-referrer" /> : <div className="avatar">{user.name[0]}</div>}
         <div>
           <span>أهلًا بعودتك</span>
           <h1>{user.name}</h1>
@@ -1729,6 +1719,13 @@ function AccountPage() {
           تسجيل الخروج
         </button>
       </div>
+      <form className="profile-editor" onSubmit={saveProfile}>
+        <div><span className="kicker">الملف الشخصي</span><h2>كيف يظهر اسمك للقراء؟</h2></div>
+        <label>الاسم الظاهر<input value={profileName} onChange={(event) => setProfileName(event.target.value)} minLength={2} maxLength={60} required /></label>
+        <label>رابط الصورة <small>اختياري</small><input type="url" value={profileAvatar} onChange={(event) => setProfileAvatar(event.target.value)} placeholder="https://..." /></label>
+        <button className="btn secondary">حفظ التغييرات</button>
+        {profileMessage && <small className="profile-message">{profileMessage}</small>}
+      </form>
       <div className="account-grid">
         <div>
           <div className="subhead">
@@ -1762,16 +1759,6 @@ function AccountPage() {
           {!orders.length && <p>لا توجد طلبات بعد.</p>}
         </aside>
       </div>
-      {completedOrderId && (
-        <div className="order-success" role="status">
-          <i><Check size={18} /></i>
-          <div>
-            <b>تمت إضافة الرواية إلى مكتبتك</b>
-            <span>رقم الطلب: RX-{completedOrderId.slice(0, 8).toUpperCase()}</span>
-          </div>
-          <Link to="/account">إخفاء</Link>
-        </div>
-      )}
       <section className="reading-later-section">
         <div className="subhead">
           <h2>القراءة لاحقًا</h2>
@@ -1791,6 +1778,22 @@ function AccountPage() {
           <article><Clock /><b>{Math.floor(totalReadingSeconds / 3600)} س</b><span>وقت القراءة</span></article>
           <article><BookOpen /><b>{history.length}</b><span>جلسات القراءة</span></article>
           <article><Check /><b>{completedCount}</b><span>فصول منجزة</span></article>
+        </div>
+        <div className="settings-layout">
+          <article className="settings-panel">
+            <header><div><span className="kicker">تجربتك</span><h2>إعدادات القراءة والصوت</h2></div></header>
+            <label><span>حجم الخط <b>{settings.fontSize}</b></span><input type="range" min="20" max="38" step="2" value={settings.fontSize} onChange={(e) => updateSetting("fontSize", Number(e.target.value))} /></label>
+            <label><span>تباعد السطور <b>{settings.lineHeight.toFixed(1)}</b></span><input type="range" min="1.7" max="2.8" step="0.1" value={settings.lineHeight} onChange={(e) => updateSetting("lineHeight", Number(e.target.value))} /></label>
+            <label><span>سرعة الصوت <b>{settings.playbackSpeed}×</b></span><input type="range" min="0.5" max="4" step="0.25" value={settings.playbackSpeed} onChange={(e) => updateSetting("playbackSpeed", Number(e.target.value))} /></label>
+            <label><span>مستوى الصوت <b>{Math.round(settings.volume * 100)}%</b></span><input type="range" min="0" max="1" step="0.05" value={settings.volume} onChange={(e) => updateSetting("volume", Number(e.target.value))} /></label>
+            <label className="setting-toggle"><span><b>تشغيل السرد تلقائيًا</b><small>يبدأ بعد فتح الفصل عندما يسمح المتصفح</small></span><input type="checkbox" checked={settings.autoNarration} onChange={(e) => updateSetting("autoNarration", e.target.checked)} /></label>
+          </article>
+          <article className="settings-panel">
+            <header><div><span className="kicker">الخصوصية والحساب</span><h2>اختياراتك محفوظة</h2></div></header>
+            <label className="setting-toggle"><span><b>إشعارات التقدم</b><small>تنبيه هادئ عند إنهاء الفصل</small></span><input type="checkbox" checked={settings.notifications} onChange={(e) => updateSetting("notifications", e.target.checked)} /></label>
+            <label className="setting-toggle"><span><b>سجل خاص</b><small>يبقى سجل القراءة ظاهرًا داخل حسابك فقط</small></span><input type="checkbox" checked={settings.privateHistory} onChange={(e) => updateSetting("privateHistory", e.target.checked)} /></label>
+            <button className="history-clear" onClick={() => { localStorage.removeItem("rethox-reading-history"); setHistory([]); }}><Trash2 /> مسح سجل القراءة</button>
+          </article>
         </div>
         <article className="history-panel">
           <header><div><span className="kicker">آخر نشاط</span><h2>سجل القراءة</h2></div><span>{history.length} جلسة</span></header>
@@ -1873,7 +1876,6 @@ function ReaderPage() {
   const railDraggingRef = useRef(false);
   const scrollHoldRef = useRef(0);
   const scrollAnimRef = useRef(0);
-  const manualProgressFrameRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
   const browserSpeechActiveRef = useRef(false);
@@ -1891,8 +1893,6 @@ function ReaderPage() {
   const historyEntryRef = useRef("");
   const currentMsRef = useRef(0);
   const currentSentenceIndexRef = useRef(currentSentenceIndex);
-  const playingRef = useRef(playing);
-  const atChapterEndRef = useRef(atChapterEnd);
   const lastTimelinePaintRef = useRef(0);
   const lastSpotSaveRef = useRef({ sentenceIndex: -1, at: 0 });
   const lastAutoScrollRef = useRef(0);
@@ -1905,13 +1905,7 @@ function ReaderPage() {
     lastSpotSaveRef.current = { sentenceIndex, at: now };
     localStorage.setItem(`rethox-sentence-${chapterId}`, String(sentenceIndex));
     if (wordId) localStorage.setItem(`rethox-word-${chapterId}`, wordId);
-    if (book && chapter) {
-      const precisePosition = chapterReadingPercentage(
-        chapter,
-        sentenceIndex,
-        wordId,
-        atChapterEndRef.current,
-      ) / 100 * (chapter.sentences.length || 1);
+    if (book && chapter)
       localStorage.setItem(
         "rethox-last-read",
         JSON.stringify({
@@ -1919,13 +1913,12 @@ function ReaderPage() {
           bookTitle: book.title,
           chapterId: chapter.id,
           chapterTitle: chapter.title,
-          position: Math.min(chapter.sentences.length, precisePosition),
+          position: Math.min(chapter.sentences.length, sentenceIndex + 1),
           total: chapter.sentences.length || 1,
           sentenceId: chapter.sentences[sentenceIndex]?.id,
           wordId,
         }),
       );
-    }
   };
   const revealActiveWord = (wordId: string) => {
     const now = performance.now();
@@ -1999,7 +1992,6 @@ function ReaderPage() {
     setPlayerError("");
     setSaveNotice("");
     setAtChapterEnd(false);
-    atChapterEndRef.current = false;
     setShowChapterList(false);
     setTransitionTitle("");
     try {
@@ -2013,37 +2005,14 @@ function ReaderPage() {
       Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0),
     );
     api<any>(`/chapters/${chapterId}/content`)
-      .then(async (r) => {
-        let savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
-        let savedWordId = localStorage.getItem(`rethox-word-${chapterId}`) || "";
-        if (user) {
-          try {
-            const saved = await api<{ progress: Progress | null }>(`/progress/${r.book.id}`);
-            const progress = saved.progress;
-            if (progress && progress.chapterId === r.chapter.id) {
-              const sentenceId = progress.sentenceId;
-              const remoteSentenceIndex = sentenceId
-                ? r.chapter.sentences.findIndex((sentence: Sentence) => sentence.id === sentenceId)
-                : -1;
-              if (remoteSentenceIndex >= 0) savedIndex = remoteSentenceIndex;
-              savedWordId = progress.wordId || "";
-            }
-          } catch {
-            // The local reading spot remains a safe offline fallback.
-          }
-        }
-        savedIndex = Math.min(Math.max(0, savedIndex), Math.max(0, r.chapter.sentences.length - 1));
-        localStorage.setItem(`rethox-sentence-${chapterId}`, String(savedIndex));
-        if (savedWordId) localStorage.setItem(`rethox-word-${chapterId}`, savedWordId);
-        else localStorage.removeItem(`rethox-word-${chapterId}`);
-        currentSentenceIndexRef.current = savedIndex;
-        activeWordRef.current = savedWordId;
-        setCurrentSentenceIndex(savedIndex);
-        setActiveWordId(savedWordId);
+      .then((r) => {
         setChapter(r.chapter);
         setBook(r.book);
         setChapterNav(r.navigation || { previous: null, next: null });
         setChapterList(r.chapterList || []);
+        const savedIndex = Number(
+          localStorage.getItem(`rethox-sentence-${chapterId}`) || 0,
+        );
         setActiveSentence(r.chapter.sentences[savedIndex] || r.chapter.sentences[0]);
         localStorage.setItem(
           "rethox-last-read",
@@ -2052,10 +2021,10 @@ function ReaderPage() {
             bookTitle: r.book.title,
             chapterId: r.chapter.id,
             chapterTitle: r.chapter.title,
-            position: Math.min(r.chapter.sentences.length, savedIndex),
+            position: Math.min(r.chapter.sentences.length, savedIndex + 1),
             total: r.chapter.sentences.length || 1,
             sentenceId: r.chapter.sentences[savedIndex]?.id,
-            wordId: savedWordId || undefined,
+            wordId: localStorage.getItem(`rethox-word-${chapterId}`) || undefined,
           }),
         );
         const history = readHistory();
@@ -2064,7 +2033,7 @@ function ReaderPage() {
           bookTitle: r.book.title,
           chapterId: r.chapter.id,
           chapterTitle: r.chapter.title,
-          position: Math.min(r.chapter.sentences.length, savedIndex),
+          position: Math.min(r.chapter.sentences.length, savedIndex + 1),
           total: r.chapter.sentences.length || 1,
           visitedAt: new Date().toISOString(),
           seconds: 0,
@@ -2086,7 +2055,7 @@ function ReaderPage() {
     fetchChapterComments(chapterId)
       .then((items) => setChapterComments(items))
       .catch(() => setChapterComments([]));
-  }, [chapterId, ready, user?.id]);
+  }, [chapterId, ready]);
   useEffect(() => {
     if (!chapter) return;
     const timer = window.setInterval(() => {
@@ -2147,12 +2116,6 @@ function ReaderPage() {
     currentMsRef.current = currentMs;
   }, [currentMs]);
   useEffect(() => {
-    playingRef.current = playing;
-  }, [playing]);
-  useEffect(() => {
-    atChapterEndRef.current = atChapterEnd;
-  }, [atChapterEnd]);
-  useEffect(() => {
     rememberReadingSpot(currentSentenceIndex);
     currentSentenceIndexRef.current = currentSentenceIndex;
   }, [currentSentenceIndex]);
@@ -2162,14 +2125,8 @@ function ReaderPage() {
       bookId: chapter.bookId,
       chapterId: chapter.id,
       sentenceId: chapter.sentences[currentSentenceIndexRef.current]?.id,
-      wordId: activeWordRef.current || undefined,
       positionMs: currentMsRef.current,
-      percentage: chapterReadingPercentage(
-        chapter,
-        currentSentenceIndexRef.current,
-        activeWordRef.current,
-        atChapterEndRef.current,
-      ),
+      percentage: Math.min(100, ((currentSentenceIndexRef.current + 1) / chapter.sentences.length) * 100),
     }).catch(() => {});
     const timer = window.setInterval(persistProgress, 10000);
     return () => {
@@ -2186,32 +2143,8 @@ function ReaderPage() {
       const scrollable = container.scrollHeight - container.clientHeight;
       setScrollRatio(scrollable > 0 ? container.scrollTop / scrollable : 0);
       setShowScrollTop(container.scrollTop > 700);
-      if (!playingRef.current) {
-        cancelAnimationFrame(manualProgressFrameRef.current);
-        manualProgressFrameRef.current = requestAnimationFrame(() => {
-          const center = container.getBoundingClientRect().top + container.clientHeight * 0.45;
-          let closestIndex = currentSentenceIndexRef.current;
-          let closestDistance = Number.POSITIVE_INFINITY;
-          container.querySelectorAll<HTMLElement>("[data-sentence-index]").forEach((item) => {
-            const rect = item.getBoundingClientRect();
-            if (rect.bottom < container.getBoundingClientRect().top || rect.top > container.getBoundingClientRect().bottom) return;
-            const distance = Math.abs(rect.top + rect.height / 2 - center);
-            if (distance < closestDistance) {
-              closestDistance = distance;
-              closestIndex = Number(item.dataset.sentenceIndex || 0);
-            }
-          });
-          if (closestIndex !== currentSentenceIndexRef.current) {
-            currentSentenceIndexRef.current = closestIndex;
-            setCurrentSentenceIndex(closestIndex);
-            rememberReadingSpot(closestIndex, "");
-          }
-        });
-      }
       if (remaining < 180) {
         setAtChapterEnd(true);
-        atChapterEndRef.current = true;
-        rememberReadingSpot(Math.max(0, chapter.sentences.length - 1), "");
         try {
           const completed: string[] = JSON.parse(
             localStorage.getItem("rethox-completed-chapters") || "[]",
@@ -2224,10 +2157,7 @@ function ReaderPage() {
       }
     };
     container.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      container.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(manualProgressFrameRef.current);
-    };
+    return () => container.removeEventListener("scroll", onScroll);
   }, [chapter]);
   useEffect(() => {
     if (durationMs && currentMs >= durationMs) setPlaying(false);
@@ -2838,6 +2768,15 @@ function ReaderPage() {
       setChapterCommentMessage((error as Error).message);
     }
   };
+  const removeChapterComment = async (comment: ChapterComment) => {
+    if (!chapterId || !user || user.id !== comment.user.id || !window.confirm("حذف تعليقك؟")) return;
+    try {
+      await deleteChapterComment(chapterId, comment.id);
+      setChapterComments((current) => current.filter((item) => item.id !== comment.id && item.parentId !== comment.id));
+    } catch (error) {
+      setChapterCommentMessage((error as Error).message);
+    }
+  };
   const normalizeSearch = (text: string) =>
     text
       .normalize("NFKD")
@@ -2917,12 +2856,6 @@ function ReaderPage() {
       localStorage.getItem("rethox-completed-chapters") || "[]",
     );
   } catch {}
-  const chapterProgressPercentage = chapterReadingPercentage(
-    chapter,
-    currentSentenceIndex,
-    activeWordId,
-    atChapterEnd || completedChapters.includes(chapter.id),
-  );
   return (
     <div className={`reader ${focusMode ? "focus-mode" : ""}`}>
       {transitionTitle && (
@@ -2945,7 +2878,7 @@ function ReaderPage() {
         <div className="reader-progress">
           <span
             style={{
-              width: `${chapterProgressPercentage}%`,
+              width: `${Math.min(100, ((currentSentenceIndex + currentMs / durationMs) / chapter.sentences.length) * 100)}%`,
             }}
           ></span>
         </div>
@@ -3215,7 +3148,10 @@ function ReaderPage() {
                         <small><time dateTime={comment.createdAt}>{formatDateTime(comment.createdAt)}</time></small>
                       </div>
                     </div>
-                    <span className="rating-stars">{"\u2605".repeat(comment.rating)}{"\u2606".repeat(5 - comment.rating)}</span>
+                    <div className="community-tools">
+                      <span className="rating-stars">{"\u2605".repeat(comment.rating)}{"\u2606".repeat(5 - comment.rating)}</span>
+                      {user?.id === comment.user.id && <button className="comment-delete" type="button" onClick={() => void removeChapterComment(comment)} aria-label="حذف تعليقي"><Trash2 size={14} /></button>}
+                    </div>
                   </header>
                   {comment.body && (comment.spoiler ? <SpoilerCurtain text={comment.body} /> : <p dir="auto">{comment.body}</p>)}
                   <div className="comment-replies">
@@ -3228,7 +3164,7 @@ function ReaderPage() {
                             <small><time dateTime={reply.createdAt}>{formatDateTime(reply.createdAt)}</time></small>
                           </div>
                         </div>
-                        <p dir="auto">{reply.body}</p>
+                        <div className="reply-body"><p dir="auto">{reply.body}</p>{user?.id === reply.user.id && <button className="comment-delete" type="button" onClick={() => void removeChapterComment(reply)} aria-label="حذف ردي"><Trash2 size={13} /></button>}</div>
                       </div>
                     ))}
                     <form
@@ -3429,8 +3365,6 @@ function AdminPage() {
   const [overview, setOverview] = useState<any>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [reports, setReports] = useState<ContentReport[]>([]);
-  const [backups, setBackups] = useState<any[]>([]);
-  const [backupBusy, setBackupBusy] = useState(false);
   const [message, setMessage] = useState("");
   useEffect(() => {
     if (user?.role === "ADMIN")
@@ -3438,12 +3372,10 @@ function AdminPage() {
         api<any>("/admin/overview"),
         api<{ users: User[] }>("/admin/users"),
         api<{ reports: ContentReport[] }>("/admin/reports"),
-        api<{ backups: any[] }>("/admin/backups"),
-      ]).then(([o, u, reportData, backupData]) => {
+      ]).then(([o, u, reportData]) => {
         setOverview(o);
         setUsers(u.users);
         setReports(reportData.reports);
-        setBackups(backupData.backups);
       });
   }, [user]);
   if (!ready) return <Loading />;
@@ -3578,38 +3510,6 @@ function AdminPage() {
             </article>
           ))}
           {!reports.length && <p className="panel-empty">لا توجد بلاغات حاليًا.</p>}
-        </div>
-      </section>
-      <section className="admin-backups">
-        <header>
-          <div><span className="kicker">حماية البيانات</span><h2>النسخ الاحتياطية</h2></div>
-          <button
-            className="btn secondary"
-            disabled={backupBusy}
-            onClick={async () => {
-              setBackupBusy(true);
-              try {
-                const result = await api<{ backup: any }>("/admin/backups", { method: "POST" });
-                setBackups((items) => [result.backup, ...items]);
-              } finally {
-                setBackupBusy(false);
-              }
-            }}
-          >
-            <ShieldCheck size={16} />
-            {backupBusy ? "جارٍ الحفظ..." : "إنشاء نسخة الآن"}
-          </button>
-        </header>
-        <div className="backup-list">
-          {backups.map((backup) => (
-            <article key={backup.id}>
-              <span className={`backup-status ${String(backup.status).toLowerCase()}`}>{backup.status}</span>
-              <b>{backup.kind}</b>
-              <small>{formatDateTime(backup.created_at)}</small>
-              <em>{backup.byte_size ? `${Math.max(1, Math.round(backup.byte_size / 1024))} KB` : "—"}</em>
-            </article>
-          ))}
-          {!backups.length && <p className="panel-empty">لا توجد نسخ احتياطية بعد.</p>}
         </div>
       </section>
     </section>

@@ -1524,6 +1524,13 @@ button {
   font-size: 24px;
   margin: 0;
 }
+.profile-editor { display:grid;grid-template-columns:minmax(180px,1fr) minmax(180px,1fr) minmax(180px,1fr) auto;gap:12px;align-items:end;margin:18px 0 28px;padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--surface); }
+.profile-editor h2 { margin:4px 0 0;font-size:16px; }
+.profile-editor label { display:grid;gap:6px;color:var(--muted);font-size:9px;font-weight:700; }
+.profile-editor label small { color:var(--muted);font-weight:400; }
+.profile-editor input { min-height:40px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);padding:0 11px; }
+.profile-message { grid-column:1/-1;color:var(--purple); }
+.avatar { object-fit:cover; }
 .account-grid {
   display: grid;
   grid-template-columns: 1fr 300px;
@@ -2576,6 +2583,12 @@ html:has(.reader.focus-mode) .theme-fab { opacity:0;pointer-events:none;transfor
 .community-list header b { font-size:10px;line-height:1.3; }
 .community-list header span { display:flex;align-items:center;gap:4px;color:#2f9b70;font-size:8px;white-space:nowrap; }
 .community-list header .rating-stars { color:#f2b84b;font-size:11px;letter-spacing:1px;text-shadow:0 4px 14px rgba(242,184,75,.18); }
+.community-tools { display:flex;align-items:center;gap:7px; }
+.comment-delete { width:26px;height:26px;display:grid;place-items:center;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--muted);cursor:pointer; }
+.comment-delete:hover { color:#d95c5c;border-color:rgba(217,92,92,.28);background:rgba(217,92,92,.09); }
+.review-delete { width:auto;height:30px;margin-top:8px;padding:0 8px;gap:5px;font-size:8px; }
+.reply-body { display:flex;align-items:start;gap:8px; }
+.reply-body p { flex:1; }
 .community-list header svg { width:11px; }
 .community-author { width:max-content;max-width:100%;display:flex;align-items:center;justify-content:flex-start;gap:9px;direction:rtl; }
 .community-author .community-avatar { flex:0 0 30px; }
@@ -2652,6 +2665,7 @@ html:has(.reader) .theme-fab { top:100px;right:68px;bottom:auto;left:auto;width:
   .rating-filter:before,.rating-filter button { flex:0 0 auto; }
   .community-list>div,.community-list>article { padding:12px 10px; }
   .comment-reply { padding:10px; }
+  .profile-editor { grid-template-columns:1fr; }
   .reader { height:100dvh;grid-template-rows:62px minmax(0,1fr) auto; }
   .reader-head { grid-template-columns:38px minmax(0,1fr) 38px;gap:6px;padding:0 9px; }
   .reader-head b { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px; }

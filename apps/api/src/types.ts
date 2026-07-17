@@ -1,5 +1,5 @@
 export type Role = "CUSTOMER" | "ADMIN";
-export type User = { id:string; name:string; email:string; phone?:string; passwordHash:string; role:Role; theme:"light"|"dark"; createdAt:string; oauthProvider?:"google"|"supabase"; oauthSubject?:string };
+export type User = { id:string; name:string; email:string; phone?:string; passwordHash:string; role:Role; theme:"light"|"dark"; createdAt:string; avatarUrl?:string; oauthProvider?:"google"|"supabase"; oauthSubject?:string };
 export type TokenTiming = { id:string; text:string; position:number; startMs:number; endMs:number; confidence:number };
 export type Sentence = { id:string; position:number; text:string; summary?:string; tokens:TokenTiming[] };
 export type Chapter = { id:string; bookId:string; title:string; position:number; durationMs:number; isSample:boolean; sentences:Sentence[]; sentenceCount?:number; contentFile?:string };

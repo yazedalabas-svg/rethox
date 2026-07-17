@@ -68,11 +68,12 @@ export const publicUser = (id: string) => {
     phone: user.phone,
     role: user.role,
     theme: user.theme,
+    avatarUrl: user.avatarUrl,
     oauthProvider: user.oauthProvider,
   };
 };
 
 export const publicAuthor = (id: string) => {
   const user = db().users.find((item) => item.id === id);
-  return user && { id: user.id, name: user.name };
+  return user && { id: user.id, name: user.name, avatarUrl: user.avatarUrl };
 };
