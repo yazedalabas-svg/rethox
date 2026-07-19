@@ -1213,7 +1213,7 @@ function BookPage() {
       <div className="wrap book-extras reveal-section book-community-only">
         <article className="spoiler-review community-card">
           <span className="kicker">آراء القراء</span>
-          <h2>{reviews.length ? `${reviews.length} تقييم موثّق` : "كن أول من يقيّم"}</h2>
+          <h2>آراء القراء Yeah.</h2>
           <form onSubmit={submitReview}>
             <div className="rating-picker">
               {[1, 2, 3, 4, 5].map((star) => (
