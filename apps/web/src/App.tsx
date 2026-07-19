@@ -3499,6 +3499,16 @@ function ReaderPage() {
             ) : <span />}
           </nav>
           <span className="chapter-label">{chapter.title}</span>
+          {chapter.id === "ch-rezero-6-01" && (
+            <figure className="chapter-opening-illustration">
+              <img
+                src="/illustrations/rezero-arc-6/chapter-01-opening.png"
+                alt="صورة افتتاحية لفصل ري:زيرو الأول"
+                decoding="async"
+                fetchPriority="high"
+              />
+            </figure>
+          )}
           {chapter.sentences.map((s, sentenceIndex) => (
             <p
               key={s.id}

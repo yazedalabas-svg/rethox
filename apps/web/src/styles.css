@@ -1804,6 +1804,23 @@ button {
   font-family: "Noto Naskh Arabic";
   line-height: 2.35;
 }
+.chapter-opening-illustration {
+  width: min(100%, 500px);
+  margin: 8px auto 46px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--line) 84%, var(--purple));
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 22px 55px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.chapter-opening-illustration img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(70dvh, 760px);
+  object-fit: contain;
+  background: var(--surface);
+}
 .reader-body article > p {
   position: relative;
   margin: 0 0 26px;
@@ -2654,6 +2671,7 @@ html:has(.reader.focus-mode) .theme-fab { opacity:0;pointer-events:none;transfor
   .settings-privacy-panel { grid-column:auto; }
 }
 @media(max-width:600px){.reader-chapter-nav,.reader-chapter-jump,.reading-stats{grid-template-columns:1fr}.auth-form{padding:24px 18px}.chapter-directory-list .chapter-row{grid-template-columns:28px minmax(0,1fr) 18px}.chapter-directory-list .chapter-row>em{grid-column:2}.account-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.chapter-opening-illustration{width:min(100%,360px);margin:0 auto 32px;border-radius:18px}.chapter-opening-illustration img{max-height:62dvh}}
 .google-auth { width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:10px;font-weight:700; }
 .google-auth i { width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853,#fbbc05,#ea4335);color:#fff;font-style:normal;font-weight:800; }
 .legacy-google-auth { display:none; }
