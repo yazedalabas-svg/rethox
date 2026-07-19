@@ -7,6 +7,7 @@ import {
   useState,
   type CSSProperties,
   type FormEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
@@ -48,6 +49,7 @@ import {
   Library,
   LogIn,
   Menu,
+  Minus,
   MoreVertical,
   Maximize2,
   Minimize2,
@@ -58,6 +60,7 @@ import {
   Volume2,
   Pause,
   Play,
+  Plus,
   Search,
   Settings,
   ShieldCheck,
@@ -1781,6 +1784,13 @@ function AccountPage() {
   const [profileAvatar, setProfileAvatar] = useState("");
   const [profileMessage, setProfileMessage] = useState("");
   const [profileAvatarBusy, setProfileAvatarBusy] = useState(false);
+  const [avatarEditorSrc, setAvatarEditorSrc] = useState("");
+  const [avatarNaturalSize, setAvatarNaturalSize] = useState({ width: 1, height: 1 });
+  const [avatarZoom, setAvatarZoom] = useState(1);
+  const [avatarOffset, setAvatarOffset] = useState({ x: 0, y: 0 });
+  const avatarCropRef = useRef<HTMLDivElement>(null);
+  const avatarCropImageRef = useRef<HTMLImageElement>(null);
+  const avatarDragRef = useRef<{ pointerId: number; x: number; y: number; offsetX: number; offsetY: number } | null>(null);
   const totalReadingSeconds = history.reduce((total, item) => total + (item.seconds || 0), 0);
   const completedCount = (() => {
     try { return JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]").length; }
@@ -1792,6 +1802,9 @@ function AccountPage() {
       setProfileAvatar(user.avatarUrl || "");
     }
   }, [user?.id]);
+  useEffect(() => () => {
+    if (avatarEditorSrc) URL.revokeObjectURL(avatarEditorSrc);
+  }, [avatarEditorSrc]);
   useEffect(() => {
     if (!user) return;
     api<{ orders: any[] }>("/orders").then((result) => setOrders(result.orders)).catch(() => setOrders([]));
@@ -1829,11 +1842,97 @@ function AccountPage() {
       setProfileAvatar(uploaded.avatarUrl);
       await updateProfile({ name: profileName.trim() || user.name, avatarUrl: uploaded.avatarUrl });
       setProfileMessage("تم تحديث صورتك");
+      setAvatarEditorSrc("");
     } catch (error) {
       setProfileMessage((error as Error).message);
     } finally {
       setProfileAvatarBusy(false);
     }
+  };
+  const chooseProfileAvatar = (file?: File) => {
+    if (!file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setProfileMessage("اختر صورة JPG أو PNG أو WEBP");
+      return;
+    }
+    if (file.size > 12 * 1024 * 1024) {
+      setProfileMessage("حجم الصورة الأصلية يجب ألا يتجاوز 12MB");
+      return;
+    }
+    setAvatarZoom(1);
+    setAvatarOffset({ x: 0, y: 0 });
+    setAvatarEditorSrc(URL.createObjectURL(file));
+    setProfileMessage("");
+  };
+  const clampAvatarOffset = (x: number, y: number, zoom = avatarZoom) => {
+    const viewport = avatarCropRef.current?.clientWidth || 280;
+    const aspect = avatarNaturalSize.width / avatarNaturalSize.height;
+    const baseWidth = aspect >= 1 ? viewport * aspect : viewport;
+    const baseHeight = aspect >= 1 ? viewport : viewport / aspect;
+    const maxX = Math.max(0, (baseWidth * zoom - viewport) / 2);
+    const maxY = Math.max(0, (baseHeight * zoom - viewport) / 2);
+    return {
+      x: Math.max(-maxX, Math.min(maxX, x)),
+      y: Math.max(-maxY, Math.min(maxY, y)),
+    };
+  };
+  const changeAvatarZoom = (nextZoom: number) => {
+    const value = Math.max(1, Math.min(4, nextZoom));
+    setAvatarZoom(value);
+    setAvatarOffset((current) => clampAvatarOffset(current.x, current.y, value));
+  };
+  const startAvatarDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (profileAvatarBusy) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    avatarDragRef.current = {
+      pointerId: event.pointerId,
+      x: event.clientX,
+      y: event.clientY,
+      offsetX: avatarOffset.x,
+      offsetY: avatarOffset.y,
+    };
+  };
+  const moveAvatar = (event: ReactPointerEvent<HTMLDivElement>) => {
+    const drag = avatarDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+    setAvatarOffset(clampAvatarOffset(
+      drag.offsetX + event.clientX - drag.x,
+      drag.offsetY + event.clientY - drag.y,
+    ));
+  };
+  const stopAvatarDrag = (event: ReactPointerEvent<HTMLDivElement>) => {
+    if (avatarDragRef.current?.pointerId === event.pointerId) avatarDragRef.current = null;
+  };
+  const saveCroppedAvatar = async () => {
+    const image = avatarCropImageRef.current;
+    const viewport = avatarCropRef.current;
+    if (!image || !viewport || !image.naturalWidth || profileAvatarBusy) return;
+    const outputSize = 1024;
+    const viewSize = viewport.clientWidth;
+    const canvas = document.createElement("canvas");
+    canvas.width = outputSize;
+    canvas.height = outputSize;
+    const context = canvas.getContext("2d", { alpha: false });
+    if (!context) return setProfileMessage("تعذر تجهيز الصورة في هذا المتصفح");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, outputSize, outputSize);
+    context.imageSmoothingEnabled = true;
+    context.imageSmoothingQuality = "high";
+    const baseScale = Math.max(viewSize / image.naturalWidth, viewSize / image.naturalHeight);
+    const outputScale = outputSize / viewSize;
+    const scale = baseScale * avatarZoom * outputScale;
+    context.setTransform(
+      scale,
+      0,
+      0,
+      scale,
+      outputSize / 2 + avatarOffset.x * outputScale,
+      outputSize / 2 + avatarOffset.y * outputScale,
+    );
+    context.drawImage(image, -image.naturalWidth / 2, -image.naturalHeight / 2);
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/webp", 0.94));
+    if (!blob) return setProfileMessage("تعذر تجهيز الصورة في هذا المتصفح");
+    await uploadProfileAvatar(new File([blob], "avatar.webp", { type: "image/webp" }));
   };
   if (!ready) return <Loading />;
   if (!user) return <Navigate to="/login" />;
@@ -1871,7 +1970,7 @@ function AccountPage() {
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   event.target.value = "";
-                  void uploadProfileAvatar(file);
+                  chooseProfileAvatar(file);
                 }}
               />
             </label>
@@ -1881,6 +1980,58 @@ function AccountPage() {
         <button className="btn secondary">حفظ التغييرات</button>
         {profileMessage && <small className="profile-message" aria-live="polite">{profileMessage}</small>}
       </form>
+      {avatarEditorSrc && createPortal(
+        <div className="avatar-editor-backdrop" role="presentation" onPointerDown={(event) => {
+          if (event.target === event.currentTarget && !profileAvatarBusy) setAvatarEditorSrc("");
+        }}>
+          <section className="avatar-editor" role="dialog" aria-modal="true" aria-labelledby="avatar-editor-title">
+            <header>
+              <div><span className="kicker">الصورة الشخصية</span><h2 id="avatar-editor-title">اضبط ظهور صورتك</h2></div>
+              <button type="button" aria-label="إغلاق" disabled={profileAvatarBusy} onClick={() => setAvatarEditorSrc("")}><X size={18} /></button>
+            </header>
+            <div
+              ref={avatarCropRef}
+              className="avatar-crop-viewport"
+              onPointerDown={startAvatarDrag}
+              onPointerMove={moveAvatar}
+              onPointerUp={stopAvatarDrag}
+              onPointerCancel={stopAvatarDrag}
+            >
+              <img
+                ref={avatarCropImageRef}
+                src={avatarEditorSrc}
+                alt="معاينة موضع الصورة"
+                draggable={false}
+                onLoad={(event) => setAvatarNaturalSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })}
+                style={{
+                  left: `calc(50% + ${avatarOffset.x}px)`,
+                  top: `calc(50% + ${avatarOffset.y}px)`,
+                  width: avatarNaturalSize.width >= avatarNaturalSize.height ? `${(avatarNaturalSize.width / avatarNaturalSize.height) * 100}%` : "100%",
+                  height: avatarNaturalSize.width >= avatarNaturalSize.height ? "100%" : `${(avatarNaturalSize.height / avatarNaturalSize.width) * 100}%`,
+                  transform: `translate(-50%, -50%) scale(${avatarZoom})`,
+                }}
+              />
+              <div className="avatar-crop-ring" aria-hidden="true" />
+              <small>اسحب الصورة لتحديد موضعها</small>
+            </div>
+            <div className="avatar-zoom-control">
+              <button type="button" aria-label="تصغير الصورة" onClick={() => changeAvatarZoom(avatarZoom - 0.1)}><Minus size={17} /></button>
+              <input aria-label="تكبير الصورة" type="range" min="1" max="4" step="0.05" value={avatarZoom} onChange={(event) => changeAvatarZoom(Number(event.target.value))} />
+              <button type="button" aria-label="تكبير الصورة" onClick={() => changeAvatarZoom(avatarZoom + 0.1)}><Plus size={17} /></button>
+              <output>{Math.round(avatarZoom * 100)}%</output>
+            </div>
+            <button className="avatar-position-reset" type="button" onClick={() => { setAvatarZoom(1); setAvatarOffset({ x: 0, y: 0 }); }}>
+              <RotateCcw size={15} /> إعادة الضبط
+            </button>
+            <footer>
+              <button className="btn secondary" type="button" disabled={profileAvatarBusy} onClick={() => setAvatarEditorSrc("")}>إلغاء</button>
+              <button className="btn primary" type="button" disabled={profileAvatarBusy} onClick={() => void saveCroppedAvatar()}>{profileAvatarBusy ? "جارٍ الحفظ..." : "استخدم هذه الصورة"}</button>
+            </footer>
+            <p>تُحفظ بدقة 1024 × 1024 لتبقى واضحة في كل أحجام العرض.</p>
+          </section>
+        </div>,
+        document.body,
+      )}
       <div className="account-grid">
         <div>
           <div className="subhead">
