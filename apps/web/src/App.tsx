@@ -1849,20 +1849,54 @@ function AccountPage() {
       setProfileAvatarBusy(false);
     }
   };
-  const chooseProfileAvatar = (file?: File) => {
+  const chooseProfileAvatar = async (file?: File) => {
     if (!file) return;
-    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-      setProfileMessage("اختر صورة JPG أو PNG أو WEBP");
+    const extension = file.name.split(".").pop()?.toLowerCase() || "";
+    const imageExtensions = new Set(["jpg", "jpeg", "jfif", "png", "webp", "avif", "gif", "bmp", "svg", "ico", "heic", "heif", "tif", "tiff"]);
+    if (!file.type.startsWith("image/") && !imageExtensions.has(extension)) {
+      setProfileMessage("الملف المختار ليس صورة");
       return;
     }
-    if (file.size > 12 * 1024 * 1024) {
-      setProfileMessage("حجم الصورة الأصلية يجب ألا يتجاوز 12MB");
+    if (file.size > 25 * 1024 * 1024) {
+      setProfileMessage("حجم الصورة الأصلية يجب ألا يتجاوز 25MB");
       return;
     }
-    setAvatarZoom(1);
-    setAvatarOffset({ x: 0, y: 0 });
-    setAvatarEditorSrc(URL.createObjectURL(file));
-    setProfileMessage("");
+    setProfileAvatarBusy(true);
+    setProfileMessage("جارٍ تجهيز الصورة...");
+    try {
+      let previewBlob: Blob = file;
+      const isHeic = ["heic", "heif"].includes(extension) || ["image/heic", "image/heif"].includes(file.type.toLowerCase());
+      const isTiff = ["tif", "tiff"].includes(extension) || ["image/tif", "image/tiff"].includes(file.type.toLowerCase());
+      if (isHeic) {
+        const { default: heic2any } = await import("heic2any");
+        const converted = await heic2any({ blob: file, toType: "image/jpeg", quality: 0.96 });
+        previewBlob = Array.isArray(converted) ? converted[0] : converted;
+      } else if (isTiff) {
+        const UTIF = await import("utif");
+        const buffer = await file.arrayBuffer();
+        const pages = UTIF.decode(buffer);
+        if (!pages.length) throw new Error("تعذر قراءة ملف TIFF");
+        UTIF.decodeImage(buffer, pages[0], pages);
+        const rgba = UTIF.toRGBA8(pages[0]);
+        const canvas = document.createElement("canvas");
+        canvas.width = pages[0].width;
+        canvas.height = pages[0].height;
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("تعذر تجهيز الصورة في هذا المتصفح");
+        context.putImageData(new ImageData(new Uint8ClampedArray(rgba), canvas.width, canvas.height), 0, 0);
+        previewBlob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("تعذر تحويل ملف TIFF")), "image/png"));
+      }
+      setAvatarNaturalSize({ width: 1, height: 1 });
+      setAvatarZoom(1);
+      setAvatarOffset({ x: 0, y: 0 });
+      setAvatarEditorSrc(URL.createObjectURL(previewBlob));
+      setProfileMessage("");
+    } catch {
+      setAvatarEditorSrc("");
+      setProfileMessage("تعذر قراءة هذه الصورة. جرّب نسخة أخرى منها");
+    } finally {
+      setProfileAvatarBusy(false);
+    }
   };
   const clampAvatarOffset = (x: number, y: number, zoom = avatarZoom) => {
     const viewport = avatarCropRef.current?.clientWidth || 280;
@@ -1965,12 +1999,12 @@ function AccountPage() {
               {profileAvatarBusy ? "جارٍ الرفع..." : "اختر من جهازك"}
               <input
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/*,.heic,.heif,.tif,.tiff,.jfif,.avif"
                 disabled={profileAvatarBusy}
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   event.target.value = "";
-                  chooseProfileAvatar(file);
+                  void chooseProfileAvatar(file);
                 }}
               />
             </label>
@@ -2003,6 +2037,7 @@ function AccountPage() {
                 alt="معاينة موضع الصورة"
                 draggable={false}
                 onLoad={(event) => setAvatarNaturalSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })}
+                onError={() => { setAvatarEditorSrc(""); setProfileMessage("تعذر عرض هذه الصورة. جرّب نسخة أخرى منها"); }}
                 style={{
                   left: `calc(50% + ${avatarOffset.x}px)`,
                   top: `calc(50% + ${avatarOffset.y}px)`,
@@ -2027,7 +2062,6 @@ function AccountPage() {
               <button className="btn secondary" type="button" disabled={profileAvatarBusy} onClick={() => setAvatarEditorSrc("")}>إلغاء</button>
               <button className="btn primary" type="button" disabled={profileAvatarBusy} onClick={() => void saveCroppedAvatar()}>{profileAvatarBusy ? "جارٍ الحفظ..." : "استخدم هذه الصورة"}</button>
             </footer>
-            <p>تُحفظ بدقة 1024 × 1024 لتبقى واضحة في كل أحجام العرض.</p>
           </section>
         </div>,
         document.body,

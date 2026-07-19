@@ -51,7 +51,8 @@ app.use(helmet({
       scriptSrc: ["'self'", "https://accounts.google.com"],
       frameSrc: ["'self'", "https://accounts.google.com"],
       connectSrc: ["'self'", "https://accounts.google.com"],
-      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://lh3.googleusercontent.com"],
+      imgSrc: ["'self'", "data:", "blob:", "https://*.supabase.co", "https://lh3.googleusercontent.com"],
+      workerSrc: ["'self'", "blob:"],
     },
   },
 }));
