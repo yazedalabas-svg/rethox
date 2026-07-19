@@ -1212,7 +1212,6 @@ function BookPage() {
       </div>
       <div className="wrap book-extras reveal-section book-community-only">
         <article className="spoiler-review community-card">
-          <span className="kicker">آراء القراء</span>
           <h2>آراء القراء</h2>
           <form onSubmit={submitReview}>
             <div className="rating-picker">
