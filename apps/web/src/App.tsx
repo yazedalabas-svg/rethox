@@ -917,8 +917,9 @@ function BookPage() {
   const [lockedChapter, setLockedChapter] = useState<ChapterMeta | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [readingLater, setReadingLater] = useState(false);
+  const [ownsBook, setOwnsBook] = useState(false);
   const { user, ready } = useAuth();
-  const { add, ids } = useCart();
+  const { add, remove, ids } = useCart();
   useEffect(() => {
     if (!ready) return;
     api<{ book: Book }>(`/books/${slug}`).then((r) => setBook(r.book));
@@ -950,14 +951,19 @@ function BookPage() {
     if (!book || !user) {
       setProgress(null);
       setReadingLater(false);
+      setOwnsBook(false);
       return;
     }
     Promise.all([
       api<{ progress: Progress | null }>(`/progress/${book.id}`),
       api<{ bookIds: string[] }>("/reading-list"),
-    ]).then(([savedProgress, list]) => {
+      api<{ bookIds: string[] }>("/entitlements"),
+    ]).then(([savedProgress, list, entitlements]) => {
       setProgress(savedProgress.progress);
       setReadingLater(list.bookIds.includes(book.id));
+      const purchased = entitlements.bookIds.includes(book.id);
+      setOwnsBook(purchased);
+      if (purchased && ids.includes(book.id)) remove(book.id);
     }).catch(() => {});
   }, [book?.id, user?.id]);
   const toggleReadingLater = async () => {
@@ -1119,8 +1125,17 @@ function BookPage() {
             </small>
           </div>
           <div className="detail-actions">
-            <button className="btn primary" onClick={() => add(book.id)}>
-              {ids.includes(book.id) ? (
+            <button
+              className="btn primary"
+              disabled={ownsBook}
+              onClick={() => !ownsBook && add(book.id)}
+            >
+              {ownsBook ? (
+                <>
+                  <Check size={17} />
+                  تم الشراء
+                </>
+              ) : ids.includes(book.id) ? (
                 <>
                   <Check size={17} />
                   في السلة
@@ -1641,19 +1656,42 @@ function CartPage() {
   const { user } = useAuth();
   const nav = useNavigate();
   const [books, setBooks] = useState<Book[]>([]);
+  const [ownedBookIds, setOwnedBookIds] = useState<string[]>([]);
+  const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   useEffect(() => {
     api<{ books: Book[] }>("/books").then((r) =>
       setBooks(r.books.filter((b) => ids.includes(b.id))),
     );
   }, [ids]);
+  useEffect(() => {
+    if (!user) {
+      setOwnedBookIds([]);
+      return;
+    }
+    api<{ bookIds: string[] }>("/entitlements")
+      .then((result) => setOwnedBookIds(result.bookIds))
+      .catch(() => setOwnedBookIds([]));
+  }, [user?.id]);
+  useEffect(() => {
+    const duplicates = ids.filter((id) => ownedBookIds.includes(id));
+    if (!duplicates.length) return;
+    duplicates.forEach((id) => remove(id));
+    setNotice("تمت إزالة المنتجات التي سبق شراؤها من السلة.");
+  }, [ids.join("|"), ownedBookIds.join("|")]);
   const total = books.reduce((s, b) => s + b.priceMinor, 0);
   const checkout = async () => {
     if (!user) return nav("/login");
+    const purchasableIds = ids.filter((id) => !ownedBookIds.includes(id));
+    if (!purchasableIds.length) {
+      setNotice("هذه المنتجات تم شراؤها مسبقًا.");
+      return;
+    }
     try {
+      setError("");
       const result = await api<{ order: { id: string } }>("/orders", {
         method: "POST",
-        body: JSON.stringify({ bookIds: ids }),
+        body: JSON.stringify({ bookIds: purchasableIds }),
       });
       clear();
       nav(`/account?order=${encodeURIComponent(result.order.id)}`);
@@ -1668,6 +1706,7 @@ function CartPage() {
         <h1>سلة القراءة</h1>
         <p>اخترت {ids.length} من الكتب. لا توجد عملية دفع حقيقية.</p>
       </div>
+      {notice && <p className="cart-notice" role="status">{notice}</p>}
       {books.length ? (
         <div className="cart-layout">
           <div className="cart-list">

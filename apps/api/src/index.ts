@@ -1158,9 +1158,34 @@ app.post("/api/orders", orderLimit, auth, async (req: AuthRequest, res) => {
   const buyer = db().users.find((u) => u.id === req.user!.id);
   if (!buyer)
     return res.status(401).json({ message: "يلزم تسجيل الدخول بحساب مسجل" });
-    const books = db().books.filter((b) => ids.data.includes(b.id) && b.status === "PUBLISHED");
+  const books = db().books.filter((b) => ids.data.includes(b.id) && b.status === "PUBLISHED");
   if (books.length !== new Set(ids.data).size)
     return res.status(400).json({ message: "أحد المنتجات غير متاح للشراء" });
+  let ownedBookIds = db().entitlements
+    .filter((item) => item.userId === req.user!.id && ids.data.includes(item.bookId))
+    .map((item) => item.bookId);
+  if (supabaseAdmin) {
+    const { data: ownedRows, error: ownershipError } = await supabaseAdmin
+      .from("entitlements")
+      .select("book_id")
+      .eq("user_id", req.user!.id)
+      .is("revoked_at", null)
+      .in("book_id", books.map((book) => book.id));
+    if (ownershipError) {
+      logger.error({ error: ownershipError.message }, "ownership check failed");
+      return res.status(503).json({ message: "تعذر التحقق من مشترياتك الآن، حاول مجددًا" });
+    }
+    ownedBookIds = (ownedRows || []).map((item) => item.book_id);
+  }
+  if (ownedBookIds.length) {
+    return res.status(409).json({
+      code: "BOOK_ALREADY_OWNED",
+      bookIds: ownedBookIds,
+      message: ownedBookIds.length === 1
+        ? "تم شراء هذا المنتج مسبقًا"
+        : "بعض المنتجات في طلبك تم شراؤها مسبقًا",
+    });
+  }
   const requestedOrderId = randomUUID();
   const idempotencyKey = `demo:${req.user!.id}:${books.map((book) => book.id).sort().join(",")}`;
   let persistedOrder: any = null;
@@ -1173,6 +1198,13 @@ app.post("/api/orders", orderLimit, auth, async (req: AuthRequest, res) => {
       p_idempotency_key: idempotencyKey,
     });
     if (error) {
+      if (error.message.includes("book_already_owned")) {
+        return res.status(409).json({
+          code: "BOOK_ALREADY_OWNED",
+          bookIds: books.map((book) => book.id),
+          message: "تم شراء هذا المنتج مسبقًا",
+        });
+      }
       logger.error({ error: error.message }, "atomic checkout failed");
       return res.status(503).json({ message: "تعذر إكمال الطلب بأمان الآن، حاول مجددًا" });
     }
