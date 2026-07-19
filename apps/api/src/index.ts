@@ -51,6 +51,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "https://accounts.google.com"],
       frameSrc: ["'self'", "https://accounts.google.com"],
       connectSrc: ["'self'", "https://accounts.google.com"],
+      imgSrc: ["'self'", "data:", "https://*.supabase.co", "https://lh3.googleusercontent.com"],
     },
   },
 }));
@@ -111,6 +112,12 @@ const communityWriteLimit = rateLimit({
 const progressWriteLimit = rateLimit({
   windowMs: 60_000,
   limit: 180,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const avatarUploadLimit = rateLimit({
+  windowMs: 10 * 60_000,
+  limit: 12,
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -372,6 +379,11 @@ const ProfileInput = z.object({
   name: z.string().trim().min(2).max(60),
   avatarUrl: z.union([z.string().url().max(1000), z.literal("")]).optional(),
 });
+const avatarTypes = {
+  "image/jpeg": { extension: "jpg", matches: (body: Buffer) => body.length >= 3 && body[0] === 0xff && body[1] === 0xd8 && body[2] === 0xff },
+  "image/png": { extension: "png", matches: (body: Buffer) => body.length >= 8 && body.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])) },
+  "image/webp": { extension: "webp", matches: (body: Buffer) => body.length >= 12 && body.subarray(0, 4).toString("ascii") === "RIFF" && body.subarray(8, 12).toString("ascii") === "WEBP" },
+} as const;
 const BookInput = z.object({
   title: z.string().min(2),
   author: z.string().min(2),
@@ -925,6 +937,45 @@ app.post("/api/auth/logout", async (req, res) => {
 app.get("/api/auth/me", auth, (req: AuthRequest, res) =>
   res.json({ user: publicUser(req.user!.id) }),
 );
+app.post(
+  "/api/auth/avatar",
+  avatarUploadLimit,
+  auth,
+  express.raw({ type: ["image/jpeg", "image/png", "image/webp"], limit: "5mb" }),
+  async (req: AuthRequest, res) => {
+    if (!supabaseAdmin)
+      return res.status(503).json({ message: "رفع الصور غير متاح الآن" });
+    const storageAdmin = supabaseAdmin;
+
+    const contentType = String(req.headers["content-type"] || "").split(";", 1)[0] as keyof typeof avatarTypes;
+    const descriptor = avatarTypes[contentType];
+    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    if (!descriptor || body.length < 128 || body.length > 5 * 1024 * 1024 || !descriptor.matches(body))
+      return res.status(400).json({ message: "اختر صورة JPG أو PNG أو WEBP بحجم لا يتجاوز 5MB" });
+
+    const objectPath = `${req.user!.id}/${randomUUID()}.${descriptor.extension}`;
+    const upload = () => storageAdmin.storage.from("avatars").upload(objectPath, body, {
+      contentType,
+      cacheControl: "31536000",
+      upsert: false,
+    });
+    let result = await upload();
+    if (result.error && /bucket.*not found/i.test(result.error.message)) {
+      const { error: bucketError } = await storageAdmin.storage.createBucket("avatars", {
+        public: true,
+        fileSizeLimit: 5 * 1024 * 1024,
+        allowedMimeTypes: Object.keys(avatarTypes),
+      });
+      if (!bucketError || /already exists/i.test(bucketError.message)) result = await upload();
+    }
+    if (result.error) {
+      logger.error({ error: result.error.message }, "avatar upload failed");
+      return res.status(503).json({ message: "تعذر رفع الصورة الآن، حاول مجددًا" });
+    }
+    const { data } = storageAdmin.storage.from("avatars").getPublicUrl(objectPath);
+    res.status(201).json({ avatarUrl: data.publicUrl });
+  },
+);
 app.patch("/api/auth/profile", auth, async (req: AuthRequest, res) => {
   const parsed = ProfileInput.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ message: "بيانات الملف الشخصي غير صالحة" });
@@ -1405,6 +1456,7 @@ app.post("/api/reviews", communityWriteLimit, auth, async (req: AuthRequest, res
   let review = db().reviews.find(
     (item) => item.userId === req.user!.id && item.bookId === parsed.data.bookId,
   );
+  const previousReview = review ? { ...review } : null;
   if (review) Object.assign(review, parsed.data, { provider, updatedAt: now });
   else {
     review = {
@@ -1417,7 +1469,28 @@ app.post("/api/reviews", communityWriteLimit, auth, async (req: AuthRequest, res
     };
     db().reviews.push(review);
   }
-  await save();
+  if (supabaseAdmin) {
+    const { error } = await supabaseAdmin.from("book_reviews").upsert({
+      id: review.id,
+      user_id: review.userId,
+      book_id: review.bookId,
+      rating: review.rating,
+      body: review.body,
+      spoiler: review.spoiler,
+      moderation_status: "VISIBLE",
+      created_at: review.createdAt,
+      updated_at: review.updatedAt,
+      deleted_at: null,
+    }, { onConflict: "user_id,book_id" });
+    if (error) {
+      if (previousReview) Object.assign(review, previousReview);
+      else db().reviews = db().reviews.filter((item) => item.id !== review!.id);
+      logger.error({ error: error.message }, "review persistence failed");
+      return res.status(503).json({ message: "تعذر حفظ التقييم الآن، حاول مجددًا" });
+    }
+  } else {
+    await save();
+  }
   const { provider: _provider, ...publicReview } = review;
   res.status(201).json({ review: { ...publicReview, user: publicAuthor(review.userId) } });
 });

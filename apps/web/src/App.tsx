@@ -44,9 +44,11 @@ import {
   Flag,
   Filter,
   Headphones,
+  ImagePlus,
   Library,
   LogIn,
   Menu,
+  MoreVertical,
   Maximize2,
   Minimize2,
   Moon,
@@ -906,6 +908,8 @@ function BookPage() {
   const [reviewBody, setReviewBody] = useState("");
   const [reviewSpoiler, setReviewSpoiler] = useState(false);
   const [reviewMessage, setReviewMessage] = useState("");
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewMenuId, setReviewMenuId] = useState<string | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [lockedChapter, setLockedChapter] = useState<ChapterMeta | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
@@ -962,40 +966,65 @@ function BookPage() {
   };
   const submitReview = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!book) return;
+    if (!book || reviewBusy) return;
     if (!user) {
       nav(registerWithReturn());
       return;
     }
+    const previousReviews = reviews;
+    const previousReview = reviews.find((item) => item.user.id === user.id);
+    const optimisticReview: Review = {
+      id: previousReview?.id || `pending-${Date.now()}`,
+      bookId: book.id,
+      rating: reviewRating,
+      body: reviewBody.trim(),
+      spoiler: reviewSpoiler,
+      createdAt: previousReview?.createdAt || new Date().toISOString(),
+      user: { id: user.id, name: user.name, avatarUrl: user.avatarUrl },
+    };
+    const optimisticReviews = [optimisticReview, ...reviews.filter((item) => item.user.id !== user.id)];
+    setReviews(optimisticReviews);
+    setReviewAverage(weightedRating(optimisticReviews));
+    setReviewBody("");
+    setReviewSpoiler(false);
+    setReviewMessage("ظهر تقييمك، جارٍ تثبيته...");
+    setReviewBusy(true);
     try {
       const review = await saveReview({
         bookId: book.id,
         rating: reviewRating,
-        body: reviewBody,
-        spoiler: reviewSpoiler,
+        body: optimisticReview.body,
+        spoiler: optimisticReview.spoiler,
       });
       setReviews((current) => {
-        const next = [review, ...current.filter((item) => item.id !== review.id)];
+        const next = [review, ...current.filter((item) => item.id !== optimisticReview.id && item.user.id !== user.id)];
         setReviewAverage(weightedRating(next));
         return next;
       });
-      setReviewBody("");
-      setReviewSpoiler(false);
       setReviewMessage("تم نشر تقييمك");
     } catch (error) {
+      setReviews(previousReviews);
+      setReviewAverage(weightedRating(previousReviews));
+      setReviewBody(optimisticReview.body);
+      setReviewSpoiler(optimisticReview.spoiler);
       setReviewMessage((error as Error).message);
+    } finally {
+      setReviewBusy(false);
     }
   };
-  const removeReview = async () => {
-    if (!book || !user || !window.confirm("حذف تقييمك نهائيًا؟")) return;
+  const removeReview = async (target: Review) => {
+    if (!book || !user || target.user.id !== user.id) return;
+    const previousReviews = reviews;
+    const next = reviews.filter((review) => review.id !== target.id);
+    setReviewMenuId(null);
+    setReviews(next);
+    setReviewAverage(weightedRating(next));
+    setReviewMessage("تم حذف تقييمك");
     try {
       await deleteReview(book.id);
-      setReviews((current) => {
-        const next = current.filter((review) => review.user.id !== user.id);
-        setReviewAverage(weightedRating(next));
-        return next;
-      });
     } catch (error) {
+      setReviews(previousReviews);
+      setReviewAverage(weightedRating(previousReviews));
       setReviewMessage((error as Error).message);
     }
   };
@@ -1193,8 +1222,8 @@ function BookPage() {
                 onChange={(event) => setReviewSpoiler(event.target.checked)}
               /> يحتوي حرقًا
             </label>
-            <button className="btn primary">نشر التقييم</button>
-            {reviewMessage && <small>{reviewMessage}</small>}
+            <button className="btn primary" disabled={reviewBusy}>{reviewBusy ? "جارٍ التثبيت..." : "نشر التقييم"}</button>
+            {reviewMessage && <small aria-live="polite">{reviewMessage}</small>}
           </form>
           <AuthPrompt open={showAuthPrompt} onClose={() => setShowAuthPrompt(false)} />
           {!!reviews.length && (
@@ -1218,13 +1247,30 @@ function BookPage() {
                       <small><time dateTime={review.createdAt}>{formatDateTime(review.createdAt)}</time></small>
                     </div>
                   </div>
-                  <span className="rating-stars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+                  <div className="review-card-tools">
+                    <span className="rating-stars">{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</span>
+                    {user?.id === review.user.id && (
+                      <div className="review-menu-wrap">
+                        <button
+                          className="review-menu-trigger"
+                          type="button"
+                          aria-label="خيارات التقييم"
+                          aria-expanded={reviewMenuId === review.id}
+                          onClick={() => setReviewMenuId((current) => current === review.id ? null : review.id)}
+                        >
+                          <MoreVertical size={17} />
+                        </button>
+                        {reviewMenuId === review.id && (
+                          <div className="review-menu" role="menu">
+                            <button type="button" role="menuitem" onClick={() => void removeReview(review)}>
+                              <Trash2 size={14} /> حذف التقييم
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </header>
-                {user?.id === review.user.id && (
-                  <button className="comment-delete review-delete" type="button" onClick={() => void removeReview()}>
-                    <Trash2 size={14} /> حذف تقييمي
-                  </button>
-                )}
                 {review.body && (review.spoiler ? <SpoilerCurtain text={review.body} /> : <p dir="auto">{review.body}</p>)}
               </div>
             ))}
@@ -1734,6 +1780,7 @@ function AccountPage() {
   const [profileName, setProfileName] = useState("");
   const [profileAvatar, setProfileAvatar] = useState("");
   const [profileMessage, setProfileMessage] = useState("");
+  const [profileAvatarBusy, setProfileAvatarBusy] = useState(false);
   const totalReadingSeconds = history.reduce((total, item) => total + (item.seconds || 0), 0);
   const completedCount = (() => {
     try { return JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]").length; }
@@ -1761,6 +1808,33 @@ function AccountPage() {
       setProfileMessage((error as Error).message);
     }
   };
+  const uploadProfileAvatar = async (file?: File) => {
+    if (!user || !file || profileAvatarBusy) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setProfileMessage("اختر صورة JPG أو PNG أو WEBP");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileMessage("حجم الصورة يجب ألا يتجاوز 5MB");
+      return;
+    }
+    setProfileAvatarBusy(true);
+    setProfileMessage("جارٍ رفع الصورة...");
+    try {
+      const uploaded = await api<{ avatarUrl: string }>("/auth/avatar", {
+        method: "POST",
+        headers: { "content-type": file.type },
+        body: file,
+      });
+      setProfileAvatar(uploaded.avatarUrl);
+      await updateProfile({ name: profileName.trim() || user.name, avatarUrl: uploaded.avatarUrl });
+      setProfileMessage("تم تحديث صورتك");
+    } catch (error) {
+      setProfileMessage((error as Error).message);
+    } finally {
+      setProfileAvatarBusy(false);
+    }
+  };
   if (!ready) return <Loading />;
   if (!user) return <Navigate to="/login" />;
   return (
@@ -1783,9 +1857,29 @@ function AccountPage() {
       <form className="profile-editor" onSubmit={saveProfile}>
         <div><span className="kicker">الملف الشخصي</span><h2>كيف يظهر اسمك للقراء؟</h2></div>
         <label>الاسم الظاهر<input value={profileName} onChange={(event) => setProfileName(event.target.value)} minLength={2} maxLength={60} required /></label>
-        <label>رابط الصورة <small>اختياري</small><input type="url" value={profileAvatar} onChange={(event) => setProfileAvatar(event.target.value)} placeholder="https://..." /></label>
+        <div className="profile-avatar-field">
+          <span>الصورة الشخصية</span>
+          <div className="profile-avatar-picker">
+            {profileAvatar ? <img src={profileAvatar} alt="معاينة الصورة الشخصية" /> : <i>{profileName[0] || user.name[0]}</i>}
+            <label className="avatar-file-button">
+              <ImagePlus size={16} />
+              {profileAvatarBusy ? "جارٍ الرفع..." : "اختر من جهازك"}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                disabled={profileAvatarBusy}
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  event.target.value = "";
+                  void uploadProfileAvatar(file);
+                }}
+              />
+            </label>
+          </div>
+          <small>تعمل من الجوال والكمبيوتر · حتى 5MB</small>
+        </div>
         <button className="btn secondary">حفظ التغييرات</button>
-        {profileMessage && <small className="profile-message">{profileMessage}</small>}
+        {profileMessage && <small className="profile-message" aria-live="polite">{profileMessage}</small>}
       </form>
       <div className="account-grid">
         <div>
