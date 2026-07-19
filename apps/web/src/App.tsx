@@ -450,6 +450,8 @@ function ThemeProvider({ children }: { children: ReactNode }) {
     () => localStorage.getItem("rethox-theme") === "dark",
   );
   useEffect(() => {
+    document.documentElement.dataset.identity = "studio";
+    localStorage.removeItem("rethox-identity");
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     localStorage.setItem("rethox-theme", dark ? "dark" : "light");
   }, [dark]);
@@ -508,7 +510,8 @@ function Shell() {
       <header>
         <div className="wrap nav">
           <Link to="/" className="brand">
-            <span>R</span>
+            <img className="brand-mark brand-mark-light" src="/rethox-mark.png" alt="" />
+            <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.png" alt="" />
             <b>
               rethox<small>READ · LISTEN · LIVE</small>
             </b>
@@ -554,7 +557,8 @@ function Shell() {
         <div className="wrap footer">
           <div>
             <Link to="/" className="brand footer-brand">
-              <span>R</span>
+              <img className="brand-mark brand-mark-light" src="/rethox-mark.png" alt="" />
+              <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.png" alt="" />
               <b>rethox</b>
             </Link>
             <p>
