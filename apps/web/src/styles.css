@@ -1813,6 +1813,16 @@ button {
   background: var(--surface);
   box-shadow: 0 22px 55px color-mix(in srgb, var(--ink) 18%, transparent);
 }
+.chapter-opening-illustration button {
+  display: block;
+  position: relative;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
 .chapter-opening-illustration img {
   display: block;
   width: 100%;
@@ -1820,7 +1830,107 @@ button {
   max-height: min(70dvh, 760px);
   object-fit: contain;
   background: var(--surface);
+  transition: transform .35s ease;
 }
+.chapter-opening-illustration button:hover img { transform: scale(1.025); }
+.chapter-opening-illustration button span {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #12101b 72%, transparent);
+  color: #fff;
+  font: 700 11px/1 system-ui;
+  opacity: 0;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.chapter-opening-illustration button:hover span,
+.chapter-opening-illustration button:focus-visible span { opacity: 1; transform: translateX(-50%) translateY(-2px); }
+.chapter-inline-illustration { margin-top: -2px; }
+.illustration-lightbox {
+  position: fixed;
+  z-index: 240;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  background: rgba(8, 7, 13, .86);
+  backdrop-filter: blur(12px);
+  animation: page-in .18s ease;
+  cursor: zoom-out;
+  overflow: hidden;
+}
+.illustration-lightbox-stage {
+  width: min(92vw, 1120px);
+  height: min(88dvh, 900px);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+.illustration-lightbox-stage.is-dragging { cursor: grabbing; }
+.illustration-lightbox-stage img {
+  display: block;
+  width: auto !important;
+  height: min(80dvh, 760px) !important;
+  max-width: min(92vw, 1040px) !important;
+  max-height: calc(100dvh - 120px) !important;
+  object-fit: contain;
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+  pointer-events: none;
+  transform-origin: center center;
+  will-change: transform;
+  transition: transform .08s linear;
+}
+.illustration-lightbox-close {
+  position: absolute;
+  top: 22px;
+  right: 24px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255,255,255,.24);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(18,16,27,.7);
+  cursor: pointer;
+}
+.illustration-lightbox-tools {
+  position: absolute;
+  z-index: 2;
+  bottom: 24px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 14px;
+  background: rgba(18,16,27,.82);
+  box-shadow: 0 12px 36px rgba(0,0,0,.28);
+  transform: translateX(-50%);
+}
+.illustration-lightbox-tools button {
+  min-width: 42px;
+  height: 34px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-weight: 750;
+  cursor: pointer;
+}
+.illustration-lightbox-tools button:hover,
+.illustration-lightbox-tools button:focus-visible { background: rgba(139,92,246,.38); }
 .reader-body article > p {
   position: relative;
   margin: 0 0 26px;
@@ -2671,7 +2781,7 @@ html:has(.reader.focus-mode) .theme-fab { opacity:0;pointer-events:none;transfor
   .settings-privacy-panel { grid-column:auto; }
 }
 @media(max-width:600px){.reader-chapter-nav,.reader-chapter-jump,.reading-stats{grid-template-columns:1fr}.auth-form{padding:24px 18px}.chapter-directory-list .chapter-row{grid-template-columns:28px minmax(0,1fr) 18px}.chapter-directory-list .chapter-row>em{grid-column:2}.account-grid{grid-template-columns:1fr}}
-@media(max-width:600px){.chapter-opening-illustration{width:min(100%,360px);margin:0 auto 32px;border-radius:18px}.chapter-opening-illustration img{max-height:62dvh}}
+@media(max-width:600px){.chapter-opening-illustration{width:min(100%,360px);margin:0 auto 32px;border-radius:18px}.chapter-opening-illustration img{max-height:62dvh}.illustration-lightbox{padding:18px}.illustration-lightbox-stage{width:100%;height:84dvh}.illustration-lightbox-stage img{height:min(76dvh,720px)!important;max-width:100%!important;max-height:76dvh!important;border-radius:14px}.illustration-lightbox-close{top:14px;right:14px}.illustration-lightbox-tools{bottom:16px}}
 .google-auth { width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:10px;font-weight:700; }
 .google-auth i { width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#4285f4,#34a853,#fbbc05,#ea4335);color:#fff;font-style:normal;font-weight:800; }
 .legacy-google-auth { display:none; }

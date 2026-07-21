@@ -1,4 +1,5 @@
 import {
+  Fragment,
   createContext,
   useContext,
   useEffect,
@@ -2236,6 +2237,9 @@ function ReaderPage() {
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [showSavedList, setShowSavedList] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [openIllustration, setOpenIllustration] = useState<{ src: string; alt: string } | null>(null);
+  const [illustrationView, setIllustrationView] = useState({ scale: 1, x: 0, y: 0 });
+  const [illustrationDragging, setIllustrationDragging] = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [reportText, setReportText] = useState("");
   const [reportNotice, setReportNotice] = useState("");
@@ -2244,6 +2248,13 @@ function ReaderPage() {
   const [volume, setVolume] = useState(initialSettings.volume);
   const [scrollRatio, setScrollRatio] = useState(0);
   const volumeRef = useRef(volume);
+  const illustrationDragRef = useRef<{
+    pointerId: number;
+    startX: number;
+    startY: number;
+    originX: number;
+    originY: number;
+  } | null>(null);
   const railRef = useRef<HTMLDivElement | null>(null);
   const railDraggingRef = useRef(false);
   const scrollHoldRef = useRef(0);
@@ -3084,8 +3095,31 @@ function ReaderPage() {
     setTransitionTitle(target.title);
     window.setTimeout(() => nav(`/reader/${target.id}`), 720);
   };
+  const closeIllustration = () => {
+    illustrationDragRef.current = null;
+    setIllustrationDragging(false);
+    setIllustrationView({ scale: 1, x: 0, y: 0 });
+    setOpenIllustration(null);
+  };
+  const changeIllustrationZoom = (amount: number) => {
+    setIllustrationView((view) => ({
+      ...view,
+      scale: Math.max(1, Math.min(4, Number((view.scale + amount).toFixed(2)))),
+    }));
+  };
+  const resetIllustrationView = () => setIllustrationView({ scale: 1, x: 0, y: 0 });
+  useEffect(() => {
+    if (openIllustration) resetIllustrationView();
+  }, [openIllustration?.src]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
+      if (openIllustration) {
+        if (event.key === "Escape") closeIllustration();
+        if (event.key === "+" || event.key === "=") changeIllustrationZoom(.25);
+        if (event.key === "-") changeIllustrationZoom(-.25);
+        if (event.key === "0") resetIllustrationView();
+        return;
+      }
       const target = event.target as HTMLElement;
       if (["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
       if (event.code === "Space") {
@@ -3501,17 +3535,27 @@ function ReaderPage() {
           <span className="chapter-label">{chapter.title}</span>
           {chapter.id === "ch-rezero-6-01" && (
             <figure className="chapter-opening-illustration">
-              <img
-                src="/illustrations/rezero-arc-6/chapter-01-opening.png"
-                alt="صورة افتتاحية لفصل ري:زيرو الأول"
-                decoding="async"
-                fetchPriority="high"
-              />
+              <button
+                type="button"
+                onClick={() => setOpenIllustration({
+                  src: "/illustrations/rezero-arc-6/chapter-01-opening.png",
+                  alt: "صورة افتتاحية لفصل ري:زيرو الأول",
+                })}
+                aria-label="تكبير الصورة الافتتاحية"
+              >
+                <img
+                  src="/illustrations/rezero-arc-6/chapter-01-opening.png"
+                  alt="صورة افتتاحية لفصل ري:زيرو الأول"
+                  decoding="async"
+                  fetchPriority="high"
+                />
+                <span>اضغط للتكبير</span>
+              </button>
             </figure>
           )}
           {chapter.sentences.map((s, sentenceIndex) => (
-            <p
-              key={s.id}
+            <Fragment key={s.id}>
+              <p
               data-sentence-index={sentenceIndex}
               className={savedSentenceIds.includes(s.id) ? "saved-paragraph" : ""}
               onMouseEnter={() => setActiveSentence(s)}
@@ -3544,7 +3588,108 @@ function ReaderPage() {
                   <Bookmark fill={savedSentenceIds.includes(s.id) ? "currentColor" : "none"} />
                 </button>
               </span>
-            </p>
+              </p>
+              {s.id === "rz6-c03-p0033" && (
+                <figure className="chapter-opening-illustration chapter-inline-illustration">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIllustration({
+                      src: "/illustrations/rezero-arc-6/chapter-03-scene-after-rz6-c03-p0033.jpg",
+                      alt: "صورة توضيحية بعد مشهد الطفلة والدمى",
+                    })}
+                    aria-label="تكبير الصورة التوضيحية"
+                  >
+                    <img
+                      src="/illustrations/rezero-arc-6/chapter-03-scene-after-rz6-c03-p0033.jpg"
+                      alt="صورة توضيحية بعد مشهد الطفلة والدمى"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>اضغط للتكبير</span>
+                  </button>
+                </figure>
+              )}
+              {s.id === "rz6-c04-p0027" && (
+                <figure className="chapter-opening-illustration chapter-inline-illustration">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIllustration({
+                      src: "/illustrations/rezero-arc-6/chapter-04-petra-scene.png",
+                      alt: "صورة توضيحية بعد تعليق سوبارو عن بيترا",
+                    })}
+                    aria-label="تكبير الصورة التوضيحية"
+                  >
+                    <img
+                      src="/illustrations/rezero-arc-6/chapter-04-petra-scene.png"
+                      alt="صورة توضيحية بعد تعليق سوبارو عن بيترا"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>اضغط للتكبير</span>
+                  </button>
+                </figure>
+              )}
+              {s.id === "rz6-c08-p0160" && (
+                <figure className="chapter-opening-illustration chapter-inline-illustration">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIllustration({
+                      src: "/illustrations/rezero-arc-6/chapter-08-earthworm.png",
+                      alt: "صورة توضيحية لوحش دودة الأرض",
+                    })}
+                    aria-label="تكبير الصورة التوضيحية"
+                  >
+                    <img
+                      src="/illustrations/rezero-arc-6/chapter-08-earthworm.png"
+                      alt="صورة توضيحية لوحش دودة الأرض"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>اضغط للتكبير</span>
+                  </button>
+                </figure>
+              )}
+              {chapter.id === "ch-rezero-6-10" && sentenceIndex === chapter.sentences.length - 1 && (
+                <figure className="chapter-opening-illustration chapter-inline-illustration">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIllustration({
+                      src: "/illustrations/rezero-arc-6/chapter-10-ending.jpg",
+                      alt: "صورة ختامية لفصل ري:زيرو العاشر",
+                    })}
+                    aria-label="تكبير الصورة الختامية"
+                  >
+                    <img
+                      src="/illustrations/rezero-arc-6/chapter-10-ending.jpg"
+                      alt="صورة ختامية لفصل ري:زيرو العاشر"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>اضغط للتكبير</span>
+                  </button>
+                </figure>
+              )}
+              {s.id === "rz6-c11-p0013" && (
+                <figure className="chapter-opening-illustration chapter-inline-illustration">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIllustration({
+                      src: "/illustrations/rezero-arc-6/chapter-11-ending.jpg",
+                      alt: "صورة توضيحية لمشهد عربة التنين في الفصل الحادي عشر",
+                    })}
+                    aria-label="تكبير الصورة التوضيحية"
+                  >
+                    <img
+                      src="/illustrations/rezero-arc-6/chapter-11-ending.jpg"
+                      alt="صورة توضيحية لمشهد عربة التنين في الفصل الحادي عشر"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>اضغط للتكبير</span>
+                  </button>
+                </figure>
+              )}
+            </Fragment>
           ))}
           <section className="chapter-community">
             <div className="chapter-community-head">
@@ -3828,6 +3973,74 @@ function ReaderPage() {
           </label>
         </div>
       </footer>
+      {openIllustration && (
+        <div
+          className="illustration-lightbox"
+          role="dialog"
+          aria-modal="true"
+          aria-label={openIllustration.alt}
+          onClick={closeIllustration}
+        >
+          <button
+            className="illustration-lightbox-close"
+            type="button"
+            onClick={closeIllustration}
+            aria-label="إغلاق الصورة"
+          >
+            <X />
+          </button>
+          <div className="illustration-lightbox-tools" onClick={(event) => event.stopPropagation()}>
+            <button type="button" onClick={() => changeIllustrationZoom(-.25)} aria-label="تصغير الصورة">−</button>
+            <button type="button" onClick={resetIllustrationView} aria-label="إعادة ضبط الصورة">{Math.round(illustrationView.scale * 100)}%</button>
+            <button type="button" onClick={() => changeIllustrationZoom(.25)} aria-label="تكبير الصورة">+</button>
+          </div>
+          <div
+            className={`illustration-lightbox-stage${illustrationDragging ? " is-dragging" : ""}`}
+            onClick={(event) => event.stopPropagation()}
+            onWheel={(event) => {
+              event.preventDefault();
+              changeIllustrationZoom(event.deltaY < 0 ? .2 : -.2);
+            }}
+            onPointerDown={(event) => {
+              if (event.button !== 0) return;
+              event.currentTarget.setPointerCapture(event.pointerId);
+              illustrationDragRef.current = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+                originX: illustrationView.x,
+                originY: illustrationView.y,
+              };
+              setIllustrationDragging(true);
+            }}
+            onPointerMove={(event) => {
+              const drag = illustrationDragRef.current;
+              if (!drag || drag.pointerId !== event.pointerId) return;
+              setIllustrationView((view) => ({
+                ...view,
+                x: drag.originX + event.clientX - drag.startX,
+                y: drag.originY + event.clientY - drag.startY,
+              }));
+            }}
+            onPointerUp={(event) => {
+              if (illustrationDragRef.current?.pointerId !== event.pointerId) return;
+              illustrationDragRef.current = null;
+              setIllustrationDragging(false);
+            }}
+            onPointerCancel={() => {
+              illustrationDragRef.current = null;
+              setIllustrationDragging(false);
+            }}
+          >
+            <img
+              src={openIllustration.src}
+              alt={openIllustration.alt}
+              draggable={false}
+              style={{ transform: `translate3d(${illustrationView.x}px, ${illustrationView.y}px, 0) scale(${illustrationView.scale})` }}
+            />
+          </div>
+        </div>
+      )}
       <LockedChapterPrompt book={book} chapter={lockedChapter} onClose={() => setLockedChapter(null)} />
     </div>
   );
