@@ -6,9 +6,7 @@ export const setToken = (value: string | null) => { accessToken = value; };
 // Empty in local development: Vite proxies the API on the same origin.
 // In production the static Cloudflare site can point at the Express API
 // without ever exposing server-side Supabase credentials.
-const productionApiOrigin = typeof window !== "undefined" && window.location.hostname === "rethox.online"
-  ? "https://api.rethox.online"
-  : "";
+const productionApiOrigin = "";
 const configuredApiOrigin = (import.meta.env.VITE_API_BASE_URL || productionApiOrigin).trim().replace(/\/$/, "");
 export const apiUrl = (path: string) => `${configuredApiOrigin}/api${path.startsWith("/") ? path : `/${path}`}`;
 

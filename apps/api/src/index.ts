@@ -699,8 +699,11 @@ const googleRedirectUri = (req: AuthRequest) => {
   // Keep one deterministic callback per environment. Using the current host made
   // Google receive LAN/temporary-tunnel origins (for example 192.168.x.x), which
   // caused recurring origin/redirect mismatches whenever the local URL changed.
+  const forwardedPublicOrigin = req.get("x-rethox-public-origin") === "https://rethox.online"
+    ? "https://rethox.online"
+    : "";
   const configuredBase = process.env.NODE_ENV === "production"
-    ? process.env.API_PUBLIC_URL || "https://api.rethox.online"
+    ? forwardedPublicOrigin || process.env.API_PUBLIC_URL || "https://api.rethox.online"
     : process.env.GOOGLE_LOCAL_SITE_URL || `http://127.0.0.1:${port}`;
   const base = (configuredBase || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
   return `${base}/api/auth/google/callback`;

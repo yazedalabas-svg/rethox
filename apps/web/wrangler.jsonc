@@ -2,8 +2,11 @@
   "$schema": "../../node_modules/wrangler/config-schema.json",
   "name": "rethox",
   "compatibility_date": "2026-07-13",
+  "main": "./src/worker.ts",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     "not_found_handling": "single-page-application"
   }
 }
