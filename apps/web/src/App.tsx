@@ -75,7 +75,7 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { ApiError, api, setToken } from "./api";
+import { ApiError, api, apiUrl, setToken } from "./api";
 import type { Book, Chapter, ChapterComment, ChapterMeta, ContentReport, Progress, Review, Sentence, User } from "./types";
 import { alignBoundaries, formatTime } from "./utils";
 
@@ -331,7 +331,7 @@ function AuthPrompt({ open, onClose }: { open: boolean; onClose: () => void }) {
         <div className="auth-prompt-options">
           <Link className="btn primary" to="/login"><LogIn /> تسجيل الدخول</Link>
           <Link className="btn secondary" to="/register"><UserRound /> إنشاء حساب جديد</Link>
-          <a className="btn secondary" href="/api/auth/google"><i className="g-badge">G</i> المتابعة باستخدام Google</a>
+          <a className="btn secondary" href={apiUrl("/auth/google")}><i className="g-badge">G</i> المتابعة باستخدام Google</a>
         </div>
       </div>
     </div>,
@@ -1301,7 +1301,7 @@ function BookPage() {
 }
 
 function GoogleSignIn({ returnTo, className = "" }: { returnTo: string; className?: string }) {
-  const googleUrl = `/api/auth/google?returnTo=${encodeURIComponent(returnTo)}`;
+  const googleUrl = `${apiUrl("/auth/google")}?returnTo=${encodeURIComponent(returnTo)}`;
   return (
     <a className={`google-oauth-button ${className}`} href={googleUrl}>
       <span className="google-mark" aria-hidden="true">G</span>

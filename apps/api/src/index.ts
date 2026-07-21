@@ -700,10 +700,16 @@ const googleRedirectUri = (req: AuthRequest) => {
   // Google receive LAN/temporary-tunnel origins (for example 192.168.x.x), which
   // caused recurring origin/redirect mismatches whenever the local URL changed.
   const configuredBase = process.env.NODE_ENV === "production"
-    ? process.env.PUBLIC_SITE_URL
+    ? process.env.API_PUBLIC_URL || "https://api.rethox.online"
     : process.env.GOOGLE_LOCAL_SITE_URL || `http://127.0.0.1:${port}`;
   const base = (configuredBase || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
   return `${base}/api/auth/google/callback`;
+};
+const publicWebUrl = () => (process.env.PUBLIC_SITE_URL || "").replace(/\/$/, "");
+const redirectToWeb = (res: Response, path: string) => {
+  const target = safeReturnPath(path);
+  const web = publicWebUrl();
+  res.redirect(web ? new URL(target, `${web}/`).toString() : target);
 };
 const safeReturnPath = (value: unknown) => {
   const path = String(value || "/");
@@ -820,7 +826,7 @@ app.post("/api/auth/google/id-token", authLimit, async (req, res) => {
 });
 app.get("/api/auth/google", (req, res) => {
   if (!googleClientId || !googleClientSecret)
-    return res.redirect(`/login?error=google-config`);
+    return redirectToWeb(res, "/login?error=google-config");
   const state = randomUUID();
   res.cookie("rethox_oauth_state", state, {
     httpOnly: true,
@@ -847,7 +853,7 @@ app.get("/api/auth/google", (req, res) => {
 });
 app.get("/api/auth/google/callback", async (req, res) => {
   const fail = (reason: string) =>
-    res.redirect(`/login?error=${reason}`);
+    redirectToWeb(res, `/login?error=${reason}`);
   if (!googleClientId || !googleClientSecret) return fail("google-config");
   const code = String(req.query.code || "");
   const state = String(req.query.state || "");
@@ -906,7 +912,7 @@ app.get("/api/auth/google/callback", async (req, res) => {
     }
     */
     await issueSession(res, verifiedUser);
-    res.redirect(returnTo);
+    redirectToWeb(res, returnTo);
   } catch (error) {
     logger.warn({ error: String(error) }, "google oauth failed");
     fail("google");
