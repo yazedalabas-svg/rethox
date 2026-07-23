@@ -3689,6 +3689,26 @@ function ReaderPage() {
                   </button>
                 </figure>
               )}
+              {s.id === "rz6-c11-p0013" && (
+                <figure className="chapter-opening-illustration chapter-inline-illustration">
+                  <button
+                    type="button"
+                    onClick={() => setOpenIllustration({
+                      src: "/illustrations/rezero-arc-6/chapter-11-scene-after-p0013.jpg",
+                      alt: "صورة توضيحية بعد مشهد البكاء في الفصل الحادي عشر",
+                    })}
+                    aria-label="تكبير الصورة التوضيحية"
+                  >
+                    <img
+                      src="/illustrations/rezero-arc-6/chapter-11-scene-after-p0013.jpg"
+                      alt="صورة توضيحية بعد مشهد البكاء في الفصل الحادي عشر"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <span>اضغط للتكبير</span>
+                  </button>
+                </figure>
+              )}
             </Fragment>
           ))}
           <section className="chapter-community">
