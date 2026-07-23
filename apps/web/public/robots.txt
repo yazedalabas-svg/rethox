@@ -1,9 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /admin
-Disallow: /account
-Disallow: /cart
-Disallow: /settings
-Disallow: /reader/
 
 Sitemap: https://rethox.online/sitemap.xml
