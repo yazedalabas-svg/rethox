@@ -9,7 +9,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $repository = 'yazedalabas-svg/rethox'
 $workflow = 'render-deploy.yml'
-$siteUrl = 'https://rethox.onrender.com'
+$siteUrl = 'https://rethox.online'
 $buildMarker = Join-Path $root 'apps\web\public\deployment.json'
 Set-Location $root
 

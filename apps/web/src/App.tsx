@@ -12,7 +12,6 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
-import * as CountryFlags from "country-flag-icons/react/3x2";
 import {
   getCountries,
   getCountryCallingCode,
@@ -149,8 +148,13 @@ const chapterReadingPercentage = (
 };
 const regionNames = new Intl.DisplayNames(["ar"], { type: "region" });
 const CountryFlag = ({ country }: { country: CountryCode }) => {
-  const Flag = CountryFlags[country as keyof typeof CountryFlags];
-  return Flag ? <Flag aria-hidden="true" /> : <b aria-hidden="true">{country}</b>;
+  if (!country) return null;
+  const codePoints = country
+    .toUpperCase()
+    .replace(/[^A-Z]/g, "")
+    .split("")
+    .map((char) => 0x1f1e6 + char.charCodeAt(0) - 65);
+  return <span aria-hidden="true">{String.fromCodePoint(...codePoints)}</span>;
 };
 const phoneCountries = getCountries()
   .map((country) => ({
@@ -340,45 +344,85 @@ function AuthPrompt({ open, onClose }: { open: boolean; onClose: () => void }) {
 }
 const AuthContext = createContext<AuthValue>(null!);
 const useAuth = () => useContext(AuthContext);
+const AUTH_STORAGE_KEY = "rethox-auth-session";
+type PersistedAuthSession = { accessToken: string; user: User };
+const readPersistedAuthSession = (): PersistedAuthSession | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<PersistedAuthSession>;
+    if (parsed.accessToken && parsed.user) return parsed as PersistedAuthSession;
+  } catch {
+    // Ignore malformed session storage and fall back to guest state.
+  }
+  return null;
+};
+const writePersistedAuthSession = (session: PersistedAuthSession | null) => {
+  if (typeof window === "undefined") return;
+  if (!session) {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    return;
+  }
+  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
+};
 function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [ready, setReady] = useState(false);
+  const persistedSession = readPersistedAuthSession();
+  const [user, setUser] = useState<User | null>(persistedSession?.user ?? null);
+  const [ready, setReady] = useState(Boolean(persistedSession));
   useEffect(() => {
-    api<{ accessToken: string; user: User }>(
-      "/auth/refresh",
-      { method: "POST" },
-      false,
-    )
-      .then((r) => {
+    const restoreSession = async () => {
+      if (persistedSession) {
+        setToken(persistedSession.accessToken);
+        setUser(persistedSession.user);
+      }
+      try {
+        const r = await api<{ accessToken: string; user: User }>(
+          "/auth/refresh",
+          { method: "POST" },
+          false,
+        );
         setToken(r.accessToken);
         setUser(r.user);
-      })
-      .catch(() => {})
-      .finally(() => setReady(true));
-  }, []);
+        writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
+      } catch {
+        if (!persistedSession) {
+          setToken(null);
+          setUser(null);
+          writePersistedAuthSession(null);
+        }
+      } finally {
+        setReady(true);
+      }
+    };
+    void restoreSession();
+  }, [persistedSession]);
   const login = async (email: string, password: string) => {
-    const r = await api<{ accessToken: string; user: User }>("/auth/login", {
+    const r = await api<{ accessToken: string; user: User }> ("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
     setToken(r.accessToken);
     setUser(r.user);
+    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
   };
   const register = async (name: string, email: string, password: string) => {
-    const r = await api<{ accessToken: string; user: User }>("/auth/register", {
+    const r = await api<{ accessToken: string; user: User }> ("/auth/register", {
       method: "POST",
       body: JSON.stringify({ name, email, password }),
     });
     setToken(r.accessToken);
     setUser(r.user);
+    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
   };
   const googleLogin = async (credential: string) => {
-    const r = await api<{ accessToken: string; user: User }>("/auth/google/id-token", {
+    const r = await api<{ accessToken: string; user: User }> ("/auth/google/id-token", {
       method: "POST",
       body: JSON.stringify({ credential }),
     });
     setToken(r.accessToken);
     setUser(r.user);
+    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
   };
   const startPhoneLogin = async (phone: string) => {
     await api("/auth/phone/start", {
@@ -387,17 +431,19 @@ function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
   const verifyPhoneLogin = async (phone: string, token: string) => {
-    const r = await api<{ accessToken: string; user: User }>("/auth/phone/verify", {
+    const r = await api<{ accessToken: string; user: User }> ("/auth/phone/verify", {
       method: "POST",
       body: JSON.stringify({ phone, token }),
     });
     setToken(r.accessToken);
     setUser(r.user);
+    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
   };
   const logout = async () => {
     await api("/auth/logout", { method: "POST" });
     setToken(null);
     setUser(null);
+    writePersistedAuthSession(null);
   };
   const updateProfile = async (input: { name: string; avatarUrl?: string }) => {
     const r = await api<{ user: User }>("/auth/profile", {
@@ -516,7 +562,7 @@ function RouteSeo() {
       ? "noindex,nofollow"
       : "index,follow,max-image-preview:large";
     const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
-    if (canonical && !privateRoute) canonical.href = `https://rethox.onrender.com${pathname || "/"}`;
+    if (canonical && !privateRoute) canonical.href = `https://rethox.online${pathname || "/"}`;
     if (pathname === "/") document.title = "rethox — اقرأها. اسمعها. عشها.";
   }, [pathname]);
   return null;
@@ -3533,26 +3579,6 @@ function ReaderPage() {
             ) : <span />}
           </nav>
           <span className="chapter-label">{chapter.title}</span>
-          {chapter.id === "ch-rezero-6-01" && (
-            <figure className="chapter-opening-illustration">
-              <button
-                type="button"
-                onClick={() => setOpenIllustration({
-                  src: "/illustrations/rezero-arc-6/chapter-01-opening.png",
-                  alt: "صورة افتتاحية لفصل ري:زيرو الأول",
-                })}
-                aria-label="تكبير الصورة الافتتاحية"
-              >
-                <img
-                  src="/illustrations/rezero-arc-6/chapter-01-opening.png"
-                  alt="صورة افتتاحية لفصل ري:زيرو الأول"
-                  decoding="async"
-                  fetchPriority="high"
-                />
-                <span>اضغط للتكبير</span>
-              </button>
-            </figure>
-          )}
           {chapter.sentences.map((s, sentenceIndex) => (
             <Fragment key={s.id}>
               <p
@@ -3589,126 +3615,6 @@ function ReaderPage() {
                 </button>
               </span>
               </p>
-              {s.id === "rz6-c03-p0033" && (
-                <figure className="chapter-opening-illustration chapter-inline-illustration">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIllustration({
-                      src: "/illustrations/rezero-arc-6/chapter-03-scene-after-rz6-c03-p0033.jpg",
-                      alt: "صورة توضيحية بعد مشهد الطفلة والدمى",
-                    })}
-                    aria-label="تكبير الصورة التوضيحية"
-                  >
-                    <img
-                      src="/illustrations/rezero-arc-6/chapter-03-scene-after-rz6-c03-p0033.jpg"
-                      alt="صورة توضيحية بعد مشهد الطفلة والدمى"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span>اضغط للتكبير</span>
-                  </button>
-                </figure>
-              )}
-              {s.id === "rz6-c04-p0027" && (
-                <figure className="chapter-opening-illustration chapter-inline-illustration">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIllustration({
-                      src: "/illustrations/rezero-arc-6/chapter-04-petra-scene.png",
-                      alt: "صورة توضيحية بعد تعليق سوبارو عن بيترا",
-                    })}
-                    aria-label="تكبير الصورة التوضيحية"
-                  >
-                    <img
-                      src="/illustrations/rezero-arc-6/chapter-04-petra-scene.png"
-                      alt="صورة توضيحية بعد تعليق سوبارو عن بيترا"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span>اضغط للتكبير</span>
-                  </button>
-                </figure>
-              )}
-              {s.id === "rz6-c08-p0160" && (
-                <figure className="chapter-opening-illustration chapter-inline-illustration">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIllustration({
-                      src: "/illustrations/rezero-arc-6/chapter-08-earthworm.png",
-                      alt: "صورة توضيحية لوحش دودة الأرض",
-                    })}
-                    aria-label="تكبير الصورة التوضيحية"
-                  >
-                    <img
-                      src="/illustrations/rezero-arc-6/chapter-08-earthworm.png"
-                      alt="صورة توضيحية لوحش دودة الأرض"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span>اضغط للتكبير</span>
-                  </button>
-                </figure>
-              )}
-              {chapter.id === "ch-rezero-6-10" && sentenceIndex === chapter.sentences.length - 1 && (
-                <figure className="chapter-opening-illustration chapter-inline-illustration">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIllustration({
-                      src: "/illustrations/rezero-arc-6/chapter-10-ending.jpg",
-                      alt: "صورة ختامية لفصل ري:زيرو العاشر",
-                    })}
-                    aria-label="تكبير الصورة الختامية"
-                  >
-                    <img
-                      src="/illustrations/rezero-arc-6/chapter-10-ending.jpg"
-                      alt="صورة ختامية لفصل ري:زيرو العاشر"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span>اضغط للتكبير</span>
-                  </button>
-                </figure>
-              )}
-              {s.id === "rz6-c11-p0013" && (
-                <figure className="chapter-opening-illustration chapter-inline-illustration">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIllustration({
-                      src: "/illustrations/rezero-arc-6/chapter-11-ending.jpg",
-                      alt: "صورة توضيحية لمشهد عربة التنين في الفصل الحادي عشر",
-                    })}
-                    aria-label="تكبير الصورة التوضيحية"
-                  >
-                    <img
-                      src="/illustrations/rezero-arc-6/chapter-11-ending.jpg"
-                      alt="صورة توضيحية لمشهد عربة التنين في الفصل الحادي عشر"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span>اضغط للتكبير</span>
-                  </button>
-                </figure>
-              )}
-              {s.id === "rz6-c11-p0013" && (
-                <figure className="chapter-opening-illustration chapter-inline-illustration">
-                  <button
-                    type="button"
-                    onClick={() => setOpenIllustration({
-                      src: "/illustrations/rezero-arc-6/chapter-11-scene-after-p0013.jpg",
-                      alt: "صورة توضيحية بعد مشهد البكاء في الفصل الحادي عشر",
-                    })}
-                    aria-label="تكبير الصورة التوضيحية"
-                  >
-                    <img
-                      src="/illustrations/rezero-arc-6/chapter-11-scene-after-p0013.jpg"
-                      alt="صورة توضيحية بعد مشهد البكاء في الفصل الحادي عشر"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span>اضغط للتكبير</span>
-                  </button>
-                </figure>
-              )}
             </Fragment>
           ))}
           <section className="chapter-community">

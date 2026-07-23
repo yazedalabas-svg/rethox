@@ -59,7 +59,7 @@ app.use(helmet({
 const allowedOrigins = new Set([
   webOrigin,
   process.env.PUBLIC_SITE_URL?.replace(/\/$/, ""),
-  "https://rethox.onrender.com",
+  "https://rethox.online",
   `http://localhost:${port}`,
   `http://127.0.0.1:${port}`,
   "http://localhost:5173",

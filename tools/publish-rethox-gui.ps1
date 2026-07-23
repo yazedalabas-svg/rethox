@@ -161,7 +161,7 @@ $form.Add_FormClosing({
   }
 })
 
-$siteButton.Add_Click({ Start-Process 'https://rethox.onrender.com/' })
+$siteButton.Add_Click({ Start-Process 'https://rethox.online/' })
 $githubButton.Add_Click({ Start-Process 'https://github.com/yazedalabas-svg/rethox/actions' })
 $renderButton.Add_Click({ Start-Process 'https://dashboard.render.com/web/srv-d92plcpkh4rs738si1q0/events' })
 

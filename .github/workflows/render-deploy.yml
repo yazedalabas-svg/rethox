@@ -47,7 +47,7 @@ jobs:
           for attempt in $(seq 1 72); do
             LIVE_BUILD_ID="$(curl --fail --silent --show-error \
               --max-time 15 \
-              "https://rethox.onrender.com/deployment.json?attempt=$attempt" \
+              "https://rethox.online/deployment.json?attempt=$attempt" \
               | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{process.stdout.write(JSON.parse(s).buildId||'')}catch{}})" \
               || true)"
             if [ "$LIVE_BUILD_ID" = "$EXPECTED_BUILD_ID" ]; then

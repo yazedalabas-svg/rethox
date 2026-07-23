@@ -59,7 +59,7 @@ Dashboard → Storage:
 
 - `NEXT_PUBLIC_SUPABASE_URL` (يستخدمه الخادم أيضًا كعنوان احتياطي)
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `PUBLIC_SITE_URL=https://rethox.onrender.com`
+- `PUBLIC_SITE_URL=https://rethox.online`
 
 يمكن إبقاء `NEXT_PUBLIC_SUPABASE_URL` والمفتاح القابل للنشر للواجهة، لكن لا تستخدم أبدًا `SUPABASE_SERVICE_ROLE_KEY` في متغير يبدأ بـ `NEXT_PUBLIC_`.
 
