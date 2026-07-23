@@ -696,16 +696,17 @@ const googleAudience = googleClientId || "";
 // Behind Render's proxy the real host/protocol arrive in forwarded headers.
 app.set("trust proxy", 1);
 const googleRedirectUri = (req: AuthRequest) => {
-  // Keep one deterministic callback per environment. Using the current host made
-  // Google receive LAN/temporary-tunnel origins (for example 192.168.x.x), which
-  // caused recurring origin/redirect mismatches whenever the local URL changed.
   const forwardedPublicOrigin = req.get("x-rethox-public-origin") === "https://rethox.online"
     ? "https://rethox.online"
     : "";
+  const requestHost = req.get("host") || "";
+  const requestBase = `${req.protocol}://${requestHost}`.replace(/\/$/, "");
   const configuredBase = process.env.NODE_ENV === "production"
-    ? forwardedPublicOrigin || process.env.API_PUBLIC_URL || "https://api.rethox.online"
-    : process.env.GOOGLE_LOCAL_SITE_URL || `http://127.0.0.1:${port}`;
-  const base = (configuredBase || `${req.protocol}://${req.get("host")}`).replace(/\/$/, "");
+    ? forwardedPublicOrigin || process.env.API_PUBLIC_URL || requestBase
+    : process.env.GOOGLE_LOCAL_SITE_URL || (requestHost.startsWith("localhost") || requestHost.startsWith("127.0.0.1")
+      ? requestBase
+      : `http://127.0.0.1:${port}`);
+  const base = (configuredBase || requestBase).replace(/\/$/, "");
   return `${base}/api/auth/google/callback`;
 };
 const publicWebUrl = () => (process.env.PUBLIC_SITE_URL || "").replace(/\/$/, "");
