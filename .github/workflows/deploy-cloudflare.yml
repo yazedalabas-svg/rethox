@@ -1,8 +1,6 @@
-name: Deploy to Cloudflare Workers
+name: Deploy to Cloudflare Workers (manual)
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -24,6 +22,6 @@ jobs:
 
       - name: Deploy to Cloudflare
         env:
-          CF_API_TOKEN: ${{ secrets.CF_BUILD_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           npx wrangler deploy
