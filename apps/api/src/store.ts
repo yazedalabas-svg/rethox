@@ -10,6 +10,7 @@ const dataDir = process.env.DATA_DIR
   : resolve(process.cwd(), "data");
 const file = resolve(dataDir, "runtime-store.json");
 const progressFile = resolve(dataDir, "runtime-progress.json");
+const sessionsFile = resolve(dataDir, "runtime-sessions.json");
 const deploySeed = resolve(process.cwd(), "data/deploy-seed.json");
 const visibleBookIds = new Set(
   (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-reverend-insanity")
@@ -48,6 +49,16 @@ state.chapterComments ??= [];
 state.readingList ??= [];
 state.reports ??= [];
 state.progress ??= [];
+// Session rotations happen far more often than catalog/account writes. Keep a
+// tiny journal so login/refresh/logout never serialize the full novel store.
+try {
+  const journal = existsSync(sessionsFile)
+    ? JSON.parse(readFileSync(sessionsFile, "utf8")) as Store["refreshTokens"]
+    : null;
+  if (journal) state.refreshTokens = journal;
+} catch {
+  // Fall back to the last complete store snapshot if the optional journal is corrupt.
+}
 // The progress journal is intentionally separate from the large legacy store.
 // It lets frequent reader checkpoints survive a local restart without
 // serializing the catalog, accounts, orders and comments on every tick.
@@ -80,6 +91,7 @@ const writeAtomicJson = (target: string, value: unknown) => {
 const writeLocal = () => {
   writeAtomicJson(file, state);
   writeAtomicJson(progressFile, state.progress);
+  writeAtomicJson(sessionsFile, state.refreshTokens);
 };
 const queueRemoteWrite = (
   options: { skipRelational?: boolean } = {},
@@ -120,6 +132,40 @@ const queueRemoteWrite = (
 export const save = (options: { skipRelational?: boolean } = {}) => {
   writeLocal();
   return queueRemoteWrite(options);
+};
+export const saveSessionChange = (change: {
+  issued?: Store["refreshTokens"][number];
+  revokedHashes?: string[];
+}) => {
+  writeAtomicJson(sessionsFile, state.refreshTokens);
+  if (!remoteStore) return Promise.resolve();
+  if (!relationalEnabled) return queueRemoteWrite({ skipRelational: true });
+  const client = remoteStore;
+  const revokedHashes = [...new Set(change.revokedHashes || [])];
+  const operation = remoteWrite.then(async () => {
+    if (change.issued) {
+      const { error } = await client.from("user_sessions").upsert({
+        user_id: change.issued.userId,
+        token_hash: change.issued.hash,
+        expires_at: change.issued.expiresAt,
+        revoked_at: null,
+      }, { onConflict: "token_hash" });
+      if (error) throw error;
+    }
+    if (revokedHashes.length) {
+      const { error } = await client
+        .from("user_sessions")
+        .update({ revoked_at: new Date().toISOString() })
+        .in("token_hash", revokedHashes);
+      if (error) throw error;
+    }
+    lastRemoteErrorAt = null;
+  });
+  remoteWrite = operation.catch((error) => {
+    lastRemoteErrorAt = new Date().toISOString();
+    console.error("Supabase session persistence failed", error);
+  });
+  return operation;
 };
 // Progress is already committed atomically to reading_progress/chapter_progress.
 // Keep the local disk current immediately, and only coalesce the legacy state

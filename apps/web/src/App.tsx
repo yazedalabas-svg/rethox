@@ -1,6 +1,7 @@
 import {
   Fragment,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -74,7 +75,16 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { ApiError, api, apiUrl, setToken } from "./api";
+import {
+  ApiError,
+  accessTokenExpiresAt,
+  api,
+  apiUrl,
+  refreshSession,
+  setAuthSessionListener,
+  setToken,
+  type AuthSession,
+} from "./api";
 import type { Book, Chapter, ChapterComment, ChapterMeta, ContentReport, Progress, Review, Sentence, User } from "./types";
 import { alignBoundaries, formatTime } from "./utils";
 
@@ -345,7 +355,7 @@ function AuthPrompt({ open, onClose }: { open: boolean; onClose: () => void }) {
 const AuthContext = createContext<AuthValue>(null!);
 const useAuth = () => useContext(AuthContext);
 const AUTH_STORAGE_KEY = "rethox-auth-session";
-type PersistedAuthSession = { accessToken: string; user: User };
+type PersistedAuthSession = AuthSession;
 const readPersistedAuthSession = (): PersistedAuthSession | null => {
   if (typeof window === "undefined") return null;
   try {
@@ -367,62 +377,84 @@ const writePersistedAuthSession = (session: PersistedAuthSession | null) => {
   localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session));
 };
 function AuthProvider({ children }: { children: ReactNode }) {
-  const persistedSession = readPersistedAuthSession();
-  const [user, setUser] = useState<User | null>(persistedSession?.user ?? null);
-  const [ready, setReady] = useState(Boolean(persistedSession));
+  const initialSession = useMemo(readPersistedAuthSession, []);
+  const [session, setSession] = useState<PersistedAuthSession | null>(initialSession);
+  const [ready, setReady] = useState(Boolean(initialSession));
+  const logoutInFlight = useRef<Promise<void> | null>(null);
+  const applySession = useCallback((next: PersistedAuthSession | null) => {
+    setToken(next?.accessToken ?? null);
+    setSession(next);
+    writePersistedAuthSession(next);
+  }, []);
+
   useEffect(() => {
+    setToken(initialSession?.accessToken ?? null);
+    const removeSessionListener = setAuthSessionListener(applySession);
+    const syncSessionAcrossTabs = (event: StorageEvent) => {
+      if (event.key === AUTH_STORAGE_KEY) applySession(readPersistedAuthSession());
+    };
+    window.addEventListener("storage", syncSessionAcrossTabs);
     const restoreSession = async () => {
-      if (persistedSession) {
-        setToken(persistedSession.accessToken);
-        setUser(persistedSession.user);
-      }
       try {
-        const r = await api<{ accessToken: string; user: User }>(
-          "/auth/refresh",
-          { method: "POST" },
-          false,
-        );
-        setToken(r.accessToken);
-        setUser(r.user);
-        writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
+        await refreshSession();
       } catch {
-        if (!persistedSession) {
-          setToken(null);
-          setUser(null);
-          writePersistedAuthSession(null);
-        }
+        // Network/server outages keep the last local session. An explicit 401
+        // is handled by refreshSession and is the only automatic sign-out.
       } finally {
         setReady(true);
       }
     };
     void restoreSession();
-  }, [persistedSession]);
+    return () => {
+      removeSessionListener();
+      window.removeEventListener("storage", syncSessionAcrossTabs);
+    };
+  }, [applySession, initialSession]);
+
+  useEffect(() => {
+    if (!session?.accessToken) return;
+    let active = true;
+    let timer = 0;
+    const renew = async () => {
+      try {
+        await refreshSession();
+      } catch (error) {
+        if (active && !(error instanceof ApiError && error.status === 401)) {
+          timer = window.setTimeout(renew, 30_000);
+        }
+      }
+    };
+    const expiry = accessTokenExpiresAt(session.accessToken);
+    const delay = expiry
+      ? Math.max(15_000, expiry - Date.now() - 60_000)
+      : 8 * 60_000;
+    timer = window.setTimeout(renew, delay);
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [session?.accessToken]);
+
   const login = async (email: string, password: string) => {
-    const r = await api<{ accessToken: string; user: User }> ("/auth/login", {
+    const r = await api<AuthSession>("/auth/login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
-    setToken(r.accessToken);
-    setUser(r.user);
-    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
+    applySession(r);
   };
   const register = async (name: string, email: string, password: string) => {
-    const r = await api<{ accessToken: string; user: User }> ("/auth/register", {
+    const r = await api<AuthSession>("/auth/register", {
       method: "POST",
       body: JSON.stringify({ name, email, password }),
     });
-    setToken(r.accessToken);
-    setUser(r.user);
-    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
+    applySession(r);
   };
   const googleLogin = async (credential: string) => {
-    const r = await api<{ accessToken: string; user: User }> ("/auth/google/id-token", {
+    const r = await api<AuthSession>("/auth/google/id-token", {
       method: "POST",
       body: JSON.stringify({ credential }),
     });
-    setToken(r.accessToken);
-    setUser(r.user);
-    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
+    applySession(r);
   };
   const startPhoneLogin = async (phone: string) => {
     await api("/auth/phone/start", {
@@ -431,30 +463,45 @@ function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
   const verifyPhoneLogin = async (phone: string, token: string) => {
-    const r = await api<{ accessToken: string; user: User }> ("/auth/phone/verify", {
+    const r = await api<AuthSession>("/auth/phone/verify", {
       method: "POST",
       body: JSON.stringify({ phone, token }),
     });
-    setToken(r.accessToken);
-    setUser(r.user);
-    writePersistedAuthSession({ accessToken: r.accessToken, user: r.user });
+    applySession(r);
   };
   const logout = async () => {
-    await api("/auth/logout", { method: "POST" });
-    setToken(null);
-    setUser(null);
-    writePersistedAuthSession(null);
+    if (logoutInFlight.current) return logoutInFlight.current;
+    // Make logout immediate and idempotent in the interface. The server-side
+    // revocation continues once, even if the button was clicked repeatedly.
+    applySession(null);
+    logoutInFlight.current = api<void>("/auth/logout", { method: "POST", keepalive: true }, false)
+      .catch(() => undefined)
+      .finally(() => { logoutInFlight.current = null; });
+    return logoutInFlight.current;
   };
   const updateProfile = async (input: { name: string; avatarUrl?: string }) => {
     const r = await api<{ user: User }>("/auth/profile", {
       method: "PATCH",
       body: JSON.stringify(input),
     });
-    setUser(r.user);
+    setSession((current) => {
+      if (!current) return current;
+      const next = { ...current, user: r.user };
+      writePersistedAuthSession(next);
+      return next;
+    });
   };
   return (
     <AuthContext.Provider value={{
-      user, ready, login, register, googleLogin, startPhoneLogin, verifyPhoneLogin, updateProfile, logout,
+      user: session?.user ?? null,
+      ready,
+      login,
+      register,
+      googleLogin,
+      startPhoneLogin,
+      verifyPhoneLogin,
+      updateProfile,
+      logout,
     }}>
       {children}
     </AuthContext.Provider>
@@ -1370,6 +1417,9 @@ function AuthPage({ register = false }: { register?: boolean }) {
   const returnTo = requestedReturnTo.startsWith("/") && !requestedReturnTo.startsWith("//")
     ? requestedReturnTo
     : "/";
+  useEffect(() => {
+    if (auth.ready && auth.user) nav(returnTo, { replace: true });
+  }, [auth.ready, auth.user, nav, returnTo]);
   const [error, setError] = useState(() => GOOGLE_ERRORS[params.get("error") || ""] || "");
   const [busy, setBusy] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -2068,7 +2118,7 @@ function AccountPage() {
           <h1>{user.name}</h1>
           <p>{user.email}</p>
         </div>
-        <button className="btn secondary" onClick={logout}>
+        <button className="btn secondary" onClick={() => { void logout(); }}>
           تسجيل الخروج
         </button>
       </div>
@@ -3387,6 +3437,29 @@ function ReaderPage() {
     activeWordId,
     atChapterEnd || completedChapters.includes(chapter.id),
   );
+  const chapterIllustration = (
+    illustration: NonNullable<Chapter["illustrations"]>[number],
+    inline: boolean,
+  ) => (
+    <figure
+      className={`chapter-opening-illustration${inline ? " chapter-inline-illustration" : ""}`}
+      key={illustration.src}
+    >
+      <button
+        type="button"
+        onClick={() => setOpenIllustration(illustration)}
+        aria-label={`تكبير الصورة: ${illustration.alt}`}
+      >
+        <img
+          src={illustration.src}
+          alt={illustration.alt}
+          loading={inline ? "lazy" : "eager"}
+          decoding="async"
+        />
+        <span>اضغط للتكبير</span>
+      </button>
+    </figure>
+  );
   return (
     <div className={`reader ${focusMode ? "focus-mode" : ""}`}>
       {transitionTitle && (
@@ -3579,6 +3652,9 @@ function ReaderPage() {
             ) : <span />}
           </nav>
           <span className="chapter-label">{chapter.title}</span>
+          {chapter.illustrations
+            ?.filter((illustration) => !illustration.afterSentenceId)
+            .map((illustration) => chapterIllustration(illustration, false))}
           {chapter.sentences.map((s, sentenceIndex) => (
             <Fragment key={s.id}>
               <p
@@ -3615,6 +3691,9 @@ function ReaderPage() {
                 </button>
               </span>
               </p>
+              {chapter.illustrations
+                ?.filter((illustration) => illustration.afterSentenceId === s.id)
+                .map((illustration) => chapterIllustration(illustration, true))}
             </Fragment>
           ))}
           <section className="chapter-community">

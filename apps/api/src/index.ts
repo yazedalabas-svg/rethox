@@ -32,6 +32,7 @@ import {
   persistenceStatus,
   save,
   saveProgressCheckpoint,
+  saveSessionChange,
 } from "./store.js";
 import type { Book, Chapter, Role, Sentence, User } from "./types.js";
 import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
@@ -401,21 +402,29 @@ const BookPatch = BookInput.partial().extend({
   pageCount: z.number().int().positive().optional(),
 });
 
-const issueSession = async (res: Response, user: { id: string; role: Role }) => {
+const SESSION_LIFETIME_MS = 365 * 864e5;
+const setRefreshCookie = (res: Response, value: string) => res.cookie("rethox_refresh", value, {
+  httpOnly: true,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+  maxAge: SESSION_LIFETIME_MS,
+  path: "/api/auth",
+});
+const issueSession = async (
+  res: Response,
+  user: { id: string; role: Role },
+  options: { persistState?: boolean } = {},
+) => {
   const refresh = refreshValue();
-  db().refreshTokens.push({
+  const session = {
     userId: user.id,
     hash: tokenHash(refresh),
-    expiresAt: new Date(Date.now() + 30 * 864e5).toISOString(),
-  });
-  res.cookie("rethox_refresh", refresh, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 30 * 864e5,
-    path: "/api/auth",
-  });
-  await save();
+    expiresAt: new Date(Date.now() + SESSION_LIFETIME_MS).toISOString(),
+  };
+  db().refreshTokens.push(session);
+  setRefreshCookie(res, refresh);
+  if (options.persistState) await save();
+  else await saveSessionChange({ issued: session });
   return accessToken(user.id, user.role);
 };
 
@@ -581,7 +590,7 @@ app.post("/api/auth/register", authLimit, async (req, res) => {
     createdAt: new Date().toISOString(),
   };
   db().users.push(user);
-  const token = await issueSession(res, user);
+  const token = await issueSession(res, user, { persistState: true });
   res.status(201).json({ accessToken: token, user: publicUser(user.id) });
 });
 app.post("/api/auth/login", authLimit, async (req, res) => {
@@ -687,7 +696,7 @@ app.post("/api/auth/phone/verify", phoneVerifyLimit, async (req, res) => {
     user.oauthProvider = "supabase";
     user.oauthSubject = data.user.id;
   }
-  const access = await issueSession(res, user);
+  const access = await issueSession(res, user, { persistState: true });
   res.json({ accessToken: access, user: publicUser(user.id) });
 });
 const googleClientId = process.env.GOOGLE_CLIENT_ID?.trim();
@@ -821,7 +830,7 @@ app.post("/api/auth/google/id-token", authLimit, async (req, res) => {
       user.oauthSubject = claims.sub;
     }
     */
-    const token = await issueSession(res, verifiedUser);
+    const token = await issueSession(res, verifiedUser, { persistState: true });
     res.json({ accessToken: token, user: publicUser(verifiedUser.id) });
   } catch (error) {
     logger.warn({ error: String(error) }, "Google ID token login failed");
@@ -915,7 +924,7 @@ app.get("/api/auth/google/callback", async (req, res) => {
       user.oauthSubject = claims.sub;
     }
     */
-    await issueSession(res, verifiedUser);
+    await issueSession(res, verifiedUser, { persistState: true });
     redirectToWeb(res, returnTo);
   } catch (error) {
     logger.warn({ error: String(error) }, "google oauth failed");
@@ -926,14 +935,19 @@ app.post("/api/auth/refresh", authLimit, async (req, res) => {
   const value = req.cookies.rethox_refresh;
   if (!value) return res.status(401).json({ message: "لا توجد جلسة" });
   const hash = tokenHash(value);
-  const index = db().refreshTokens.findIndex(
+  const session = db().refreshTokens.find(
     (t) => t.hash === hash && new Date(t.expiresAt) > new Date(),
   );
-  if (index < 0) return res.status(401).json({ message: "انتهت الجلسة" });
-  const old = db().refreshTokens.splice(index, 1)[0];
-  const user = db().users.find((u) => u.id === old.userId);
+  if (!session) return res.status(401).json({ message: "انتهت الجلسة" });
+  const user = db().users.find((u) => u.id === session.userId);
   if (!user) return res.status(401).json({ message: "المستخدم غير موجود" });
-  res.json({ accessToken: await issueSession(res, user), user: publicUser(user.id) });
+  session.expiresAt = new Date(Date.now() + SESSION_LIFETIME_MS).toISOString();
+  setRefreshCookie(res, value);
+  await saveSessionChange({ issued: session });
+  res.json({
+    accessToken: accessToken(user.id, user.role),
+    user: publicUser(user.id),
+  });
 });
 app.post("/api/auth/logout", async (req, res) => {
   const value = req.cookies.rethox_refresh;
@@ -941,8 +955,12 @@ app.post("/api/auth/logout", async (req, res) => {
     db().refreshTokens = db().refreshTokens.filter(
       (t) => t.hash !== tokenHash(value),
     );
-  res.clearCookie("rethox_refresh", { path: "/api/auth" });
-  await save();
+  res.clearCookie("rethox_refresh", {
+    path: "/api/auth",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  if (value) await saveSessionChange({ revokedHashes: [tokenHash(value)] });
   res.status(204).end();
 });
 app.get("/api/auth/me", auth, (req: AuthRequest, res) =>

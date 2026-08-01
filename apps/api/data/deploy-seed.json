@@ -28,6 +28,12 @@
           "position": 1,
           "durationMs": 1787510,
           "isSample": true,
+          "illustrations": [
+            {
+              "src": "/illustrations/rezero-arc-6/chapter-01-opening.png",
+              "alt": "لوحة افتتاح الفصل الأول"
+            }
+          ],
           "sentences": [
             {
               "id": "rz6-c01-p0001",
@@ -1584,6 +1590,13 @@
           "position": 3,
           "durationMs": 2170210,
           "isSample": false,
+          "illustrations": [
+            {
+              "src": "/illustrations/rezero-arc-6/chapter-03-scene-after-rz6-c03-p0033.jpg",
+              "alt": "لوحة من أحداث الفصل الثالث",
+              "afterSentenceId": "rz6-c03-p0033"
+            }
+          ],
           "sentences": [
             {
               "id": "rz6-c03-p0001",
@@ -2494,6 +2507,13 @@
           "position": 4,
           "durationMs": 2336620,
           "isSample": false,
+          "illustrations": [
+            {
+              "src": "/illustrations/rezero-arc-6/chapter-04-petra-scene.png",
+              "alt": "بترا في مشهد من الفصل الرابع",
+              "afterSentenceId": "rz6-c04-p0024"
+            }
+          ],
           "sentences": [
             {
               "id": "rz6-c04-p0001",
@@ -5294,6 +5314,13 @@
           "position": 8,
           "durationMs": 2654390,
           "isSample": false,
+          "illustrations": [
+            {
+              "src": "/illustrations/rezero-arc-6/chapter-08-earthworm.webp",
+              "alt": "دودة الأرض الرملية في الفصل الثامن",
+              "afterSentenceId": "rz6-c08-p0160"
+            }
+          ],
           "sentences": [
             {
               "id": "rz6-c08-p0001",
@@ -7294,6 +7321,13 @@
           "position": 10,
           "durationMs": 2364570,
           "isSample": false,
+          "illustrations": [
+            {
+              "src": "/illustrations/rezero-arc-6/chapter-10-ending.jpg",
+              "alt": "لوحة ختام الفصل العاشر",
+              "afterSentenceId": "rz6-c10-p0113"
+            }
+          ],
           "sentences": [
             {
               "id": "rz6-c10-p0001",
@@ -7982,6 +8016,13 @@
           "position": 11,
           "durationMs": 1816750,
           "isSample": false,
+          "illustrations": [
+            {
+              "src": "/illustrations/rezero-arc-6/chapter-11-ending.jpg",
+              "alt": "لوحة ختام الفصل الحادي عشر",
+              "afterSentenceId": "rz6-c11-p0096"
+            }
+          ],
           "sentences": [
             {
               "id": "rz6-c11-p0001",
