@@ -1,6 +1,24 @@
 Push-and-deploy helper
 ======================
 
+Rethox Auto Sync (Windows)
+--------------------------
+
+Double-click `Rethox-AutoSync.cmd` in the repository root. Keep the Arabic
+window open while editing. It watches project files and, after 8 quiet seconds:
+
+1. builds the API and web app;
+2. runs the complete test suite;
+3. creates a version marker and commit;
+4. pushes `main` to GitHub;
+5. starts the Render workflow; and
+6. waits until the same version is live on `https://rethox.online`.
+
+The window also supports immediate publishing, pausing file monitoring, and
+opening the live site, GitHub Actions, or Render. Only one Auto Sync window can
+run at a time. Secrets, build output, logs, runtime data, and the local
+`wild-paper-877c` experiment are excluded.
+
 Usage
 -----
 

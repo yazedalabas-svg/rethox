@@ -105,6 +105,10 @@ try {
     & npm run build
     if ($LASTEXITCODE -ne 0) { throw 'Build failed. Nothing was uploaded.' }
 
+    Write-Host 'Running the complete test suite...' -ForegroundColor Cyan
+    & npm test
+    if ($LASTEXITCODE -ne 0) { throw 'Tests failed. Nothing was uploaded.' }
+
     Run-Git @('add', '-A')
     $staged = @(& git diff --cached --name-only)
     if ($staged.Count -eq 0) { throw 'There are no publishable changes after Git ignore rules.' }
