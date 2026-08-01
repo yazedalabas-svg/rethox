@@ -345,7 +345,7 @@ function AuthPrompt({ open, onClose }: { open: boolean; onClose: () => void }) {
         <div className="auth-prompt-options">
           <Link className="btn primary" to="/login"><LogIn /> تسجيل الدخول</Link>
           <Link className="btn secondary" to="/register"><UserRound /> إنشاء حساب جديد</Link>
-          <a className="btn secondary" href={apiUrl("/auth/google")}><i className="g-badge">G</i> المتابعة باستخدام Google</a>
+          <GoogleSignIn className="btn secondary" returnTo="/" />
         </div>
       </div>
     </div>,
@@ -452,7 +452,7 @@ function AuthProvider({ children }: { children: ReactNode }) {
   const googleLogin = async (credential: string) => {
     const r = await api<AuthSession>("/auth/google/id-token", {
       method: "POST",
-      body: JSON.stringify({ credential }),
+      body: JSON.stringify({ credential, consent: true }),
     });
     applySession(r);
   };
@@ -1394,18 +1394,61 @@ function BookPage() {
 }
 
 function GoogleSignIn({ returnTo, className = "" }: { returnTo: string; className?: string }) {
-  const googleUrl = `${apiUrl("/auth/google")}?returnTo=${encodeURIComponent(returnTo)}`;
+  const [open, setOpen] = useState(false);
+  const [accepted, setAccepted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const continueWithGoogle = async () => {
+    if (!accepted || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      const result = await api<{ authorizationUrl: string }>("/auth/google/consent", {
+        method: "POST",
+        body: JSON.stringify({ accepted: true, returnTo }),
+      });
+      window.location.assign(result.authorizationUrl);
+    } catch (requestError) {
+      setError((requestError as Error).message);
+      setBusy(false);
+    }
+  };
   return (
-    <a className={`google-oauth-button ${className}`} href={googleUrl}>
-      <span className="google-mark" aria-hidden="true">G</span>
-      <span>المتابعة باستخدام Google</span>
-    </a>
+    <>
+      <button type="button" className={`google-oauth-button ${className}`} onClick={() => setOpen(true)}>
+        <span className="google-mark" aria-hidden="true">G</span>
+        <span>المتابعة باستخدام Google</span>
+      </button>
+      {open && createPortal(
+        <div className="google-consent-overlay" role="dialog" aria-modal="true" aria-labelledby="google-consent-title" onClick={() => !busy && setOpen(false)}>
+          <section className="google-consent-card" onClick={(event) => event.stopPropagation()}>
+            <button type="button" className="auth-prompt-close" aria-label="إغلاق" disabled={busy} onClick={() => setOpen(false)}><X /></button>
+            <span className="google-consent-logo" aria-hidden="true">G</span>
+            <h2 id="google-consent-title">تأكيد المتابعة بحساب Google</h2>
+            <p>بعد موافقتك ستنتقل إلى Google لاختيار الحساب ومراجعة الأذونات. لن ينشئ rethox حسابًا محليًا إلا بعد أن تتحقق Google من وجود الحساب والبريد الإلكتروني.</p>
+            <label className="google-consent-check">
+              <input type="checkbox" checked={accepted} onChange={(event) => setAccepted(event.target.checked)} />
+              <span>أوافق على إنشاء حساب rethox جديد أو ربط حسابي الحالي بحساب Google الذي سأختاره.</span>
+            </label>
+            {error && <p className="auth-error">{error}</p>}
+            <div className="google-consent-actions">
+              <button type="button" className="btn secondary" disabled={busy} onClick={() => setOpen(false)}>إلغاء</button>
+              <button type="button" className="btn primary" disabled={!accepted || busy} onClick={continueWithGoogle}>
+                {busy ? "جارٍ فتح Google..." : "موافق، افتح Google"}
+              </button>
+            </div>
+          </section>
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }
 
 const GOOGLE_ERRORS: Record<string, string> = {
   "google-config": "تسجيل Google غير مضبوط على الخادم بعد.",
   "google-state": "انتهت صلاحية محاولة الدخول. اضغط زر Google مرة أخرى.",
+  "google-consent": "أكد موافقتك أولًا قبل المتابعة باستخدام Google.",
   google: "تعذر إتمام الدخول عبر Google. حاول مرة أخرى.",
 };
 
@@ -4050,12 +4093,48 @@ function ReaderPage() {
     </div>
   );
 }
+type AdminCatalogBook = {
+  id: string;
+  title: string;
+  author: string;
+  synopsis: string;
+  slug: string;
+  priceMinor: number;
+  status: "PUBLISHED" | "DRAFT";
+  coverUrl?: string;
+  chapters: { id: string; title: string; position: number; illustrationCount: number }[];
+};
+type AdminChapterDetails = {
+  id: string;
+  title: string;
+  position: number;
+  illustrations: NonNullable<Chapter["illustrations"]>;
+  sentences: { id: string; position: number; text: string }[];
+};
+type AdminAuditLog = {
+  id: string;
+  user_id?: string;
+  userId?: string;
+  action: string;
+  entity_type?: string;
+  entity_id?: string;
+  metadata?: Record<string, unknown>;
+  created_at?: string;
+  createdAt?: string;
+};
+
 function AdminPage() {
   const { user, ready } = useAuth();
   const [overview, setOverview] = useState<any>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [reports, setReports] = useState<ContentReport[]>([]);
   const [backups, setBackups] = useState<any[]>([]);
+  const [catalog, setCatalog] = useState<AdminCatalogBook[]>([]);
+  const [selectedBookId, setSelectedBookId] = useState("");
+  const [selectedChapterId, setSelectedChapterId] = useState("");
+  const [chapterDetails, setChapterDetails] = useState<AdminChapterDetails | null>(null);
+  const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([]);
+  const [contentBusy, setContentBusy] = useState(false);
   const [backupBusy, setBackupBusy] = useState(false);
   const [message, setMessage] = useState("");
   useEffect(() => {
@@ -4065,16 +4144,48 @@ function AdminPage() {
         api<{ users: User[] }>("/admin/users"),
         api<{ reports: ContentReport[] }>("/admin/reports"),
         api<{ backups: any[] }>("/admin/backups"),
-      ]).then(([o, u, reportData, backupData]) => {
+        api<{ books: AdminCatalogBook[] }>("/admin/catalog"),
+        api<{ logs: AdminAuditLog[] }>("/admin/audit-logs"),
+      ]).then(([o, u, reportData, backupData, catalogData, auditData]) => {
         setOverview(o);
         setUsers(u.users);
         setReports(reportData.reports);
         setBackups(backupData.backups);
-      });
+        setCatalog(catalogData.books);
+        setAuditLogs(auditData.logs);
+        const firstBook = catalogData.books[0];
+        setSelectedBookId((current) => current || firstBook?.id || "");
+        setSelectedChapterId((current) => current || firstBook?.chapters[0]?.id || "");
+      }).catch((error) => setMessage((error as Error).message));
   }, [user]);
+  useEffect(() => {
+    if (!selectedChapterId) {
+      setChapterDetails(null);
+      return;
+    }
+    api<{ chapter: AdminChapterDetails }>(`/admin/chapters/${selectedChapterId}`)
+      .then((result) => setChapterDetails(result.chapter))
+      .catch((error) => setMessage((error as Error).message));
+  }, [selectedChapterId]);
   if (!ready) return <Loading />;
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "ADMIN") return <Navigate to="/account" />;
+  const selectedBook = catalog.find((book) => book.id === selectedBookId) || null;
+  const reloadChapter = async () => {
+    if (!selectedChapterId) return;
+    const result = await api<{ chapter: AdminChapterDetails }>(`/admin/chapters/${selectedChapterId}`);
+    setChapterDetails(result.chapter);
+    setCatalog((books) => books.map((book) => ({
+      ...book,
+      chapters: book.chapters.map((chapter) => chapter.id === selectedChapterId
+        ? { ...chapter, illustrationCount: result.chapter.illustrations.length }
+        : chapter),
+    })));
+  };
+  const reloadAudit = async () => {
+    const result = await api<{ logs: AdminAuditLog[] }>("/admin/audit-logs");
+    setAuditLogs(result.logs);
+  };
   const create = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
@@ -4094,8 +4205,79 @@ function AdminPage() {
       });
       setMessage("تم إنشاء مسودة الكتاب");
       e.currentTarget.reset();
+      const result = await api<{ books: AdminCatalogBook[] }>("/admin/catalog");
+      setCatalog(result.books);
+      await reloadAudit();
     } catch (e) {
       setMessage((e as Error).message);
+    }
+  };
+  const uploadIllustration = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!chapterDetails) return;
+    const form = event.currentTarget;
+    const fields = new FormData(form);
+    const file = fields.get("image");
+    if (!(file instanceof File) || !file.size) return setMessage("اختر صورة أولًا");
+    setContentBusy(true);
+    setMessage("");
+    try {
+      const query = new URLSearchParams({ alt: String(fields.get("alt") || "") });
+      const afterSentenceId = String(fields.get("afterSentenceId") || "");
+      if (afterSentenceId) query.set("afterSentenceId", afterSentenceId);
+      await api(`/admin/chapters/${chapterDetails.id}/illustrations?${query}`, {
+        method: "POST",
+        headers: { "content-type": file.type },
+        body: file,
+      });
+      form.reset();
+      await Promise.all([reloadChapter(), reloadAudit()]);
+      setMessage("تم رفع الصورة وحفظ موضعها في قاعدة البيانات");
+    } catch (error) {
+      setMessage((error as Error).message);
+    } finally {
+      setContentBusy(false);
+    }
+  };
+  const editIllustration = async (event: FormEvent<HTMLFormElement>, illustrationId: string) => {
+    event.preventDefault();
+    const fields = new FormData(event.currentTarget);
+    setContentBusy(true);
+    try {
+      await api(`/admin/chapters/${selectedChapterId}/illustrations/${illustrationId}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          alt: String(fields.get("alt") || ""),
+          afterSentenceId: String(fields.get("afterSentenceId") || "") || null,
+        }),
+      });
+      await Promise.all([reloadChapter(), reloadAudit()]);
+      setMessage("تم حفظ وصف الصورة وموضعها");
+    } catch (error) {
+      setMessage((error as Error).message);
+    } finally {
+      setContentBusy(false);
+    }
+  };
+  const replaceIllustration = async (event: FormEvent<HTMLFormElement>, illustrationId: string) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const file = new FormData(form).get("replacement");
+    if (!(file instanceof File) || !file.size) return setMessage("اختر الصورة البديلة أولًا");
+    setContentBusy(true);
+    try {
+      await api(`/admin/chapters/${selectedChapterId}/illustrations/${illustrationId}/file`, {
+        method: "PUT",
+        headers: { "content-type": file.type },
+        body: file,
+      });
+      form.reset();
+      await Promise.all([reloadChapter(), reloadAudit()]);
+      setMessage("تم استبدال ملف الصورة فعليًا");
+    } catch (error) {
+      setMessage((error as Error).message);
+    } finally {
+      setContentBusy(false);
     }
   };
   return (
@@ -4103,7 +4285,7 @@ function AdminPage() {
       <div className="page-head">
         <span>ADMIN CONSOLE</span>
         <h1>لوحة الإدارة</h1>
-        <p>إدارة الكتب والفصول والمجتمع.</p>
+        <p>تحكم كامل بالمحتوى والصور والمستخدمين مع حفظ دائم وسجل لكل تغيير.</p>
       </div>
       {overview && (
         <div className="admin-stats">
@@ -4134,6 +4316,86 @@ function AdminPage() {
           </div>
         </div>
       )}
+      {message && <div className="admin-message" role="status">{message}</div>}
+      <section className="admin-content-studio">
+        <header>
+          <div><span className="kicker">CONTENT STUDIO</span><h2>إدارة صور الفصول</h2></div>
+          <span className="admin-live-badge">قاعدة البيانات والتخزين متصلان</span>
+        </header>
+        <div className="admin-content-selectors">
+          <label>
+            الكتاب
+            <select value={selectedBookId} onChange={(event) => {
+              const nextBook = catalog.find((book) => book.id === event.target.value);
+              setSelectedBookId(event.target.value);
+              setSelectedChapterId(nextBook?.chapters[0]?.id || "");
+            }}>
+              {catalog.map((book) => <option key={book.id} value={book.id}>{book.title}</option>)}
+            </select>
+          </label>
+          <label>
+            الفصل
+            <select value={selectedChapterId} onChange={(event) => setSelectedChapterId(event.target.value)}>
+              {(selectedBook?.chapters || []).map((chapter) => (
+                <option key={chapter.id} value={chapter.id}>{chapter.position}. {chapter.title} ({chapter.illustrationCount} صورة)</option>
+              ))}
+            </select>
+          </label>
+        </div>
+        {chapterDetails && (
+          <>
+            <form className="admin-image-upload" onSubmit={uploadIllustration}>
+              <div>
+                <h3>إضافة صورة جديدة</h3>
+                <p>اختر الصورة ثم حدد هل تظهر في بداية الفصل أو بعد جملة معينة.</p>
+              </div>
+              <label>ملف الصورة<input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required /></label>
+              <label>وصف بديل<input name="alt" minLength={2} maxLength={180} required placeholder="وصف واضح للصورة" /></label>
+              <label>موضع الصورة<select name="afterSentenceId"><option value="">بداية الفصل</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
+              <button className="btn primary" disabled={contentBusy}><ImagePlus size={17} /> {contentBusy ? "جارٍ الحفظ..." : "رفع وإضافة"}</button>
+            </form>
+            <div className="admin-image-list">
+              {chapterDetails.illustrations.map((illustration) => (
+                <article key={illustration.id || illustration.src}>
+                  <img src={illustration.src} alt={illustration.alt} />
+                  {illustration.id ? (
+                    <div className="admin-image-controls">
+                      <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
+                        <label>الوصف<input name="alt" defaultValue={illustration.alt} required /></label>
+                        <label>الموضع<select name="afterSentenceId" defaultValue={illustration.afterSentenceId || ""}><option value="">بداية الفصل</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
+                        <button className="btn secondary" disabled={contentBusy}>حفظ الموضع والوصف</button>
+                      </form>
+                      <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
+                        <input name="replacement" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+                        <button className="btn secondary" disabled={contentBusy}>استبدال الملف</button>
+                      </form>
+                      <button
+                        type="button"
+                        className="admin-danger-button"
+                        disabled={contentBusy}
+                        onClick={async () => {
+                          if (!window.confirm("حذف هذه الصورة من الفصل؟")) return;
+                          setContentBusy(true);
+                          try {
+                            await api(`/admin/chapters/${selectedChapterId}/illustrations/${illustration.id}`, { method: "DELETE" });
+                            await Promise.all([reloadChapter(), reloadAudit()]);
+                            setMessage("تم حذف الصورة من قاعدة البيانات والموقع");
+                          } catch (error) {
+                            setMessage((error as Error).message);
+                          } finally {
+                            setContentBusy(false);
+                          }
+                        }}
+                      ><Trash2 size={15} /> حذف الصورة</button>
+                    </div>
+                  ) : <p>هذه صورة قديمة غير مُدارة بعد.</p>}
+                </article>
+              ))}
+              {!chapterDetails.illustrations.length && <p className="panel-empty">لا توجد صور في هذا الفصل. تستطيع إضافة أول صورة الآن.</p>}
+            </div>
+          </>
+        )}
+      </section>
       <div className="admin-grid">
         <form onSubmit={create} className="admin-form">
           <h2>كتاب جديد</h2>
@@ -4167,10 +4429,9 @@ function AdminPage() {
             <textarea name="synopsis" minLength={20} required />
           </label>
           <button className="btn primary">حفظ كمسودة</button>
-          {message && <p>{message}</p>}
         </form>
         <div className="users-table">
-          <h2>المستخدمون</h2>
+          <h2>المستخدمون والصلاحيات</h2>
           {users.map((u) => (
             <div key={u.id}>
               {u.avatarUrl ? <img className="mini-avatar" src={u.avatarUrl} alt="" referrerPolicy="no-referrer" /> : <span className="mini-avatar">{u.name[0]}</span>}
@@ -4178,11 +4439,65 @@ function AdminPage() {
                 <b>{u.name}</b>
                 <small>{u.email || (u.oauthProvider === "google" ? "Google" : "حساب مسجل")}</small>
               </span>
-              <em>{u.role}</em>
+              <select
+                aria-label={`صلاحية ${u.name}`}
+                value={u.role}
+                disabled={u.id === user.id}
+                onChange={async (event) => {
+                  const role = event.target.value as User["role"];
+                  try {
+                    const result = await api<{ user: User }>(`/admin/users/${u.id}/role`, {
+                      method: "PATCH",
+                      body: JSON.stringify({ role }),
+                    });
+                    setUsers((items) => items.map((item) => item.id === u.id ? result.user : item));
+                    await reloadAudit();
+                    setMessage(`تم تحديث صلاحية ${u.name}`);
+                  } catch (error) {
+                    setMessage((error as Error).message);
+                  }
+                }}
+              >
+                <option value="CUSTOMER">قارئ</option>
+                <option value="ADMIN">مدير كامل</option>
+              </select>
             </div>
           ))}
         </div>
       </div>
+      {selectedBook && (
+        <section className="admin-book-editor">
+          <header><div><span className="kicker">CATALOG</span><h2>تعديل بيانات الكتاب</h2></div><span>{selectedBook.status === "PUBLISHED" ? "منشور" : "مسودة"}</span></header>
+          <form key={selectedBook.id} onSubmit={async (event) => {
+            event.preventDefault();
+            const fields = new FormData(event.currentTarget);
+            try {
+              const result = await api<{ book: AdminCatalogBook }>(`/admin/books/${selectedBook.id}`, {
+                method: "PATCH",
+                body: JSON.stringify({
+                  title: String(fields.get("title")),
+                  author: String(fields.get("author")),
+                  synopsis: String(fields.get("synopsis")),
+                  priceMinor: Math.round(Number(fields.get("price")) * 100),
+                  status: fields.get("status"),
+                }),
+              });
+              setCatalog((books) => books.map((book) => book.id === selectedBook.id ? { ...book, ...result.book } : book));
+              await reloadAudit();
+              setMessage("تم حفظ بيانات الكتاب في الموقع وقاعدة البيانات");
+            } catch (error) {
+              setMessage((error as Error).message);
+            }
+          }}>
+            <label>العنوان<input name="title" defaultValue={selectedBook.title} required /></label>
+            <label>الكاتب<input name="author" defaultValue={selectedBook.author} required /></label>
+            <label>السعر بالريال<input name="price" type="number" min="0" step="0.01" defaultValue={selectedBook.priceMinor / 100} required /></label>
+            <label>الحالة<select name="status" defaultValue={selectedBook.status}><option value="PUBLISHED">منشور</option><option value="DRAFT">مسودة</option></select></label>
+            <label className="admin-book-synopsis">النبذة<textarea name="synopsis" minLength={20} defaultValue={selectedBook.synopsis} required /></label>
+            <button className="btn primary">حفظ بيانات الكتاب</button>
+          </form>
+        </section>
+      )}
       <section className="admin-reports">
         <header><div><span className="kicker">مراجعة المحتوى</span><h2>بلاغات القراء</h2></div><span>{reports.filter((report) => report.status === "OPEN").length} مفتوح</span></header>
         <div>
@@ -4236,6 +4551,19 @@ function AdminPage() {
             </article>
           ))}
           {!backups.length && <p className="panel-empty">لا توجد نسخ احتياطية بعد.</p>}
+        </div>
+      </section>
+      <section className="admin-audit-log">
+        <header><div><span className="kicker">AUDIT TRAIL</span><h2>سجل التغييرات الفعلي</h2></div><span>{auditLogs.length} عملية</span></header>
+        <div>
+          {auditLogs.slice(0, 30).map((log) => (
+            <article key={log.id}>
+              <b>{log.action}</b>
+              <span>{log.entity_type || "system"}{log.entity_id ? ` · ${log.entity_id}` : ""}</span>
+              <small>{formatDateTime(log.created_at || log.createdAt || new Date().toISOString())}</small>
+            </article>
+          ))}
+          {!auditLogs.length && <p className="panel-empty">سيظهر هنا كل تغيير ينفذه المدير.</p>}
         </div>
       </section>
     </section>

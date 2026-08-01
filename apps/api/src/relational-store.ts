@@ -416,7 +416,11 @@ export const syncRelationalStore = async (
 
 };
 
-const mergeChapter = (row: Row, seeded?: Chapter): Chapter => ({
+const mergeChapter = (
+  row: Row,
+  seeded: Chapter | undefined,
+  illustrations: Chapter["illustrations"],
+): Chapter => ({
   ...(seeded || {
     id: row.id,
     bookId: row.book_id,
@@ -433,6 +437,7 @@ const mergeChapter = (row: Row, seeded?: Chapter): Chapter => ({
   durationMs: row.duration_ms,
   isSample: row.is_sample,
   sentenceCount: row.sentence_count,
+  illustrations: row.illustrations_managed ? illustrations : seeded?.illustrations,
 });
 
 export const loadRelationalStore = async (
@@ -455,6 +460,7 @@ export const loadRelationalStore = async (
     sessions,
     books,
     chapters,
+    chapterAssets,
     orders,
     orderItems,
     entitlements,
@@ -474,6 +480,7 @@ export const loadRelationalStore = async (
     selectAll(client, "user_sessions"),
     selectAll(client, "books"),
     selectAll(client, "chapters"),
+    selectAll(client, "chapter_assets"),
     selectAll(client, "orders"),
     selectAll(client, "order_items"),
     selectAll(client, "entitlements"),
@@ -498,7 +505,26 @@ export const loadRelationalStore = async (
     ]),
   );
   const seededById = new Map(seededBooks.map((book) => [book.id, book]));
-  const chapterRows = new Map(chapters.map((chapter) => [chapter.id, chapter]));
+  const imageAssetsByChapter = new Map<string, Chapter["illustrations"]>();
+  chapterAssets
+    .filter((asset) => asset.kind === "IMAGE")
+    .sort((a, b) => a.position - b.position || a.created_at.localeCompare(b.created_at))
+    .forEach((asset) => {
+      const src = asset.bucket === "site-public"
+        ? asset.object_path
+        : client.storage.from(asset.bucket).getPublicUrl(asset.object_path).data.publicUrl;
+      imageAssetsByChapter.set(asset.chapter_id, [
+        ...(imageAssetsByChapter.get(asset.chapter_id) || []),
+        {
+          id: asset.id,
+          src,
+          alt: asset.alt_text || "صورة من الفصل",
+          afterSentenceId: asset.after_sentence_id || undefined,
+          position: asset.position,
+          storagePath: asset.bucket === "chapter-images" ? asset.object_path : undefined,
+        },
+      ]);
+    });
   const loadedBooks: Book[] = books.map((row) => {
     const seeded = seededById.get(row.id);
     const baseChapters = seeded?.chapters || [];
@@ -506,7 +532,11 @@ export const loadRelationalStore = async (
     const loadedChapters = chapters
       .filter((chapter) => chapter.book_id === row.id)
       .sort((a, b) => a.position - b.position)
-      .map((chapter) => mergeChapter(chapter, seededChapters.get(chapter.id)));
+      .map((chapter) => mergeChapter(
+        chapter,
+        seededChapters.get(chapter.id),
+        imageAssetsByChapter.get(chapter.id) || [],
+      ));
     return {
       id: row.id,
       slug: row.slug,

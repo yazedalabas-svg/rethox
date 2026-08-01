@@ -34,7 +34,7 @@ import {
   saveProgressCheckpoint,
   saveSessionChange,
 } from "./store.js";
-import type { Book, Chapter, Role, Sentence, User } from "./types.js";
+import type { Book, Chapter, ChapterIllustration, Role, Sentence, User } from "./types.js";
 import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
 import { createRelationalBackup, startBackupScheduler } from "./backup-service.js";
 import { summaryProvider } from "./summary-provider.js";
@@ -120,6 +120,12 @@ const progressWriteLimit = rateLimit({
 const avatarUploadLimit = rateLimit({
   windowMs: 10 * 60_000,
   limit: 12,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const chapterImageUploadLimit = rateLimit({
+  windowMs: 10 * 60_000,
+  limit: 40,
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -329,7 +335,11 @@ const loadChapterContent = (chapter: Chapter): Chapter => {
   }
   const loaded = volume.get(chapter.id);
   if (!loaded) throw new Error("chapter is missing from external volume");
-  return { ...loaded, isSample: chapter.isSample };
+  return {
+    ...loaded,
+    isSample: chapter.isSample,
+    illustrations: chapter.illustrations ?? loaded.illustrations,
+  };
 };
 const findSentenceContext = (sentenceId: string): { book: Book; chapter: Chapter; sentence: Sentence } | null => {
   for (const book of db().books) {
@@ -787,9 +797,12 @@ app.get("/api/auth/google/config", (_req, res) =>
   res.json({ clientId: googleAudience }),
 );
 app.post("/api/auth/google/id-token", authLimit, async (req, res) => {
-  const parsed = z.object({ credential: z.string().min(100).max(6000) }).safeParse(req.body);
+  const parsed = z.object({
+    credential: z.string().min(100).max(6000),
+    consent: z.literal(true),
+  }).safeParse(req.body);
   if (!parsed.success)
-    return res.status(400).json({ message: "بيانات Google غير مكتملة" });
+    return res.status(400).json({ message: "يجب تأكيد الموافقة قبل استخدام Google" });
   try {
     const verifiedClaims = await verifyGoogleIdToken(parsed.data.credential);
     const verifiedUser = await resolveGoogleUser(verifiedClaims);
@@ -837,32 +850,41 @@ app.post("/api/auth/google/id-token", authLimit, async (req, res) => {
     res.status(401).json({ message: "تعذر التحقق من حساب Google" });
   }
 });
-app.get("/api/auth/google", (req, res) => {
-  if (!googleClientId || !googleClientSecret)
-    return redirectToWeb(res, "/login?error=google-config");
-  const state = randomUUID();
-  res.cookie("rethox_oauth_state", state, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 600_000,
-    path: "/api/auth",
-  });
-  res.cookie("rethox_oauth_return", safeReturnPath(req.query.returnTo), {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 600_000,
-    path: "/api/auth",
-  });
+const googleOauthCookie = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 600_000,
+  path: "/api/auth",
+};
+const googleAuthorizationUrl = (req: AuthRequest, state: string) => {
   const url = new URL("https://accounts.google.com/o/oauth2/v2/auth");
-  url.searchParams.set("client_id", googleClientId);
+  url.searchParams.set("client_id", googleClientId || "");
   url.searchParams.set("redirect_uri", googleRedirectUri(req));
   url.searchParams.set("response_type", "code");
   url.searchParams.set("scope", "openid email profile");
   url.searchParams.set("state", state);
-  url.searchParams.set("prompt", "select_account");
-  res.redirect(url.toString());
+  // Google may otherwise skip its consent screen for a previously approved account.
+  url.searchParams.set("prompt", "consent select_account");
+  return url.toString();
+};
+app.get("/api/auth/google", (_req, res) =>
+  redirectToWeb(res, "/login?error=google-consent"),
+);
+app.post("/api/auth/google/consent", authLimit, (req: AuthRequest, res) => {
+  if (!googleClientId || !googleClientSecret)
+    return res.status(503).json({ message: "تسجيل Google غير مضبوط على الخادم" });
+  const parsed = z.object({
+    accepted: z.literal(true),
+    returnTo: z.string().max(500).optional(),
+  }).safeParse(req.body);
+  if (!parsed.success)
+    return res.status(400).json({ message: "يجب الموافقة بوضوح قبل المتابعة" });
+  const state = randomUUID();
+  res.cookie("rethox_oauth_state", state, googleOauthCookie);
+  res.cookie("rethox_oauth_consent", state, googleOauthCookie);
+  res.cookie("rethox_oauth_return", safeReturnPath(parsed.data.returnTo), googleOauthCookie);
+  res.json({ authorizationUrl: googleAuthorizationUrl(req, state) });
 });
 app.get("/api/auth/google/callback", async (req, res) => {
   const fail = (reason: string) =>
@@ -870,9 +892,14 @@ app.get("/api/auth/google/callback", async (req, res) => {
   if (!googleClientId || !googleClientSecret) return fail("google-config");
   const code = String(req.query.code || "");
   const state = String(req.query.state || "");
-  if (!code || !state || state !== req.cookies.rethox_oauth_state)
+  if (
+    !code || !state ||
+    state !== req.cookies.rethox_oauth_state ||
+    state !== req.cookies.rethox_oauth_consent
+  )
     return fail("google-state");
   res.clearCookie("rethox_oauth_state", { path: "/api/auth" });
+  res.clearCookie("rethox_oauth_consent", { path: "/api/auth" });
   const returnTo = safeReturnPath(req.cookies.rethox_oauth_return);
   res.clearCookie("rethox_oauth_return", { path: "/api/auth" });
   try {
@@ -1680,6 +1707,362 @@ app.delete("/api/chapters/:id/comments/:commentId", communityWriteLimit, auth, a
   res.status(204).end();
 });
 
+const chapterImageBody = express.raw({
+  type: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+  limit: "12mb",
+});
+const imageExtension: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+};
+const detectedImageMime = (body: Buffer) => {
+  if (body.length >= 8 && body.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])))
+    return "image/png";
+  if (body.length >= 3 && body[0] === 0xff && body[1] === 0xd8 && body[2] === 0xff)
+    return "image/jpeg";
+  if (body.length >= 12 && body.subarray(0, 4).toString("ascii") === "RIFF" && body.subarray(8, 12).toString("ascii") === "WEBP")
+    return "image/webp";
+  const gifHeader = body.subarray(0, 6).toString("ascii");
+  if (gifHeader === "GIF87a" || gifHeader === "GIF89a") return "image/gif";
+  return "";
+};
+const adminChapter = (chapterId: string) => {
+  const book = db().books.find((item) => item.chapters.some((chapter) => chapter.id === chapterId));
+  const chapterMeta = book?.chapters.find((chapter) => chapter.id === chapterId);
+  if (!book || !chapterMeta) return null;
+  return { book, chapterMeta, chapter: loadChapterContent(chapterMeta) };
+};
+const validImagePlacement = (chapter: Chapter, afterSentenceId?: string) =>
+  !afterSentenceId || chapter.sentences.some((sentence) => sentence.id === afterSentenceId);
+const publicChapterAssetUrl = (bucket: string, objectPath: string) =>
+  bucket === "site-public"
+    ? objectPath
+    : supabaseAdmin!.storage.from(bucket).getPublicUrl(objectPath).data.publicUrl;
+const recordAdminAudit = async (
+  userId: string,
+  action: string,
+  entityType: string,
+  entityId: string,
+  metadata: Record<string, unknown> = {},
+) => {
+  const id = randomUUID();
+  const createdAt = new Date().toISOString();
+  if (supabaseAdmin) {
+    const { error } = await supabaseAdmin.from("admin_audit_logs").insert({
+      id,
+      user_id: userId,
+      action,
+      entity_type: entityType,
+      entity_id: entityId,
+      metadata,
+      created_at: createdAt,
+    });
+    if (error) throw new Error(`audit log failed: ${error.message}`);
+  }
+  db().auditLogs.push({ id, userId, action, createdAt });
+  await save({ skipRelational: Boolean(supabaseAdmin) });
+};
+const updateMemoryIllustration = (
+  chapter: Chapter,
+  illustration: ChapterIllustration,
+) => {
+  const items = chapter.illustrations || [];
+  const index = items.findIndex((item) => item.id === illustration.id);
+  chapter.illustrations = index < 0
+    ? [...items, illustration]
+    : items.map((item, itemIndex) => itemIndex === index ? illustration : item);
+};
+
+app.get("/api/admin/catalog", auth, requireRole("ADMIN"), (_req, res) => {
+  res.json({
+    books: db().books.map((book) => ({
+      id: book.id,
+      title: book.title,
+      author: book.author,
+      synopsis: book.synopsis,
+      slug: book.slug,
+      priceMinor: book.priceMinor,
+      status: book.status,
+      coverUrl: book.coverUrl,
+      chapters: book.chapters.map((chapter) => ({
+        id: chapter.id,
+        title: chapter.title,
+        position: chapter.position,
+        illustrationCount: chapter.illustrations?.length || 0,
+      })),
+    })),
+  });
+});
+app.get("/api/admin/chapters/:id", auth, requireRole("ADMIN"), (req, res) => {
+  try {
+    const context = adminChapter(String(req.params.id));
+    if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
+    res.json({
+      book: { id: context.book.id, title: context.book.title },
+      chapter: {
+        id: context.chapter.id,
+        title: context.chapter.title,
+        position: context.chapter.position,
+        illustrations: context.chapterMeta.illustrations || [],
+        sentences: context.chapter.sentences.map((sentence) => ({
+          id: sentence.id,
+          position: sentence.position,
+          text: sentence.text,
+        })),
+      },
+    });
+  } catch (error) {
+    logger.warn({ error: String(error), chapterId: req.params.id }, "admin chapter load failed");
+    res.status(503).json({ message: "تعذر تحميل محتوى الفصل" });
+  }
+});
+app.post(
+  "/api/admin/chapters/:id/illustrations",
+  chapterImageUploadLimit,
+  auth,
+  requireRole("ADMIN"),
+  chapterImageBody,
+  async (req: AuthRequest, res) => {
+    if (!supabaseAdmin)
+      return res.status(503).json({ message: "قاعدة البيانات أو التخزين غير متصل" });
+    const context = adminChapter(String(req.params.id));
+    if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
+    const metadata = z.object({
+      alt: z.string().trim().min(2).max(180),
+      afterSentenceId: z.string().max(200).optional(),
+    }).safeParse({
+      alt: String(req.query.alt || ""),
+      afterSentenceId: String(req.query.afterSentenceId || "") || undefined,
+    });
+    if (!metadata.success || !validImagePlacement(context.chapter, metadata.data.afterSentenceId))
+      return res.status(400).json({ message: "وصف الصورة أو موضعها غير صحيح" });
+    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
+    const actualMime = detectedImageMime(body);
+    if (!body.length || !imageExtension[declaredMime] || actualMime !== declaredMime)
+      return res.status(400).json({ message: "الملف ليس صورة صالحة أو نوعه غير مطابق" });
+
+    const { data: versions, error: versionError } = await supabaseAdmin
+      .from("chapter_assets")
+      .select("version,position")
+      .eq("chapter_id", context.chapter.id)
+      .eq("kind", "IMAGE");
+    if (versionError) return res.status(503).json({ message: "تعذر قراءة صور الفصل" });
+    const version = Math.max(0, ...(versions || []).map((item) => item.version || 0)) + 1;
+    const position = Math.max(0, ...(versions || []).map((item) => item.position || 0)) + 1;
+    const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[declaredMime]}`;
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from("chapter-images")
+      .upload(objectPath, body, { contentType: declaredMime, cacheControl: "31536000", upsert: false });
+    if (uploadError) {
+      logger.error({ error: uploadError.message }, "chapter image upload failed");
+      return res.status(503).json({ message: "تعذر رفع الصورة إلى التخزين" });
+    }
+    const { data: asset, error: assetError } = await supabaseAdmin
+      .from("chapter_assets")
+      .insert({
+        chapter_id: context.chapter.id,
+        kind: "IMAGE",
+        bucket: "chapter-images",
+        object_path: objectPath,
+        content_type: declaredMime,
+        byte_size: body.length,
+        checksum_sha256: createHash("sha256").update(body).digest("hex"),
+        version,
+        alt_text: metadata.data.alt,
+        after_sentence_id: metadata.data.afterSentenceId || null,
+        position,
+        created_by: req.user!.id,
+        updated_at: new Date().toISOString(),
+      })
+      .select("id,bucket,object_path,alt_text,after_sentence_id,position")
+      .single();
+    if (assetError || !asset) {
+      await supabaseAdmin.storage.from("chapter-images").remove([objectPath]);
+      logger.error({ error: assetError?.message }, "chapter image metadata failed");
+      return res.status(503).json({ message: "تعذر حفظ بيانات الصورة" });
+    }
+    const { error: chapterError } = await supabaseAdmin
+      .from("chapters")
+      .update({ illustrations_managed: true })
+      .eq("id", context.chapter.id);
+    if (chapterError) {
+      await supabaseAdmin.from("chapter_assets").delete().eq("id", asset.id);
+      await supabaseAdmin.storage.from("chapter-images").remove([objectPath]);
+      return res.status(503).json({ message: "تعذر تفعيل إدارة صور الفصل" });
+    }
+    const illustration: ChapterIllustration = {
+      id: asset.id,
+      src: publicChapterAssetUrl(asset.bucket, asset.object_path),
+      alt: asset.alt_text,
+      afterSentenceId: asset.after_sentence_id || undefined,
+      position: asset.position,
+      storagePath: asset.object_path,
+    };
+    updateMemoryIllustration(context.chapterMeta, illustration);
+    await recordAdminAudit(req.user!.id, "CHAPTER_IMAGE_ADDED", "chapter", context.chapter.id, {
+      illustrationId: asset.id,
+      afterSentenceId: illustration.afterSentenceId || null,
+      objectPath,
+    });
+    res.status(201).json({ illustration });
+  },
+);
+app.patch(
+  "/api/admin/chapters/:id/illustrations/:illustrationId",
+  auth,
+  requireRole("ADMIN"),
+  async (req: AuthRequest, res) => {
+    if (!supabaseAdmin) return res.status(503).json({ message: "قاعدة البيانات غير متصلة" });
+    const context = adminChapter(String(req.params.id));
+    if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
+    const parsed = z.object({
+      alt: z.string().trim().min(2).max(180).optional(),
+      afterSentenceId: z.string().max(200).nullable().optional(),
+    }).refine((value) => value.alt !== undefined || value.afterSentenceId !== undefined).safeParse(req.body);
+    if (!parsed.success || !validImagePlacement(context.chapter, parsed.data.afterSentenceId || undefined))
+      return res.status(400).json({ message: "بيانات الصورة أو موضعها غير صحيح" });
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    if (parsed.data.alt !== undefined) updates.alt_text = parsed.data.alt;
+    if (parsed.data.afterSentenceId !== undefined)
+      updates.after_sentence_id = parsed.data.afterSentenceId || null;
+    const { data: asset, error } = await supabaseAdmin
+      .from("chapter_assets")
+      .update(updates)
+      .eq("id", req.params.illustrationId)
+      .eq("chapter_id", context.chapter.id)
+      .eq("kind", "IMAGE")
+      .select("id,bucket,object_path,alt_text,after_sentence_id,position")
+      .maybeSingle();
+    if (error) return res.status(503).json({ message: "تعذر حفظ تعديل الصورة" });
+    if (!asset) return res.status(404).json({ message: "الصورة غير موجودة" });
+    const illustration: ChapterIllustration = {
+      id: asset.id,
+      src: publicChapterAssetUrl(asset.bucket, asset.object_path),
+      alt: asset.alt_text,
+      afterSentenceId: asset.after_sentence_id || undefined,
+      position: asset.position,
+      storagePath: asset.bucket === "chapter-images" ? asset.object_path : undefined,
+    };
+    updateMemoryIllustration(context.chapterMeta, illustration);
+    await recordAdminAudit(req.user!.id, "CHAPTER_IMAGE_UPDATED", "chapter", context.chapter.id, {
+      illustrationId: asset.id,
+      afterSentenceId: illustration.afterSentenceId || null,
+    });
+    res.json({ illustration });
+  },
+);
+app.put(
+  "/api/admin/chapters/:id/illustrations/:illustrationId/file",
+  chapterImageUploadLimit,
+  auth,
+  requireRole("ADMIN"),
+  chapterImageBody,
+  async (req: AuthRequest, res) => {
+    if (!supabaseAdmin) return res.status(503).json({ message: "التخزين غير متصل" });
+    const context = adminChapter(String(req.params.id));
+    if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
+    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
+    if (!body.length || !imageExtension[declaredMime] || detectedImageMime(body) !== declaredMime)
+      return res.status(400).json({ message: "الملف ليس صورة صالحة أو نوعه غير مطابق" });
+    const { data: current, error: currentError } = await supabaseAdmin
+      .from("chapter_assets")
+      .select("id,bucket,object_path,alt_text,after_sentence_id,position")
+      .eq("id", req.params.illustrationId)
+      .eq("chapter_id", context.chapter.id)
+      .eq("kind", "IMAGE")
+      .maybeSingle();
+    if (currentError) return res.status(503).json({ message: "تعذر قراءة بيانات الصورة" });
+    if (!current) return res.status(404).json({ message: "الصورة غير موجودة" });
+    const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[declaredMime]}`;
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from("chapter-images")
+      .upload(objectPath, body, { contentType: declaredMime, cacheControl: "31536000", upsert: false });
+    if (uploadError) return res.status(503).json({ message: "تعذر رفع الصورة البديلة" });
+    const { data: asset, error: updateError } = await supabaseAdmin
+      .from("chapter_assets")
+      .update({
+        bucket: "chapter-images",
+        object_path: objectPath,
+        content_type: declaredMime,
+        byte_size: body.length,
+        checksum_sha256: createHash("sha256").update(body).digest("hex"),
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", current.id)
+      .select("id,bucket,object_path,alt_text,after_sentence_id,position")
+      .single();
+    if (updateError || !asset) {
+      await supabaseAdmin.storage.from("chapter-images").remove([objectPath]);
+      return res.status(503).json({ message: "تعذر ربط الصورة البديلة بالفصل" });
+    }
+    if (current.bucket === "chapter-images")
+      await supabaseAdmin.storage.from("chapter-images").remove([current.object_path]);
+    const illustration: ChapterIllustration = {
+      id: asset.id,
+      src: publicChapterAssetUrl(asset.bucket, asset.object_path),
+      alt: asset.alt_text,
+      afterSentenceId: asset.after_sentence_id || undefined,
+      position: asset.position,
+      storagePath: asset.object_path,
+    };
+    updateMemoryIllustration(context.chapterMeta, illustration);
+    await recordAdminAudit(req.user!.id, "CHAPTER_IMAGE_REPLACED", "chapter", context.chapter.id, {
+      illustrationId: asset.id,
+      objectPath,
+    });
+    res.json({ illustration });
+  },
+);
+app.delete(
+  "/api/admin/chapters/:id/illustrations/:illustrationId",
+  auth,
+  requireRole("ADMIN"),
+  async (req: AuthRequest, res) => {
+    if (!supabaseAdmin) return res.status(503).json({ message: "قاعدة البيانات غير متصلة" });
+    const context = adminChapter(String(req.params.id));
+    if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
+    const { data: asset, error: findError } = await supabaseAdmin
+      .from("chapter_assets")
+      .select("id,bucket,object_path")
+      .eq("id", req.params.illustrationId)
+      .eq("chapter_id", context.chapter.id)
+      .eq("kind", "IMAGE")
+      .maybeSingle();
+    if (findError) return res.status(503).json({ message: "تعذر قراءة بيانات الصورة" });
+    if (!asset) return res.status(404).json({ message: "الصورة غير موجودة" });
+    const { error: deleteError } = await supabaseAdmin.from("chapter_assets").delete().eq("id", asset.id);
+    if (deleteError) return res.status(503).json({ message: "تعذر حذف الصورة من قاعدة البيانات" });
+    if (asset.bucket === "chapter-images") {
+      const { error: storageError } = await supabaseAdmin.storage.from("chapter-images").remove([asset.object_path]);
+      if (storageError) logger.warn({ error: storageError.message, path: asset.object_path }, "orphan chapter image cleanup failed");
+    }
+    context.chapterMeta.illustrations = (context.chapterMeta.illustrations || [])
+      .filter((item) => item.id !== asset.id);
+    await recordAdminAudit(req.user!.id, "CHAPTER_IMAGE_DELETED", "chapter", context.chapter.id, {
+      illustrationId: asset.id,
+      objectPath: asset.object_path,
+    });
+    res.status(204).end();
+  },
+);
+
+app.get("/api/admin/audit-logs", auth, requireRole("ADMIN"), async (_req, res) => {
+  if (supabaseAdmin) {
+    const { data, error } = await supabaseAdmin
+      .from("admin_audit_logs")
+      .select("id,user_id,action,entity_type,entity_id,metadata,created_at")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    if (error) return res.status(503).json({ message: "تعذر تحميل سجل التغييرات" });
+    return res.json({ logs: data || [] });
+  }
+  res.json({ logs: db().auditLogs.slice().reverse().slice(0, 100) });
+});
+
 app.post(
   "/api/admin/books",
   auth,
@@ -1704,13 +2087,11 @@ app.post(
       ...parsed.data,
     };
     db().books.push(book);
-    db().auditLogs.push({
-      id: randomUUID(),
-      userId: req.user!.id,
-      action: `CREATE_BOOK:${book.id}`,
-      createdAt: new Date().toISOString(),
-    });
     await save();
+    await recordAdminAudit(req.user!.id, "BOOK_CREATED", "book", book.id, {
+      title: book.title,
+      status: book.status,
+    });
     res.status(201).json({ book });
   },
 );
@@ -1726,14 +2107,18 @@ app.patch(
       return res.status(400).json({ message: "بيانات التعديل غير صحيحة" });
     Object.assign(book, parsed.data);
     await save();
+    await recordAdminAudit(req.user!.id, "BOOK_UPDATED", "book", book.id, {
+      fields: Object.keys(parsed.data),
+    });
     res.json({ book });
   },
 );
-app.delete("/api/admin/books/:id", auth, requireRole("ADMIN"), async (req, res) => {
+app.delete("/api/admin/books/:id", auth, requireRole("ADMIN"), async (req: AuthRequest, res) => {
   const book = db().books.find((b) => b.id === req.params.id);
   if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });
   book.status = "DRAFT";
   await save();
+  await recordAdminAudit(req.user!.id, "BOOK_UNPUBLISHED", "book", book.id);
   res.status(204).end();
 });
 const persistentProfiles = async () => {
@@ -1780,13 +2165,16 @@ app.patch(
   "/api/admin/users/:id/role",
   auth,
   requireRole("ADMIN"),
-  async (req, res) => {
+  async (req: AuthRequest, res) => {
     const role = z.enum(["CUSTOMER", "ADMIN"]).safeParse(req.body.role);
     const user = db().users.find((u) => u.id === req.params.id);
     if (!role.success || !user)
       return res.status(400).json({ message: "الطلب غير صحيح" });
     user.role = role.data;
     await save();
+    await recordAdminAudit(req.user!.id, "USER_ROLE_CHANGED", "user", user.id, {
+      role: role.data,
+    });
     res.json({ user: publicUser(user.id) });
   },
 );
@@ -1810,8 +2198,10 @@ app.patch("/api/admin/reports/:id", auth, requireRole("ADMIN"), async (req: Auth
     return res.status(400).json({ message: "البلاغ غير موجود" });
   report.status = status.data;
   report.updatedAt = new Date().toISOString();
-  db().auditLogs.push({ id: randomUUID(), userId: req.user!.id, action: `report:${report.id}:${report.status}`, createdAt: report.updatedAt });
   await save();
+  await recordAdminAudit(req.user!.id, "REPORT_STATUS_CHANGED", "report", report.id, {
+    status: report.status,
+  });
   res.json({ report });
 });
 app.get("/api/admin/overview", auth, requireRole("ADMIN"), async (_req, res) => {
