@@ -231,6 +231,12 @@ function Complete-Publish([int]$ExitCode, [string]$FailureMessage = '') {
     $statusLabel.Text = '● تم النشر والتحقق بنجاح'
     $statusLabel.ForeColor = [System.Drawing.Color]::FromArgb(117, 220, 170)
     $detailLabel.Text = "آخر نجاح: $((Get-Date).ToString('yyyy-MM-dd HH:mm:ss'))"
+  } elseif ($ExitCode -eq 75) {
+    $script:pending = $true
+    $script:lastChangeAt = [datetime]::UtcNow
+    $statusLabel.Text = '● تأجّل النشر لحماية التحديث'
+    $statusLabel.ForeColor = [System.Drawing.Color]::FromArgb(255, 202, 87)
+    $detailLabel.Text = 'تغيّرت الملفات أثناء الاختبار؛ ستُعاد المحاولة تلقائيًا بعد هدوئها.'
   } else {
     $script:pending = $false
     $statusLabel.Text = '● لم يكتمل النشر'

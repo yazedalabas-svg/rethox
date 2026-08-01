@@ -32,6 +32,32 @@ function Get-RemoteSha([string]$Branch) {
   return (($remoteLine | Select-Object -First 1) -split '\s+')[0].Trim()
 }
 
+function Get-WorktreeTreeHash {
+  $temporaryIndex = Join-Path ([System.IO.Path]::GetTempPath()) `
+    ("rethox-publish-{0}.index" -f [guid]::NewGuid().ToString('N'))
+  $hadCustomIndex = Test-Path Env:\GIT_INDEX_FILE
+  $previousIndex = $env:GIT_INDEX_FILE
+
+  try {
+    $env:GIT_INDEX_FILE = $temporaryIndex
+    Run-Git @('read-tree', 'HEAD')
+    Run-Git @('add', '-A')
+    $treeHash = (& git write-tree).Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $treeHash) {
+      throw 'Could not snapshot the files selected for publishing.'
+    }
+    return $treeHash
+  } finally {
+    [System.IO.File]::Delete($temporaryIndex)
+    [System.IO.File]::Delete("$temporaryIndex.lock")
+    if ($hadCustomIndex) {
+      $env:GIT_INDEX_FILE = $previousIndex
+    } else {
+      Remove-Item Env:\GIT_INDEX_FILE -ErrorAction SilentlyContinue
+    }
+  }
+}
+
 function Get-LiveBuildId([string]$ExpectedBuildId) {
   try {
     $nonce = [guid]::NewGuid().ToString('N')
@@ -101,6 +127,8 @@ try {
     } | ConvertTo-Json -Compress
     [System.IO.File]::WriteAllText($buildMarker, $marker, [System.Text.UTF8Encoding]::new($false))
 
+    $validatedTree = Get-WorktreeTreeHash
+
     Write-Host 'Checking the production build...' -ForegroundColor Cyan
     & npm run build
     if ($LASTEXITCODE -ne 0) { throw 'Build failed. Nothing was uploaded.' }
@@ -109,7 +137,18 @@ try {
     & npm test
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed. Nothing was uploaded.' }
 
+    if ((Get-WorktreeTreeHash) -ne $validatedTree) {
+      Write-Host 'Files changed while validation was running. Waiting for a stable snapshot before publishing.' -ForegroundColor Yellow
+      exit 75
+    }
+
     Run-Git @('add', '-A')
+    $stagedTree = (& git write-tree).Trim()
+    if ($LASTEXITCODE -ne 0 -or $stagedTree -ne $validatedTree) {
+      Run-Git @('reset', 'HEAD', '--')
+      Write-Host 'Files changed while staging. Waiting for a stable snapshot before publishing.' -ForegroundColor Yellow
+      exit 75
+    }
     $staged = @(& git diff --cached --name-only)
     if ($staged.Count -eq 0) { throw 'There are no publishable changes after Git ignore rules.' }
 
