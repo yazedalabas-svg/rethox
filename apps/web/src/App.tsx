@@ -657,8 +657,8 @@ function Shell() {
       <header>
         <div className="wrap nav">
           <Link to="/" className="brand">
-            <img className="brand-mark brand-mark-light" src="/rethox-mark.png" alt="" />
-            <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.png" alt="" />
+            <img className="brand-mark brand-mark-light" src="/rethox-mark.webp" alt="rethox logo" fetchPriority="high" />
+            <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.webp" alt="rethox logo" fetchPriority="high" />
             <b>
               rethox<small>READ · LISTEN · LIVE</small>
             </b>
@@ -712,8 +712,8 @@ function Shell() {
         <div className="wrap footer">
           <div>
             <Link to="/" className="brand footer-brand">
-              <img className="brand-mark brand-mark-light" src="/rethox-mark.png" alt="" />
-              <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.png" alt="" />
+              <img className="brand-mark brand-mark-light" src="/rethox-mark.webp" alt="rethox logo" loading="lazy" />
+              <img className="brand-mark brand-mark-dark" src="/rethox-mark-dark.webp" alt="rethox logo" loading="lazy" />
               <b>rethox</b>
             </Link>
             <p>
