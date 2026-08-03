@@ -250,7 +250,7 @@ type ReadingSettings = {
 };
 type ReadingHistoryItem = LastRead & { visitedAt: string; seconds: number };
 const defaultReadingSettings: ReadingSettings = {
-  fontSize: 26, lineHeight: 2.25, playbackSpeed: 1, volume: 1,
+  fontSize: 32, lineHeight: 2.25, playbackSpeed: 1, volume: 1,
   autoNarration: false, notifications: true, privateHistory: true,
 };
 const readSettings = (): ReadingSettings => {
@@ -1929,7 +1929,7 @@ function SettingsPage() {
       <div className="settings-layout">
         <article className="settings-panel">
           <header><div><span className="kicker">القراءة</span><h2>النص والصفحة</h2></div></header>
-          <label><span>حجم الخط <b>{settings.fontSize}</b></span><input type="range" min="20" max="38" step="2" value={settings.fontSize} onChange={(e) => updateSetting("fontSize", Number(e.target.value))} /></label>
+          <label><span>حجم الخط <b>{settings.fontSize}</b></span><input type="range" min="22" max="46" step="2" value={settings.fontSize} onChange={(e) => updateSetting("fontSize", Number(e.target.value))} /></label>
           <label><span>تباعد السطور <b>{settings.lineHeight.toFixed(1)}</b></span><input type="range" min="1.7" max="2.8" step="0.1" value={settings.lineHeight} onChange={(e) => updateSetting("lineHeight", Number(e.target.value))} /></label>
           <label className="setting-toggle"><span><b>إشعارات التقدم</b><small>تنبيه هادئ عند إنهاء الفصل</small></span><input type="checkbox" checked={settings.notifications} onChange={(e) => updateSetting("notifications", e.target.checked)} /></label>
         </article>
@@ -3543,10 +3543,10 @@ function ReaderPage() {
           <button onClick={() => setFocusMode((value) => !value)} title="وضع التركيز">
             {focusMode ? <Minimize2 /> : <Maximize2 />}
           </button>
-          <button onClick={() => setFontSize((v) => Math.min(38, v + 2))}>
+          <button onClick={() => setFontSize((v) => Math.min(46, v + 2))}>
             + أ
           </button>
-          <button onClick={() => setFontSize((v) => Math.max(20, v - 2))}>
+          <button onClick={() => setFontSize((v) => Math.max(22, v - 2))}>
             - أ
           </button>
           <button
