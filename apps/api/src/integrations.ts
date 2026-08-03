@@ -15,6 +15,18 @@ const supabaseServiceKey = (
   process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY
 )?.trim();
 
+const moyasarSecretKey = process.env.MOYASR_SECRET_KEY?.trim();
+const moyasarBaseUrl =
+  process.env.MOYASR_BASE_URL?.trim() || "https://api.moyasar.com/v1";
+
+export const moyasar = moyasarSecretKey
+  ? {
+      secretKey: moyasarSecretKey,
+      baseURL: moyasarBaseUrl,
+    }
+  : null;
+
+
 export const supabase: SupabaseClient | null =
   supabaseUrl && supabaseAnonKey
     ? createClient(supabaseUrl, supabaseAnonKey, {
@@ -49,6 +61,9 @@ export async function integrationStatus() {
     openrouter: {
       configured: Boolean(process.env.OPENROUTER_API_KEY?.trim()),
       model: process.env.OPENROUTER_MODEL || "openai/gpt-4o-mini",
+    },
+    moyasar: {
+      configured: Boolean(moyasar),
     },
   };
 }

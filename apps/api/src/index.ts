@@ -39,6 +39,7 @@ import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
 import { createRelationalBackup, startBackupScheduler } from "./backup-service.js";
 import { summaryProvider } from "./summary-provider.js";
 import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
+import { paymentsRouter } from "./payments.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4181);
@@ -1206,6 +1207,8 @@ app.get("/api/recommendations", (_req, res) =>
   }),
 );
 
+app.use("/api/payments", paymentsRouter);
+
 app.post("/api/orders", orderLimit, auth, async (req: AuthRequest, res) => {
   const ids = z.array(z.string()).min(1).safeParse(req.body.bookIds);
   if (!ids.success)
@@ -2240,6 +2243,8 @@ app.post("/api/admin/backups", auth, requireRole("ADMIN"), async (_req, res) => 
     res.status(503).json({ message: "تعذر إنشاء النسخة الاحتياطية" });
   }
 });
+
+app.use("/api/payments", paymentsRouter);
 
 const webDist = resolve(rootDir, "apps/web/dist");
 if (existsSync(webDist))
