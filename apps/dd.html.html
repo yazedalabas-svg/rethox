@@ -1,0 +1,547 @@
+# -*- coding: utf-8 -*-
+"""
+قارئ PDF عربي بصوت Hamed في ملف Python واحد.
+
+التشغيل:
+1) احفظ الملف باسم pdf_reader.py
+2) شغله: py pdf_reader.py
+3) سيفتح الموقع تلقائياً على http://127.0.0.1:8000
+
+في أول تشغيل يثبت تلقائياً:
+Flask, PyMuPDF, edge-tts
+"""
+from __future__ import annotations
+
+import hashlib
+import base64
+import zlib
+import importlib
+import json
+import re
+import subprocess
+import sys
+import tempfile
+import threading
+import time
+import uuid
+import unicodedata
+import webbrowser
+from pathlib import Path
+from typing import Any
+
+
+def ensure_package(package: str, module: str) -> None:
+    try:
+        importlib.import_module(module)
+    except ImportError:
+        print(f"جاري تثبيت {package} ...")
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "--upgrade", package]
+        )
+        importlib.invalidate_caches()
+
+
+ensure_package("Flask>=3.0", "flask")
+ensure_package("PyMuPDF>=1.24", "fitz")
+ensure_package("edge-tts>=7.0", "edge_tts")
+
+import edge_tts
+import fitz
+
+from flask import (
+    Flask,
+    Response,
+    abort,
+    jsonify,
+    request,
+    send_file,
+)
+
+
+HOST = "127.0.0.1"
+PORT = 8000
+
+VOICE = "ar-SA-HamedNeural"
+TICKS_PER_SECOND = 10_000_000
+
+WORK_DIR = Path(tempfile.gettempdir()) / "hamed_pdf_reader"
+PDF_DIR = WORK_DIR / "pdf"
+AUDIO_DIR = WORK_DIR / "audio"
+
+PDF_DIR.mkdir(parents=True, exist_ok=True)
+AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+
+app = Flask(__name__)
+
+# يسمح بملفات PDF حتى 500 ميجابايت.
+app.config["MAX_CONTENT_LENGTH"] = 500 * 1024 * 1024
+
+sessions: dict[str, dict[str, Any]] = {}
+
+
+def clean_text(value: str) -> str:
+    text = unicodedata.normalize("NFKC", str(value or ""))
+
+    text = re.sub(
+        r"[\u200B-\u200F\u202A-\u202E\u2066-\u2069]",
+        "",
+        text,
+    )
+
+    text = text.replace("\u0640", "")
+    text = text.replace("�", " ")
+
+    text = re.sub(r"[■□▪◼◾▮▯]+", " ", text)
+    text = re.sub(r"\s+([،؛؟.!:])", r"\1", text)
+    text = re.sub(r"([،؛؟.!:])(?=\S)", r"\1 ", text)
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
+def get_session(session_id: str) -> dict[str, Any]:
+    session = sessions.get(session_id)
+
+    if not session:
+        abort(404, description="جلسة الملف غير موجودة.")
+
+    pdf_path = Path(session["path"])
+
+    if not pdf_path.exists():
+        sessions.pop(session_id, None)
+        abort(404, description="ملف PDF لم يعد موجوداً.")
+
+    return session
+
+
+def make_voice(
+    text: str,
+    cache_key: str,
+) -> tuple[Path, list[dict[str, Any]]]:
+
+    audio_path = AUDIO_DIR / f"{cache_key}.mp3"
+    marks_path = AUDIO_DIR / f"{cache_key}.json"
+
+    if audio_path.exists() and marks_path.exists():
+        marks = json.loads(
+            marks_path.read_text(encoding="utf-8")
+        )
+
+        return audio_path, marks
+
+    communicator = edge_tts.Communicate(
+        text=text,
+        voice=VOICE,
+        rate="+0%",
+        volume="+0%",
+        pitch="+0Hz",
+        boundary="WordBoundary",
+    )
+
+    temp_audio = (
+        AUDIO_DIR /
+        f"{cache_key}.{uuid.uuid4().hex}.tmp"
+    )
+
+    marks: list[dict[str, Any]] = []
+
+    try:
+        with temp_audio.open("wb") as audio_file:
+            for chunk in communicator.stream_sync():
+                chunk_type = chunk.get("type")
+
+                if chunk_type == "audio":
+                    audio_file.write(chunk["data"])
+
+                elif chunk_type == "WordBoundary":
+                    marks.append(
+                        {
+                            "text": str(
+                                chunk.get("text", "")
+                            ),
+                            "start": (
+                                float(
+                                    chunk.get("offset", 0)
+                                )
+                                / TICKS_PER_SECOND
+                            ),
+                            "duration": (
+                                float(
+                                    chunk.get("duration", 0)
+                                )
+                                / TICKS_PER_SECOND
+                            ),
+                        }
+                    )
+
+        if (
+            not temp_audio.exists()
+            or temp_audio.stat().st_size == 0
+        ):
+            raise RuntimeError(
+                "خدمة الصوت لم تُرجع ملفاً صوتياً."
+            )
+
+        temp_audio.replace(audio_path)
+
+        marks_path.write_text(
+            json.dumps(
+                marks,
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+
+        return audio_path, marks
+
+    finally:
+        temp_audio.unlink(missing_ok=True)
+
+
+HTML_B64 = """
+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
+3KZvxk/a9Ffa/wflFiBH
+"""
+
+HTML = zlib.decompress(
+    base64.b64decode(HTML_B64)
+).decode("utf-8")
+
+
+@app.get("/")
+def home() -> Response:
+    return Response(
+        HTML,
+        mimetype="text/html",
+    )
+
+
+@app.post("/api/upload")
+def upload_pdf() -> Response:
+    uploaded = request.files.get("file")
+
+    if not uploaded or not uploaded.filename:
+        return jsonify(
+            {"error": "اختر ملف PDF أولاً."}
+        ), 400
+
+    filename = uploaded.filename
+
+    if not filename.lower().endswith(".pdf"):
+        return jsonify(
+            {"error": "الملف يجب أن يكون PDF."}
+        ), 400
+
+    session_id = uuid.uuid4().hex
+    pdf_path = PDF_DIR / f"{session_id}.pdf"
+
+    uploaded.save(pdf_path)
+
+    try:
+        with fitz.open(pdf_path) as document:
+            page_count = document.page_count
+
+            if page_count < 1:
+                raise ValueError(
+                    "الملف لا يحتوي صفحات."
+                )
+
+    except Exception as error:
+        pdf_path.unlink(missing_ok=True)
+
+        return jsonify(
+            {
+                "error":
+                f"تعذر فتح PDF: {error}"
+            }
+        ), 400
+
+    sessions[session_id] = {
+        "path": str(pdf_path),
+        "name": filename,
+        "pages": page_count,
+        "created": time.time(),
+    }
+
+    return jsonify(
+        {
+            "session_id": session_id,
+            "filename": filename,
+            "pages": page_count,
+            "voice": VOICE,
+        }
+    )
+
+
+@app.get(
+    "/api/page/<session_id>/<int:page_number>"
+)
+def page_image(
+    session_id: str,
+    page_number: int,
+) -> Response:
+
+    session = get_session(session_id)
+
+    try:
+        scale = float(
+            request.args.get("scale", "2.2")
+        )
+    except ValueError:
+        scale = 2.2
+
+    scale = max(
+        1.0,
+        min(scale, 3.2),
+    )
+
+    with fitz.open(
+        session["path"]
+    ) as document:
+
+        if (
+            page_number < 1
+            or page_number > document.page_count
+        ):
+            abort(
+                404,
+                description="رقم الصفحة غير صحيح.",
+            )
+
+        page = document.load_page(
+            page_number - 1
+        )
+
+        pixmap = page.get_pixmap(
+            matrix=fitz.Matrix(
+                scale,
+                scale,
+            ),
+            colorspace=fitz.csRGB,
+            alpha=False,
+        )
+
+        png = pixmap.tobytes("png")
+
+    response = Response(
+        png,
+        mimetype="image/png",
+    )
+
+    response.headers["Cache-Control"] = (
+        "private, max-age=3600"
+    )
+
+    return response
+
+
+@app.get("/api/download/<session_id>")
+def download_pdf(
+    session_id: str,
+) -> Response:
+
+    session = get_session(session_id)
+
+    return send_file(
+        session["path"],
+        as_attachment=True,
+        download_name=session["name"],
+        mimetype="application/pdf",
+    )
+
+
+@app.post("/api/tts")
+def tts() -> Response:
+    payload = (
+        request.get_json(silent=True)
+        or {}
+    )
+
+    text = clean_text(
+        payload.get("text", "")
+    )
+
+    if not text:
+        return jsonify(
+            {
+                "error":
+                "لا يوجد نص لتوليد الصوت."
+            }
+        ), 400
+
+    if len(text) > 25_000:
+        return jsonify(
+            {
+                "error":
+                "نص الصفحة طويل جداً."
+            }
+        ), 400
+
+    cache_key = hashlib.sha256(
+        f"{VOICE}|{text}".encode("utf-8")
+    ).hexdigest()
+
+    try:
+        _audio_path, marks = make_voice(
+            text,
+            cache_key,
+        )
+
+    except Exception as error:
+        return jsonify(
+            {
+                "error":
+                f"تعذر توليد صوت Hamed: {error}"
+            }
+        ), 500
+
+    return jsonify(
+        {
+            "voice": VOICE,
+            "audio_url":
+                f"/api/audio/{cache_key}",
+            "marks": marks,
+        }
+    )
+
+
+@app.get("/api/audio/<cache_key>")
+def audio(
+    cache_key: str,
+) -> Response:
+
+    if not re.fullmatch(
+        r"[a-f0-9]{64}",
+        cache_key,
+    ):
+        abort(404)
+
+    audio_path = (
+        AUDIO_DIR /
+        f"{cache_key}.mp3"
+    )
+
+    if not audio_path.exists():
+        abort(404)
+
+    response = send_file(
+        audio_path,
+        mimetype="audio/mpeg",
+        conditional=True,
+    )
+
+    response.headers["Cache-Control"] = (
+        "private, max-age=86400"
+    )
+
+    return response
+
+
+@app.errorhandler(413)
+def too_large(
+    _error: Exception,
+) -> Response:
+
+    return jsonify(
+        {
+            "error":
+            "حجم الملف أكبر من 500 ميجابايت."
+        }
+    ), 413
+
+
+def open_browser() -> None:
+    time.sleep(1.2)
+
+    webbrowser.open(
+        f"http://{HOST}:{PORT}"
+    )
+
+
+if __name__ == "__main__":
+    print("")
+    print("قارئ PDF العربي يعمل الآن.")
+    print(
+        f"افتح: http://{HOST}:{PORT}"
+    )
+    print("")
+
+    threading.Thread(
+        target=open_browser,
+        daemon=True,
+    ).start()
+
+    app.run(
+        host=HOST,
+        port=PORT,
+        debug=False,
+        threaded=True,
+        use_reloader=False,
+    )

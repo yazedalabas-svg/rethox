@@ -632,6 +632,7 @@ function App() {
               <Route path="login" element={<AuthPage />} />
               <Route path="register" element={<AuthPage register />} />
               <Route path="cart" element={<CartPage />} />
+              <Route path="payment-callback" element={<PaymentCallback />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route element={<ProtectedRoute />}>
                 <Route path="account" element={<AccountPage />} />
@@ -1819,6 +1820,7 @@ function CartPage() {
     setNotice("تمت إزالة المنتجات التي سبق شراؤها من السلة.");
   }, [ids.join("|"), ownedBookIds.join("|")]);
   const total = books.reduce((s, b) => s + b.priceMinor, 0);
+  const [redirecting, setRedirecting] = useState(false);
   const checkout = async () => {
     if (!user) return nav("/login");
     const purchasableIds = ids.filter((id) => !ownedBookIds.includes(id));
@@ -1828,14 +1830,22 @@ function CartPage() {
     }
     try {
       setError("");
-      const result = await api<{ order: { id: string } }>("/orders", {
+      setRedirecting(true);
+      const result = await api<{ order: { id: string }; paymentUrl?: string }>("/orders", {
         method: "POST",
         body: JSON.stringify({ bookIds: purchasableIds }),
       });
+      // The cart stays put until the payment settles, so an abandoned or
+      // failed checkout does not wipe the reader's selection.
+      if (result.paymentUrl) {
+        window.location.href = result.paymentUrl;
+        return;
+      }
       clear();
       nav(`/account?order=${encodeURIComponent(result.order.id)}`);
     } catch (e) {
       setError((e as Error).message);
+      setRedirecting(false);
     }
   };
   return (
@@ -1843,7 +1853,7 @@ function CartPage() {
       <div className="page-head">
         <span>الطلب</span>
         <h1>سلة القراءة</h1>
-        <p>اخترت {ids.length} من الكتب. لا توجد عملية دفع حقيقية.</p>
+        <p>اخترت {ids.length} من الكتب.</p>
       </div>
       {notice && <p className="cart-notice" role="status">{notice}</p>}
       {books.length ? (
@@ -1880,10 +1890,14 @@ function CartPage() {
               <span>الإجمالي</span>
               <b>{total / 100} ر.س</b>
             </div>
-            <p>عملية محاكاة فقط. تحصل على صلاحية القراءة فورًا.</p>
+            <p>الدفع بمدى أو فيزا أو ماستركارد عبر بوابة ميسر الآمنة.</p>
             {error && <p className="error">{error}</p>}
-            <button className="btn primary full" onClick={checkout}>
-              {user ? "متابعة الطلب" : "سجّل الدخول وأكمل"}
+            <button className="btn primary full" onClick={checkout} disabled={redirecting}>
+              {redirecting
+                ? "جارٍ تحويلك لصفحة الدفع…"
+                : user
+                  ? "إتمام الشراء"
+                  : "سجّل الدخول وأكمل"}
             </button>
           </aside>
         </div>
@@ -1897,6 +1911,99 @@ function CartPage() {
           </Link>
         </div>
       )}
+    </section>
+  );
+}
+
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  PENDING: "بانتظار الدفع",
+  COMPLETED: "مكتمل",
+  CANCELLED: "ملغى",
+  REFUNDED: "مسترجع",
+};
+
+function PaymentCallback() {
+  const [params] = useSearchParams();
+  const { clear } = useCart();
+  const orderId = params.get("order") || "";
+  const [state, setState] = useState<"checking" | "paid" | "failed">("checking");
+  const [message, setMessage] = useState("");
+  useEffect(() => {
+    if (!orderId) {
+      setState("failed");
+      setMessage("رابط العودة غير مكتمل.");
+      return;
+    }
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    let attempts = 0;
+    // Moyasar can settle through the webhook a moment after the buyer returns,
+    // so give the confirmation a few tries before declaring failure.
+    const check = async () => {
+      attempts += 1;
+      try {
+        const result = await api<{ status: string }>("/payments/verify", {
+          method: "POST",
+          body: JSON.stringify({ orderId }),
+        });
+        if (cancelled) return;
+        if (result.status === "COMPLETED") {
+          clear();
+          setState("paid");
+          return;
+        }
+        if (attempts >= 6) {
+          setState("failed");
+          setMessage("لم تكتمل عملية الدفع.");
+          return;
+        }
+      } catch (e) {
+        if (cancelled) return;
+        if (attempts >= 6) {
+          setState("failed");
+          setMessage((e as Error).message);
+          return;
+        }
+      }
+      timer = setTimeout(check, 2500);
+    };
+    check();
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [orderId]);
+  return (
+    <section className="inner-page wrap">
+      <div className="empty">
+        {state === "checking" && (
+          <>
+            <Loading />
+            <h2>نتحقق من عملية الدفع…</h2>
+            <p>لا تغلق الصفحة، تأخذ ثوانٍ قليلة.</p>
+          </>
+        )}
+        {state === "paid" && (
+          <>
+            <ShieldCheck size={42} />
+            <h2>تم الدفع بنجاح</h2>
+            <p>أضفنا الكتب إلى مكتبتك، استمتع بالقراءة.</p>
+            <Link className="btn primary" to="/account">
+              اذهب إلى مكتبتي
+            </Link>
+          </>
+        )}
+        {state === "failed" && (
+          <>
+            <X size={42} />
+            <h2>لم يكتمل الدفع</h2>
+            <p>{message || "لم يُخصم أي مبلغ. تقدر تحاول مرة ثانية."}</p>
+            <Link className="btn primary" to="/cart">
+              العودة إلى السلة
+            </Link>
+          </>
+        )}
+      </div>
     </section>
   );
 }
@@ -2271,7 +2378,7 @@ function AccountPage() {
             <div key={o.id}>
               <span>طلب #{o.id.slice(0, 6)}</span>
               <b>{o.totalMinor / 100} ر.س</b>
-              <small>مكتمل</small>
+              <small>{ORDER_STATUS_LABELS[o.status] || "مكتمل"}</small>
             </div>
           ))}
           {!orders.length && <p>لا توجد طلبات بعد.</p>}

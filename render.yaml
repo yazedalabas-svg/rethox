@@ -36,6 +36,13 @@ services:
         sync: false
       - key: ADMIN_PASSWORD
         sync: false
+      # Moyasar. Set the secret key and the webhook secret in the Render
+      # dashboard; they must never be committed. Leaving PAYMENTS_MODE unset
+      # keeps real charges on — checkout fails closed if the key is missing.
+      - key: MOYASR_SECRET_KEY
+        sync: false
+      - key: MOYASR_WEBHOOK_SECRET
+        sync: false
     disk:
       name: rethox-data
       mountPath: /var/data

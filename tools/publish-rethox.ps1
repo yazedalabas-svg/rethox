@@ -112,7 +112,14 @@ try {
 
   if ($changed.Count -gt 0) {
     $blocked = $changed | Where-Object {
-      $_ -match '(?i)(^|\s)(\.env($|\.)|.*\.(pem|key|p12)$|.*service[-_]?account.*\.json$)'
+      # Porcelain lines look like "XY path", or "R  old -> new" for renames.
+      $path = (($_ -replace '^.{2}\s+', '') -replace '^.* -> ', '').Trim('"')
+      $name = Split-Path $path -Leaf
+      # Templates are committed on purpose and hold placeholders, not secrets.
+      if ($name -match '(?i)\.(example|sample|template)$') { return $false }
+      ($name -match '(?i)^\.env($|\.)') -or
+      ($path -match '(?i)\.(pem|key|p12)$') -or
+      ($path -match '(?i)service[-_]?account.*\.json$')
     }
     if ($blocked) {
       Write-Host 'Blocked sensitive-looking files:' -ForegroundColor Red

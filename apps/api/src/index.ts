@@ -39,7 +39,12 @@ import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
 import { createRelationalBackup, startBackupScheduler } from "./backup-service.js";
 import { summaryProvider } from "./summary-provider.js";
 import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
-import { paymentsRouter } from "./payments.js";
+import {
+  createInvoice,
+  demoCheckout,
+  paymentsConfigured,
+  paymentsRouter,
+} from "./payments.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4181);
@@ -1245,51 +1250,124 @@ app.post("/api/orders", orderLimit, auth, async (req: AuthRequest, res) => {
     });
   }
   const requestedOrderId = randomUUID();
-  const idempotencyKey = `demo:${req.user!.id}:${books.map((book) => book.id).sort().join(",")}`;
-  let persistedOrder: any = null;
+  const publicNumber = `RX-${requestedOrderId.replace(/-/g, "").slice(0, 8).toUpperCase()}`;
+  const bookIds = books.map((book) => book.id);
+  const cartKey = `${req.user!.id}:${[...bookIds].sort().join(",")}`;
+  const totalMinor = books.reduce((sum, book) => sum + book.priceMinor, 0);
+  const alreadyOwned = () =>
+    res.status(409).json({
+      code: "BOOK_ALREADY_OWNED",
+      bookIds,
+      message: "تم شراء هذا المنتج مسبقًا",
+    });
+
+  if (demoCheckout) {
+    let persistedOrder: any = null;
+    if (supabaseAdmin) {
+      const { data, error } = await supabaseAdmin.rpc("complete_demo_order", {
+        p_order_id: requestedOrderId,
+        p_public_number: publicNumber,
+        p_user_id: req.user!.id,
+        p_book_ids: bookIds,
+        p_idempotency_key: `demo:${cartKey}`,
+      });
+      if (error) {
+        if (error.message.includes("book_already_owned")) return alreadyOwned();
+        logger.error({ error: error.message }, "atomic checkout failed");
+        return res.status(503).json({ message: "تعذر إكمال الطلب بأمان الآن، حاول مجددًا" });
+      }
+      persistedOrder = data;
+    }
+    const order = {
+      id: persistedOrder?.id || requestedOrderId,
+      userId: req.user!.id,
+      bookIds,
+      totalMinor: persistedOrder?.total_minor ?? totalMinor,
+      currency: persistedOrder?.currency || "SAR",
+      status: "COMPLETED" as const,
+      createdAt: persistedOrder?.created_at || new Date().toISOString(),
+    };
+    if (!db().orders.some((item) => item.id === order.id)) db().orders.push(order);
+    books.forEach((b) => {
+      if (
+        !db().entitlements.some(
+          (e) => e.userId === req.user!.id && e.bookId === b.id,
+        )
+      )
+        db().entitlements.push({ userId: req.user!.id, bookId: b.id });
+    });
+    await save({ skipRelational: Boolean(supabaseAdmin) });
+    return res
+      .status(201)
+      .json({ order, message: "تم الشراء التجريبي، لم يُخصم أي مبلغ" });
+  }
+
+  if (!paymentsConfigured)
+    return res.status(503).json({ message: "الدفع غير متاح حاليًا، حاول لاحقًا" });
+
+  // Real checkout reserves the order first and hands the buyer to Moyasar.
+  // Entitlements stay unissued until a verified payment settles the order.
+  let pendingOrder: any = null;
   if (supabaseAdmin) {
-    const { data, error } = await supabaseAdmin.rpc("complete_demo_order", {
+    const { data, error } = await supabaseAdmin.rpc("create_pending_order", {
       p_order_id: requestedOrderId,
-      p_public_number: `RX-${requestedOrderId.replace(/-/g, "").slice(0, 8).toUpperCase()}`,
+      p_public_number: publicNumber,
       p_user_id: req.user!.id,
-      p_book_ids: books.map((book) => book.id),
-      p_idempotency_key: idempotencyKey,
+      p_book_ids: bookIds,
+      p_idempotency_key: `pay:${cartKey}`,
     });
     if (error) {
-      if (error.message.includes("book_already_owned")) {
-        return res.status(409).json({
-          code: "BOOK_ALREADY_OWNED",
-          bookIds: books.map((book) => book.id),
-          message: "تم شراء هذا المنتج مسبقًا",
-        });
-      }
-      logger.error({ error: error.message }, "atomic checkout failed");
-      return res.status(503).json({ message: "تعذر إكمال الطلب بأمان الآن، حاول مجددًا" });
+      if (error.message.includes("book_already_owned")) return alreadyOwned();
+      if (error.message.includes("amount_below_minimum"))
+        return res.status(400).json({ message: "أقل مبلغ للدفع هو ريال واحد" });
+      logger.error({ error: error.message }, "pending order creation failed");
+      return res.status(503).json({ message: "تعذر بدء الطلب الآن، حاول مجددًا" });
     }
-    persistedOrder = data;
+    pendingOrder = data;
   }
   const order = {
-    id: persistedOrder?.id || requestedOrderId,
+    id: pendingOrder?.id || requestedOrderId,
     userId: req.user!.id,
-    bookIds: books.map((b) => b.id),
-    totalMinor: persistedOrder?.total_minor ?? books.reduce((s, b) => s + b.priceMinor, 0),
-    currency: persistedOrder?.currency || "SAR",
-    status: "COMPLETED" as const,
-    createdAt: persistedOrder?.created_at || new Date().toISOString(),
+    bookIds,
+    totalMinor: pendingOrder?.total_minor ?? totalMinor,
+    currency: pendingOrder?.currency || books[0]?.currency || "SAR",
+    status: "PENDING" as const,
+    createdAt: pendingOrder?.created_at || new Date().toISOString(),
   };
+  if (order.totalMinor < 100)
+    return res.status(400).json({ message: "أقل مبلغ للدفع هو ريال واحد" });
   if (!db().orders.some((item) => item.id === order.id)) db().orders.push(order);
-  books.forEach((b) => {
-    if (
-      !db().entitlements.some(
-        (e) => e.userId === req.user!.id && e.bookId === b.id,
-      )
-    )
-      db().entitlements.push({ userId: req.user!.id, bookId: b.id });
-  });
   await save({ skipRelational: Boolean(supabaseAdmin) });
-  res
-    .status(201)
-    .json({ order, message: "تم الشراء التجريبي، لم يُخصم أي مبلغ" });
+
+  try {
+    const invoice = await createInvoice({
+      orderId: order.id,
+      amountMinor: order.totalMinor,
+      currency: order.currency,
+      description: books.map((book) => book.title).join(" + ").slice(0, 100),
+      publicOrigin: publicWebUrl() || webOrigin,
+    });
+    if (supabaseAdmin) {
+      const { error } = await supabaseAdmin.rpc("attach_order_payment", {
+        p_order_id: order.id,
+        p_external_id: invoice.invoiceId,
+      });
+      if (error)
+        logger.error({ error: error.message }, "could not record the payment attempt");
+    }
+    // Remember which invoice the buyer was sent to so the return page can
+    // confirm the payment without waiting for the webhook.
+    const stored = db().orders.find((item) => item.id === order.id);
+    if (stored) stored.externalId = invoice.invoiceId;
+    await save({ skipRelational: Boolean(supabaseAdmin) });
+    res.status(201).json({ order, paymentUrl: invoice.url });
+  } catch (error) {
+    logger.error(
+      { orderId: order.id, error: (error as Error).message },
+      "invoice creation failed",
+    );
+    res.status(502).json({ message: "تعذر فتح صفحة الدفع الآن، حاول مجددًا" });
+  }
 });
 app.get("/api/orders", auth, (req: AuthRequest, res) =>
   res.json({ orders: db().orders.filter((o) => o.userId === req.user!.id) }),
@@ -2243,8 +2321,6 @@ app.post("/api/admin/backups", auth, requireRole("ADMIN"), async (_req, res) => 
     res.status(503).json({ message: "تعذر إنشاء النسخة الاحتياطية" });
   }
 });
-
-app.use("/api/payments", paymentsRouter);
 
 const webDist = resolve(rootDir, "apps/web/dist");
 if (existsSync(webDist))
