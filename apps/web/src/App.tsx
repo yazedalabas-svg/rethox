@@ -98,6 +98,30 @@ const saveReview = (input: { bookId: string; rating: number; body: string; spoil
 const deleteReview = (bookId: string) => api(`/reviews/${bookId}`, { method: "DELETE" });
 const fetchChapterComments = (chapterId: string) =>
   api<{ comments: ChapterComment[] }>(`/chapters/${chapterId}/comments`).then((r) => r.comments);
+type ChapterContentResponse = {
+  book: Book;
+  chapter: Chapter;
+  navigation?: {
+    previous: { id: string; title: string; sentenceCount?: number; locked?: boolean } | null;
+    next: { id: string; title: string; sentenceCount?: number; locked?: boolean } | null;
+  };
+  chapterList?: { id: string; title: string; position: number; locked?: boolean }[];
+};
+
+// A volume can contain thousands of sentence nodes.  Keep a request made from
+// its table of contents so opening the reader can reuse it instead of fetching
+// the same payload a second time.
+const chapterContentRequests = new Map<string, Promise<ChapterContentResponse>>();
+const getChapterContent = (chapterId: string) => {
+  const cached = chapterContentRequests.get(chapterId);
+  if (cached) return cached;
+  const request = api<ChapterContentResponse>(`/chapters/${chapterId}/content`).catch((error) => {
+    chapterContentRequests.delete(chapterId);
+    throw error;
+  });
+  chapterContentRequests.set(chapterId, request);
+  return request;
+};
 const saveChapterComment = ({
   chapterId,
   ...input
@@ -1252,6 +1276,7 @@ function BookPage() {
               <Link
                 className="btn secondary"
                 to={sample.sections?.length ? `/book/${book.slug}/volume/${sample.id}` : `/reader/${sample.id}`}
+                state={sample.sections?.length ? { book, chapter: sample } : undefined}
               >
                 <Play size={16} />
                 استمع للعينة
@@ -1304,6 +1329,7 @@ function BookPage() {
                       className={`chapter-row ${chapterState(chapter)}`}
                       key={chapter.id}
                       to={chapter.sections?.length ? `/book/${book.slug}/volume/${chapter.id}` : `/reader/${chapter.id}`}
+                      state={chapter.sections?.length ? { book, chapter } : undefined}
                     >
                       {content}
                     </Link>
@@ -1412,25 +1438,53 @@ function BookPage() {
 function VolumeContentsPage() {
   const { slug, volumeId } = useParams();
   const nav = useNavigate();
-  const [book, setBook] = useState<Book | null>(null);
-  const [chapter, setChapter] = useState<Chapter | null>(null);
+  const location = useLocation();
+  const routeState = location.state as { book?: Book; chapter?: ChapterMeta } | null;
+  const routeBook = routeState?.book;
+  const routeChapter = routeState?.chapter;
+  const initialBook = routeBook && routeBook.slug === slug ? routeBook : null;
+  const initialChapter = routeChapter && routeChapter.id === volumeId
+    ? routeChapter
+    : initialBook?.chapters?.find((item) => item.id === volumeId) || null;
+  const [book, setBook] = useState<Book | null>(initialBook);
+  const [chapter, setChapter] = useState<ChapterMeta | null>(initialChapter);
   useEffect(() => {
-    if (!volumeId) return;
-    api<{ book: Book; chapter: Chapter }>(`/chapters/${volumeId}/content`)
+    if (book && chapter?.id === volumeId) return;
+    if (!slug || !volumeId) {
+      nav("/", { replace: true });
+      return;
+    }
+    let active = true;
+    api<{ book: Book }>(`/books/${slug}`)
       .then((result) => {
-        if (slug && result.book.slug !== slug) {
-          nav(`/book/${result.book.slug}/volume/${volumeId}`, { replace: true });
+        const selectedChapter = result.book.chapters?.find((item) => item.id === volumeId);
+        if (!active || !selectedChapter) {
+          if (active) nav(`/book/${slug}`, { replace: true });
           return;
         }
         setBook(result.book);
-        setChapter(result.chapter);
+        setChapter(selectedChapter);
       })
-      .catch(() => nav(slug ? `/book/${slug}` : "/", { replace: true }));
-  }, [slug, volumeId]);
+      .catch(() => {
+        if (active) nav(`/book/${slug}`, { replace: true });
+      });
+    return () => { active = false; };
+  }, [book, chapter, nav, slug, volumeId]);
+  useEffect(() => {
+    if (!chapter) return;
+    const prefetch = () => { void getChapterContent(chapter.id).catch(() => {}); };
+    const idleWindow = window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number; cancelIdleCallback?: (handle: number) => void };
+    if (idleWindow.requestIdleCallback) {
+      const handle = idleWindow.requestIdleCallback(prefetch, { timeout: 800 });
+      return () => idleWindow.cancelIdleCallback?.(handle);
+    }
+    const timer = window.setTimeout(prefetch, 250);
+    return () => window.clearTimeout(timer);
+  }, [chapter?.id]);
   if (!book || !chapter) return <Loading />;
   const sections = chapter.sections?.length
     ? chapter.sections
-    : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: chapter.sentences[0]?.id || "", position: 1 }];
+    : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: "", position: 1 }];
   const goToSection = (sentenceId: string) => {
     const query = sentenceId ? `?section=${encodeURIComponent(sentenceId)}` : "";
     nav(`/reader/${chapter.id}${query}`);
@@ -2523,6 +2577,7 @@ function ReaderPage() {
   const [focusMode, setFocusMode] = useState(false);
   const [atChapterEnd, setAtChapterEnd] = useState(false);
   const [transitionTitle, setTransitionTitle] = useState("");
+  const [sectionTargetId, setSectionTargetId] = useState("");
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [chapterComments, setChapterComments] = useState<ChapterComment[]>([]);
   const [chapterRating, setChapterRating] = useState(5);
@@ -2605,6 +2660,7 @@ function ReaderPage() {
   const lastTimelinePaintRef = useRef(0);
   const lastSpotSaveRef = useRef({ sentenceIndex: -1, wordId: "", at: 0 });
   const lastAutoScrollRef = useRef(0);
+  const sectionHighlightTimerRef = useRef(0);
   const rememberReadingSpot = (sentenceIndex: number, wordId = activeWordRef.current) => {
     const now = Date.now();
     if (
@@ -2725,26 +2781,11 @@ function ReaderPage() {
     setCurrentSentenceIndex(
       Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0),
     );
-    api<any>(`/chapters/${chapterId}/content`)
-      .then(async (r) => {
+    let active = true;
+    getChapterContent(chapterId)
+      .then((r) => {
         let savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
         let savedWordId = localStorage.getItem(`rethox-word-${chapterId}`) || "";
-        if (user) {
-          try {
-            const saved = await api<{ progress: Progress | null }>(`/progress/${r.book.id}`);
-            const progress = saved.progress;
-            if (progress && progress.chapterId === r.chapter.id) {
-              const sentenceId = progress.sentenceId;
-              const remoteSentenceIndex = sentenceId
-                ? r.chapter.sentences.findIndex((sentence: Sentence) => sentence.id === sentenceId)
-                : -1;
-              if (remoteSentenceIndex >= 0) savedIndex = remoteSentenceIndex;
-              savedWordId = progress.wordId || "";
-            }
-          } catch {
-            // The local reading spot remains a safe offline fallback.
-          }
-        }
         const requestedSectionIndex = sectionSentenceId
           ? r.chapter.sentences.findIndex((sentence: Sentence) => sentence.id === sectionSentenceId)
           : -1;
@@ -2791,8 +2832,35 @@ function ReaderPage() {
         };
         historyEntryRef.current = entry.visitedAt;
         localStorage.setItem("rethox-reading-history", JSON.stringify([entry, ...history].slice(0, 60)));
+        // Progress sync must never delay showing the text.  It updates the
+        // reading spot only when the reader did not explicitly choose a section.
+        if (user && !sectionSentenceId) {
+          void api<{ progress: Progress | null }>(`/progress/${r.book.id}`)
+            .then((saved) => {
+              if (!active) return;
+              const progress = saved.progress;
+              if (!progress || progress.chapterId !== r.chapter.id) return;
+              const remoteSentenceIndex = progress.sentenceId
+                ? r.chapter.sentences.findIndex((sentence) => sentence.id === progress.sentenceId)
+                : -1;
+              if (remoteSentenceIndex < 0) return;
+              const remoteWordId = progress.wordId || "";
+              localStorage.setItem(`rethox-sentence-${chapterId}`, String(remoteSentenceIndex));
+              if (remoteWordId) localStorage.setItem(`rethox-word-${chapterId}`, remoteWordId);
+              else localStorage.removeItem(`rethox-word-${chapterId}`);
+              currentSentenceIndexRef.current = remoteSentenceIndex;
+              activeWordRef.current = remoteWordId;
+              setCurrentSentenceIndex(remoteSentenceIndex);
+              setActiveWordId(remoteWordId);
+              setActiveSentence(r.chapter.sentences[remoteSentenceIndex] || r.chapter.sentences[0]);
+            })
+            .catch(() => {
+              // The local reading spot remains a safe offline fallback.
+            });
+        }
       })
       .catch((error) => {
+        if (!active) return;
         if (error instanceof ApiError && error.status === 403) {
           const lockedBook = error.data.book as { slug?: string } | undefined;
           const locked = error.data.chapter as { id?: string } | undefined;
@@ -2806,6 +2874,7 @@ function ReaderPage() {
     fetchChapterComments(chapterId)
       .then((items) => setChapterComments(items))
       .catch(() => setChapterComments([]));
+    return () => { active = false; };
   }, [chapterId, ready, sectionSentenceId, user?.id]);
   useEffect(() => {
     if (!chapter) return;
@@ -3444,7 +3513,8 @@ function ReaderPage() {
     }
     stopAllPlayback();
     setTransitionTitle(target.title);
-    window.setTimeout(() => nav(`/reader/${target.id}`), 720);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.setTimeout(() => nav(`/reader/${target.id}`), reduceMotion ? 0 : 180);
   };
   const closeIllustration = () => {
     illustrationDragRef.current = null;
@@ -3678,15 +3748,23 @@ function ReaderPage() {
       currentSentenceIndexRef.current = index;
       setCurrentSentenceIndex(index);
       rememberReadingSpot(index, "");
-      document
-        .querySelector(`[data-sentence-index="${index}"]`)
-        ?.scrollIntoView({ block: "center", behavior: "smooth" });
+      setSectionTargetId(sentence.id);
+      window.clearTimeout(sectionHighlightTimerRef.current);
+      window.requestAnimationFrame(() => {
+        readerBodyRef.current
+          ?.querySelector(`[data-sentence-index="${index}"]`)
+          ?.scrollIntoView({
+            block: "center",
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+          });
+      });
+      sectionHighlightTimerRef.current = window.setTimeout(() => setSectionTargetId(""), 850);
     }
   };
   const jumpToSection = (sentenceId: string) => {
     const sentence = chapter?.sentences.find((item) => item.id === sentenceId);
     setShowChapterList(false);
-    if (sentence) jumpToSentence(sentence);
+    if (sentence) window.requestAnimationFrame(() => jumpToSentence(sentence));
   };
   if (!chapter || !book) return <Loading dark />;
   let completedChapters: string[] = [];
@@ -3940,7 +4018,10 @@ function ReaderPage() {
               <p
               data-sentence-index={sentenceIndex}
               data-sentence-id={s.id}
-              className={savedSentenceIds.includes(s.id) ? "saved-paragraph" : ""}
+              className={[
+                savedSentenceIds.includes(s.id) ? "saved-paragraph" : "",
+                sectionTargetId === s.id ? "section-target" : "",
+              ].filter(Boolean).join(" ")}
               onMouseEnter={() => setActiveSentence(s)}
             >
               {sentenceTokens(s).map((token, wordIndex) => (
