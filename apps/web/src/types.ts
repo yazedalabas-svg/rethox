@@ -1,5 +1,5 @@
 export type User={id:string;name:string;email:string;phone?:string;role:"CUSTOMER"|"ADMIN";theme:string;avatarUrl?:string;oauthProvider?:string};
-export type Book={id:string;slug:string;title:string;author:string;synopsis:string;priceMinor:number;currency:string;genre:string;tags:string[];coverTheme:string;coverUrl?:string;rating:number;chapterCount?:number;sampleChapterId?:string;chapters?:ChapterMeta[];pdfUrl?:string;pageCount?:number};
+export type Book={id:string;slug:string;title:string;author:string;synopsis:string;priceMinor:number;currency:string;genre:string;tags:string[];coverTheme:string;coverUrl?:string;rating:number;chapterCount?:number;sampleChapterId?:string;chapters?:ChapterMeta[];contentUnitLabel?:string;contentUnitLabelPlural?:string;pdfUrl?:string;pageCount?:number};
 export type ChapterMeta={id:string;title:string;position:number;durationMs:number;isSample:boolean;locked?:boolean;sentenceCount?:number;rating?:number};
 export type TokenTiming={id:string;text:string;position:number;startMs:number;endMs:number;confidence:number};
 export type Sentence={id:string;position:number;text:string;summary?:string;tokens:TokenTiming[]};

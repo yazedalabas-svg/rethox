@@ -1133,6 +1133,8 @@ function BookPage() {
     }
   };
   if (!book) return <Loading />;
+  const contentUnitLabel = book.contentUnitLabel || "فصل";
+  const contentUnitLabelPlural = book.contentUnitLabelPlural || "فصول";
   const sample = book.chapters?.find((c) => c.isSample);
   const filteredReviews = reviewFilter
     ? reviews.filter((review) => review.rating === reviewFilter)
@@ -1189,7 +1191,7 @@ function BookPage() {
             <span>آراء القراء {reviews.length}</span>
             <span>
               <Clock size={14} />
-              {Math.max(1, book.chapters?.length || 1)} فصل
+              {Math.max(1, book.chapters?.length || 1)} {contentUnitLabel}
             </span>
             <span>
               <Headphones size={14} />
@@ -1268,10 +1270,10 @@ function BookPage() {
             <div className="chapter-directory">
               <div className="chapter-directory-head">
                 <div>
-                  <span className="kicker">فصول الرواية</span>
+                  <span className="kicker">{contentUnitLabelPlural} الرواية</span>
                   <h2>ابدأ من حيث تريد</h2>
                 </div>
-                <span>{book.chapters.length} فصلًا</span>
+                <span>{book.chapters.length} {contentUnitLabelPlural}</span>
               </div>
               <div className="chapter-directory-list">
                 {book.chapters.map((chapter) => {
@@ -1301,7 +1303,7 @@ function BookPage() {
           )}
           <div className="detail-note">
             <LockKeyhole />
-            الفصل الأول عينة مجانية، وبقية الفصول تفتح بعد الشراء.
+            {contentUnitLabel === "فصل" ? "الفصل الأول عينة مجانية، وبقية الفصول تفتح بعد الشراء." : `المجلد الأول عينة مجانية، وبقية ${contentUnitLabelPlural} تفتح بعد الشراء.`}
           </div>
         </div>
       </div>
@@ -3626,7 +3628,7 @@ function ReaderPage() {
         <div>
           <b>{book.title}</b>
           <small>
-            {chapter.title} · الفصل {chapter.position} من {chapterList.length || 1}
+            {chapter.title} · {book.contentUnitLabel || "فصل"} {chapter.position} من {chapterList.length || 1}
           </small>
         </div>
         <div className="reader-progress">
@@ -4209,6 +4211,8 @@ type AdminCatalogBook = {
   priceMinor: number;
   status: "PUBLISHED" | "DRAFT";
   coverUrl?: string;
+  contentUnitLabel?: string;
+  contentUnitLabelPlural?: string;
   chapters: { id: string; title: string; position: number; illustrationCount: number }[];
 };
 type AdminChapterDetails = {
@@ -4278,6 +4282,7 @@ function AdminPage() {
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "ADMIN") return <Navigate to="/account" />;
   const selectedBook = catalog.find((book) => book.id === selectedBookId) || null;
+  const selectedContentUnitLabel = selectedBook?.contentUnitLabel || "فصل";
   const reloadChapter = async () => {
     if (!selectedChapterId) return;
     const result = await api<{ chapter: AdminChapterDetails }>(`/admin/chapters/${selectedChapterId}`);
@@ -4441,7 +4446,7 @@ function AdminPage() {
             </select>
           </label>
           <label>
-            الفصل
+            {selectedContentUnitLabel}
             <select value={selectedChapterId} onChange={(event) => setSelectedChapterId(event.target.value)}>
               {(selectedBook?.chapters || []).map((chapter) => (
                 <option key={chapter.id} value={chapter.id}>{chapter.position}. {chapter.title} ({chapter.illustrationCount} صورة)</option>
@@ -4454,7 +4459,7 @@ function AdminPage() {
             <form className="admin-image-upload" onSubmit={uploadIllustration}>
               <div>
                 <h3>إضافة صورة جديدة</h3>
-                <p>اختر الصورة ثم حدد هل تظهر في بداية الفصل أو بعد جملة معينة.</p>
+                <p>اختر الصورة ثم حدد هل تظهر في بداية {selectedContentUnitLabel} أو بعد جملة معينة.</p>
               </div>
               <label>ملف الصورة<input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required /></label>
               <label>وصف بديل<input name="alt" minLength={2} maxLength={180} required placeholder="وصف واضح للصورة" /></label>
@@ -4498,7 +4503,7 @@ function AdminPage() {
                   ) : <p>هذه صورة قديمة غير مُدارة بعد.</p>}
                 </article>
               ))}
-              {!chapterDetails.illustrations.length && <p className="panel-empty">لا توجد صور في هذا الفصل. تستطيع إضافة أول صورة الآن.</p>}
+              {!chapterDetails.illustrations.length && <p className="panel-empty">لا توجد صور في هذا {selectedContentUnitLabel}. تستطيع إضافة أول صورة الآن.</p>}
             </div>
           </>
         )}

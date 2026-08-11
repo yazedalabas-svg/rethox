@@ -1180,6 +1180,8 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       slug: book.slug,
       title: book.title,
       author: book.author,
+      contentUnitLabel: book.contentUnitLabel,
+      contentUnitLabelPlural: book.contentUnitLabelPlural,
       priceMinor: book.priceMinor,
     },
     chapter: { ...chapter, contentFile: undefined },
@@ -1867,6 +1869,8 @@ app.get("/api/admin/catalog", auth, requireRole("ADMIN"), (_req, res) => {
       priceMinor: book.priceMinor,
       status: book.status,
       coverUrl: book.coverUrl,
+      contentUnitLabel: book.contentUnitLabel,
+      contentUnitLabelPlural: book.contentUnitLabelPlural,
       chapters: book.chapters.map((chapter) => ({
         id: chapter.id,
         title: chapter.title,
