@@ -2372,6 +2372,18 @@ const isKnownSpaPath = (requestPath: string) => {
     );
   }
 
+  const volumeContentsMatch = normalizedPath.match(/^\/book\/([^/]+)\/volume\/([^/]+)$/);
+  if (volumeContentsMatch) {
+    const slug = decodePathSegment(volumeContentsMatch[1]);
+    const chapterId = decodePathSegment(volumeContentsMatch[2]);
+    return !!slug && !!chapterId && db().books.some(
+      (book) =>
+        book.slug === slug &&
+        book.status === "PUBLISHED" &&
+        book.chapters.some((chapter) => chapter.id === chapterId),
+    );
+  }
+
   const readerMatch = normalizedPath.match(/^\/reader\/([^/]+)$/);
   if (readerMatch) {
     const chapterId = decodePathSegment(readerMatch[1]);
