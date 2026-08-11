@@ -93,3 +93,5 @@ Health check: `http://127.0.0.1:4181/api/health`. Demo admin: `admin@rethox.loca
 - TTS responses are cached on disk under `data/tts-cache` keyed by a hash of voice+text; the cache key version string must be bumped when generation logic changes.
 - Arabic search uses `normalizeArabic` (strips diacritics, unifies alef/yaa/taa marbuta) — apply it to both query and indexed text.
 - Payment is fake (no real charges). Do not add real payment providers without explicit request.
+
+## Imported Claude Cowork project instructions
