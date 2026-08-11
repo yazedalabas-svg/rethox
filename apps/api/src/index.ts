@@ -1163,6 +1163,33 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
     logger.error({ chapterId: chapterMeta.id, error: String(error) }, "chapter content unavailable");
     return res.status(503).json({ message: "تعذر تجهيز الفصل الآن" });
   }
+  const requestedSectionId = String(req.query.section || "");
+  const requestedSectionIndex = requestedSectionId
+    ? (chapter.sections || []).findIndex(
+        (section) => section.id === requestedSectionId || section.sentenceId === requestedSectionId,
+      )
+    : -1;
+  const activeSection = requestedSectionIndex >= 0 ? chapter.sections?.[requestedSectionIndex] : undefined;
+  const nextSection = activeSection ? chapter.sections?.[requestedSectionIndex + 1] : undefined;
+  const visibleChapter = activeSection
+    ? (() => {
+        const startIndex = chapter.sentences.findIndex((sentence) => sentence.id === activeSection.sentenceId);
+        const endIndex = nextSection
+          ? chapter.sentences.findIndex((sentence) => sentence.id === nextSection.sentenceId)
+          : chapter.sentences.length;
+        const sentences = chapter.sentences.slice(Math.max(0, startIndex), Math.max(0, endIndex));
+        const sentenceIds = new Set(sentences.map((sentence) => sentence.id));
+        return {
+          ...chapter,
+          sentences,
+          illustrations: chapter.illustrations?.filter(
+            (illustration) => illustration.afterSentenceId
+              ? sentenceIds.has(illustration.afterSentenceId)
+              : requestedSectionIndex === 0,
+          ),
+        };
+      })()
+    : chapter;
   const chapterIndex = book.chapters.findIndex((item) => item.id === chapterMeta.id);
   const chapterLink = (item: (typeof book.chapters)[number] | undefined) =>
     item
@@ -1184,7 +1211,7 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       contentUnitLabelPlural: book.contentUnitLabelPlural,
       priceMinor: book.priceMinor,
     },
-    chapter: { ...chapter, contentFile: undefined },
+    chapter: { ...visibleChapter, contentFile: undefined },
     chapterList: book.chapters.map((item) => ({
       id: item.id,
       title: item.title,
@@ -1195,6 +1222,13 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       previous: chapterLink(book.chapters[chapterIndex - 1]),
       next: chapterLink(book.chapters[chapterIndex + 1]),
     },
+    activeSection,
+    sectionNavigation: activeSection
+      ? {
+          previous: requestedSectionIndex > 0 ? chapter.sections?.[requestedSectionIndex - 1] : null,
+          next: nextSection || null,
+        }
+      : null,
     audio: { type: "tts-demo", url: null },
   });
 });

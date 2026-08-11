@@ -85,7 +85,7 @@ import {
   setToken,
   type AuthSession,
 } from "./api";
-import type { Book, Chapter, ChapterComment, ChapterMeta, ContentReport, Progress, Review, Sentence, User } from "./types";
+import type { Book, Chapter, ChapterComment, ChapterMeta, ChapterSection, ContentReport, Progress, Review, Sentence, User } from "./types";
 import { alignBoundaries, formatTime } from "./utils";
 
 const fetchReviews = (bookId: string) =>
@@ -106,20 +106,26 @@ type ChapterContentResponse = {
     next: { id: string; title: string; sentenceCount?: number; locked?: boolean } | null;
   };
   chapterList?: { id: string; title: string; position: number; locked?: boolean }[];
+  activeSection?: ChapterSection;
+  sectionNavigation?: {
+    previous: ChapterSection | null;
+    next: ChapterSection | null;
+  } | null;
 };
 
-// A volume can contain thousands of sentence nodes.  Keep a request made from
-// its table of contents so opening the reader can reuse it instead of fetching
-// the same payload a second time.
+// Keep each requested reading page in memory for the current visit.  Section
+// IDs are part of the key so a large volume never turns into one large payload.
 const chapterContentRequests = new Map<string, Promise<ChapterContentResponse>>();
-const getChapterContent = (chapterId: string) => {
-  const cached = chapterContentRequests.get(chapterId);
+const getChapterContent = (chapterId: string, sectionId = "") => {
+  const cacheKey = `${chapterId}:${sectionId}`;
+  const cached = chapterContentRequests.get(cacheKey);
   if (cached) return cached;
-  const request = api<ChapterContentResponse>(`/chapters/${chapterId}/content`).catch((error) => {
-    chapterContentRequests.delete(chapterId);
+  const query = sectionId ? `?section=${encodeURIComponent(sectionId)}` : "";
+  const request = api<ChapterContentResponse>(`/chapters/${chapterId}/content${query}`).catch((error) => {
+    chapterContentRequests.delete(cacheKey);
     throw error;
   });
-  chapterContentRequests.set(chapterId, request);
+  chapterContentRequests.set(cacheKey, request);
   return request;
 };
 const saveChapterComment = ({
@@ -1472,17 +1478,6 @@ function VolumeContentsPage() {
     return () => { active = false; };
   }, [book, chapter, nav, slug, volumeId]);
   useEffect(() => {
-    if (!chapter) return;
-    const prefetch = () => { void getChapterContent(chapter.id).catch(() => {}); };
-    const idleWindow = window as Window & { requestIdleCallback?: (callback: () => void, options?: { timeout: number }) => number; cancelIdleCallback?: (handle: number) => void };
-    if (idleWindow.requestIdleCallback) {
-      const handle = idleWindow.requestIdleCallback(prefetch, { timeout: 800 });
-      return () => idleWindow.cancelIdleCallback?.(handle);
-    }
-    const timer = window.setTimeout(prefetch, 250);
-    return () => window.clearTimeout(timer);
-  }, [chapter?.id]);
-  useEffect(() => {
     setResolvedSections([]);
     if (!chapter || chapter.sections?.length) return;
     let active = true;
@@ -1502,8 +1497,8 @@ function VolumeContentsPage() {
     : resolvedSections.length
       ? resolvedSections
       : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: "", position: 1 }];
-  const goToSection = (sentenceId: string) => {
-    const query = sentenceId ? `?section=${encodeURIComponent(sentenceId)}` : "";
+  const goToSection = (sectionId: string) => {
+    const query = sectionId ? `?section=${encodeURIComponent(sectionId)}` : "";
     nav(`/reader/${chapter.id}${query}`);
   };
   return (
@@ -1518,14 +1513,14 @@ function VolumeContentsPage() {
           <span className="kicker">فهرس المجلد</span>
           <h1>{chapter.title}</h1>
           <p>اختر مقطعًا للانتقال إليه مباشرة، أو ابدأ القراءة من البداية.</p>
-          <button className="btn primary" type="button" onClick={() => goToSection(sections[0]?.sentenceId || "")}>
+          <button className="btn primary" type="button" onClick={() => goToSection(sections[0]?.id || "")}>
             <Play size={17} /> ابدأ من البداية
           </button>
         </header>
         <ol className="volume-section-list" aria-label={`أقسام ${chapter.title}`}>
           {sections.map((section) => (
             <li key={section.id}>
-              <button type="button" onClick={() => goToSection(section.sentenceId)}>
+              <button type="button" onClick={() => goToSection(section.id)}>
                 <i>{String(section.position).padStart(2, "0")}</i>
                 <span>{section.title}</span>
                 <ChevronLeft size={18} />
@@ -2589,6 +2584,11 @@ function ReaderPage() {
   const [chapterList, setChapterList] = useState<
     { id: string; title: string; position: number; locked?: boolean }[]
   >([]);
+  const [activeSection, setActiveSection] = useState<ChapterSection | null>(null);
+  const [sectionNavigation, setSectionNavigation] = useState<{
+    previous: ChapterSection | null;
+    next: ChapterSection | null;
+  } | null>(null);
   const [lockedChapter, setLockedChapter] = useState<{ id: string; title: string } | null>(null);
   const [showChapterList, setShowChapterList] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
@@ -2799,15 +2799,12 @@ function ReaderPage() {
       Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0),
     );
     let active = true;
-    getChapterContent(chapterId)
+    getChapterContent(chapterId, sectionSentenceId)
       .then((r) => {
         let savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
         let savedWordId = localStorage.getItem(`rethox-word-${chapterId}`) || "";
-        const requestedSectionIndex = sectionSentenceId
-          ? r.chapter.sentences.findIndex((sentence: Sentence) => sentence.id === sectionSentenceId)
-          : -1;
-        if (requestedSectionIndex >= 0) {
-          savedIndex = requestedSectionIndex;
+        if (sectionSentenceId) {
+          savedIndex = 0;
           savedWordId = "";
         }
         savedIndex = Math.min(Math.max(0, savedIndex), Math.max(0, r.chapter.sentences.length - 1));
@@ -2822,6 +2819,8 @@ function ReaderPage() {
         setBook(r.book);
         setChapterNav(r.navigation || { previous: null, next: null });
         setChapterList(r.chapterList || []);
+        setActiveSection(r.activeSection || null);
+        setSectionNavigation(r.sectionNavigation || null);
         setActiveSentence(r.chapter.sentences[savedIndex] || r.chapter.sentences[0]);
         localStorage.setItem(
           "rethox-last-read",
@@ -2926,11 +2925,14 @@ function ReaderPage() {
     if (!chapter) return;
     const savedWord = sectionSentenceId ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
     const savedIndex = sectionSentenceId
-      ? Math.max(0, chapter.sentences.findIndex((sentence) => sentence.id === sectionSentenceId))
+      ? 0
       : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
+    const sectionStartSentenceId = sectionSentenceId
+      ? chapter.sections?.find((section) => section.id === sectionSentenceId || section.sentenceId === sectionSentenceId)?.sentenceId
+      : "";
     window.requestAnimationFrame(() => {
       const target =
-        (sectionSentenceId && document.querySelector(`[data-sentence-id="${sectionSentenceId}"]`)) ||
+        (sectionStartSentenceId && document.querySelector(`[data-sentence-id="${sectionStartSentenceId}"]`)) ||
         (savedWord && document.querySelector(`[data-word-id="${savedWord}"]`)) ||
         document.querySelector(`[data-sentence-index="${savedIndex}"]`);
       target?.scrollIntoView({ block: "center", behavior: sectionSentenceId ? "auto" : "smooth" });
@@ -3531,7 +3533,20 @@ function ReaderPage() {
     stopAllPlayback();
     setTransitionTitle(target.title);
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.setTimeout(() => nav(`/reader/${target.id}`), reduceMotion ? 0 : 180);
+    const targetUrl = sectionSentenceId && book
+      ? `/book/${book.slug}/volume/${target.id}`
+      : `/reader/${target.id}`;
+    window.setTimeout(() => nav(targetUrl), reduceMotion ? 0 : 180);
+  };
+  const goToSectionPage = (target: ChapterSection | null) => {
+    if (!target || !chapterId) return;
+    stopAllPlayback();
+    setTransitionTitle(target.title);
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.setTimeout(
+      () => nav(`/reader/${chapterId}?section=${encodeURIComponent(target.id)}`),
+      reduceMotion ? 0 : 180,
+    );
   };
   const closeIllustration = () => {
     illustrationDragRef.current = null;
@@ -3779,9 +3794,9 @@ function ReaderPage() {
     }
   };
   const jumpToSection = (sentenceId: string) => {
-    const sentence = chapter?.sentences.find((item) => item.id === sentenceId);
+    const section = chapter?.sections?.find((item) => item.id === sentenceId || item.sentenceId === sentenceId);
     setShowChapterList(false);
-    if (sentence) window.requestAnimationFrame(() => jumpToSentence(sentence));
+    if (section && chapterId) nav(`/reader/${chapterId}?section=${encodeURIComponent(section.id)}`);
   };
   if (!chapter || !book) return <Loading dark />;
   let completedChapters: string[] = [];
@@ -3835,7 +3850,7 @@ function ReaderPage() {
         <div>
           <b>{book.title}</b>
           <small>
-            {chapter.title} · {book.contentUnitLabel || "فصل"} {chapter.position} من {chapterList.length || 1}
+            {activeSection?.title || chapter.title} · {book.contentUnitLabel || "فصل"} {chapter.position} من {chapterList.length || 1}
           </small>
         </div>
         <div className="reader-progress">
@@ -4011,14 +4026,26 @@ function ReaderPage() {
           onCut={(event) => event.preventDefault()}
         >
           <nav className="reader-chapter-nav reader-chapter-jump" aria-label="تنقل سريع بين الفصول">
-            {chapterNav.previous ? (
+            {sectionNavigation?.previous ? (
+              <button onClick={() => goToSectionPage(sectionNavigation.previous)}>
+                <ArrowLeft size={15} />
+                <span>الفصل السابق</span>
+                <b>{sectionNavigation.previous.title}</b>
+              </button>
+            ) : chapterNav.previous ? (
               <button onClick={() => goToChapter(chapterNav.previous)}>
                 <ArrowLeft size={15} />
                 <span>{book.contentUnitLabel || "الفصل"} السابق</span>
                 <b>{chapterNav.previous.title}</b>
               </button>
             ) : <span />}
-            {chapterNav.next ? (
+            {sectionNavigation?.next ? (
+              <button onClick={() => goToSectionPage(sectionNavigation.next)}>
+                <span>الفصل التالي</span>
+                <b>{sectionNavigation.next.title}</b>
+                <ChevronLeft size={15} />
+              </button>
+            ) : chapterNav.next ? (
               <button onClick={() => goToChapter(chapterNav.next)}>
                 <span>{book.contentUnitLabel || "الفصل"} التالي</span>
                 <b>{chapterNav.next.title}</b>
@@ -4026,7 +4053,7 @@ function ReaderPage() {
               </button>
             ) : <span />}
           </nav>
-          <span className="chapter-label">{chapter.title}</span>
+          <span className="chapter-label">{activeSection?.title || chapter.title}</span>
           {chapter.illustrations
             ?.filter((illustration) => !illustration.afterSentenceId)
             .map((illustration) => chapterIllustration(illustration, false))}
@@ -4189,16 +4216,26 @@ function ReaderPage() {
             </div>
           </section>
           <nav className={`reader-chapter-nav ${atChapterEnd ? "reached-end" : ""}`} aria-label={`التنقل بين ${book.contentUnitLabelPlural || "الفصول"}`}>
-            {chapterNav.previous ? (
+            {sectionNavigation?.previous ? (
+              <button onClick={() => goToSectionPage(sectionNavigation.previous)}>
+                <ArrowLeft size={15} />
+                <span>الفصل السابق</span>
+                <b>{sectionNavigation.previous.title}</b>
+              </button>
+            ) : chapterNav.previous ? (
               <button onClick={() => goToChapter(chapterNav.previous)}>
                 <ArrowLeft size={15} />
                 <span>{book.contentUnitLabel || "الفصل"} السابق</span>
                 <b>{chapterNav.previous.title}</b>
               </button>
-            ) : (
-              <span />
-            )}
-            {chapterNav.next && (
+            ) : <span />}
+            {sectionNavigation?.next ? (
+              <button className="next-chapter" onClick={() => goToSectionPage(sectionNavigation.next)}>
+                <span>{atChapterEnd ? "جاهز؟ تابع الرحلة" : "الفصل التالي"}</span>
+                <b>{sectionNavigation.next.title}</b>
+                <ChevronLeft size={15} />
+              </button>
+            ) : chapterNav.next && (
               <button className="next-chapter" onClick={() => goToChapter(chapterNav.next)}>
                 <span>{atChapterEnd ? "جاهز؟ تابع الرحلة" : `${book.contentUnitLabel || "الفصل"} التالي`}</span>
                 <b>{chapterNav.next.title}</b>
