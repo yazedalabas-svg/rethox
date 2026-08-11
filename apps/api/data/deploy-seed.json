@@ -105523,7 +105523,7 @@
         "رواية مترجمة"
       ],
       "coverTheme": "indigo",
-      "coverUrl": "/Mushoku%20Tensei/assets/volume-01/page-001-image-01.jpg",
+      "coverUrl": "/covers/mushoku-tensei.jpg",
       "status": "PUBLISHED",
       "rating": 0,
       "contentUnitLabel": "مجلد",
@@ -105535,7 +105535,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 1",
           "position": 1,
-          "durationMs": 21829380,
+          "durationMs": 21815190,
           "isSample": true,
           "illustrations": [
             {
@@ -105700,7 +105700,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1143,
+          "sentenceCount": 1142,
           "contentFile": "books/Mushoku Tensei/derived/volume-01.json"
         },
         {
@@ -105708,7 +105708,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 2",
           "position": 2,
-          "durationMs": 20250420,
+          "durationMs": 20235800,
           "isSample": true,
           "illustrations": [
             {
@@ -105845,7 +105845,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1134,
+          "sentenceCount": 1133,
           "contentFile": "books/Mushoku Tensei/derived/volume-02.json"
         },
         {
@@ -105853,7 +105853,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 3",
           "position": 3,
-          "durationMs": 28443640,
+          "durationMs": 28429450,
           "isSample": true,
           "illustrations": [
             {
@@ -105955,7 +105955,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1510,
+          "sentenceCount": 1509,
           "contentFile": "books/Mushoku Tensei/derived/volume-03.json"
         },
         {
@@ -105963,7 +105963,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 4",
           "position": 4,
-          "durationMs": 23152490,
+          "durationMs": 23137870,
           "isSample": true,
           "illustrations": [
             {
@@ -106092,7 +106092,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1219,
+          "sentenceCount": 1218,
           "contentFile": "books/Mushoku Tensei/derived/volume-04.json"
         },
         {
@@ -106100,7 +106100,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 5",
           "position": 5,
-          "durationMs": 24792940,
+          "durationMs": 24778750,
           "isSample": true,
           "illustrations": [
             {
@@ -106236,7 +106236,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1279,
+          "sentenceCount": 1278,
           "contentFile": "books/Mushoku Tensei/derived/volume-05.json"
         },
         {
@@ -106244,7 +106244,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 6",
           "position": 6,
-          "durationMs": 23604850,
+          "durationMs": 23590230,
           "isSample": true,
           "illustrations": [
             {
@@ -106346,7 +106346,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1202,
+          "sentenceCount": 1201,
           "contentFile": "books/Mushoku Tensei/derived/volume-06.json"
         },
         {
@@ -106354,7 +106354,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 7",
           "position": 7,
-          "durationMs": 22576290,
+          "durationMs": 22562100,
           "isSample": true,
           "illustrations": [
             {
@@ -106491,7 +106491,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1136,
+          "sentenceCount": 1135,
           "contentFile": "books/Mushoku Tensei/derived/volume-07.json"
         },
         {
@@ -106499,7 +106499,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 8",
           "position": 8,
-          "durationMs": 21160300,
+          "durationMs": 21146110,
           "isSample": true,
           "illustrations": [
             {
@@ -106609,7 +106609,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1045,
+          "sentenceCount": 1044,
           "contentFile": "books/Mushoku Tensei/derived/volume-08.json"
         },
         {
@@ -106617,7 +106617,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 9",
           "position": 9,
-          "durationMs": 28321090,
+          "durationMs": 28306900,
           "isSample": true,
           "illustrations": [
             {
@@ -106719,7 +106719,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1432,
+          "sentenceCount": 1431,
           "contentFile": "books/Mushoku Tensei/derived/volume-09.json"
         },
         {
@@ -106727,7 +106727,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 10",
           "position": 10,
-          "durationMs": 21625990,
+          "durationMs": 21611800,
           "isSample": true,
           "illustrations": [
             {
@@ -106829,7 +106829,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1128,
+          "sentenceCount": 1127,
           "contentFile": "books/Mushoku Tensei/derived/volume-10.json"
         },
         {
@@ -106837,7 +106837,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 11",
           "position": 11,
-          "durationMs": 29213340,
+          "durationMs": 29198720,
           "isSample": true,
           "illustrations": [
             {
@@ -106939,7 +106939,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1595,
+          "sentenceCount": 1594,
           "contentFile": "books/Mushoku Tensei/derived/volume-11.json"
         },
         {
@@ -106947,7 +106947,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 12",
           "position": 12,
-          "durationMs": 24879800,
+          "durationMs": 24865180,
           "isSample": true,
           "illustrations": [
             {
@@ -107056,7 +107056,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1325,
+          "sentenceCount": 1324,
           "contentFile": "books/Mushoku Tensei/derived/volume-12.json"
         },
         {
@@ -107064,7 +107064,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 13",
           "position": 13,
-          "durationMs": 27275760,
+          "durationMs": 27261140,
           "isSample": true,
           "illustrations": [
             {
@@ -107166,7 +107166,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1583,
+          "sentenceCount": 1582,
           "contentFile": "books/Mushoku Tensei/derived/volume-13.json"
         },
         {
@@ -107174,7 +107174,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 14",
           "position": 14,
-          "durationMs": 24967520,
+          "durationMs": 24953330,
           "isSample": true,
           "illustrations": [
             {
@@ -107276,7 +107276,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1294,
+          "sentenceCount": 1293,
           "contentFile": "books/Mushoku Tensei/derived/volume-14.json"
         },
         {
@@ -107284,7 +107284,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 15",
           "position": 15,
-          "durationMs": 26665590,
+          "durationMs": 26651400,
           "isSample": true,
           "illustrations": [
             {
@@ -107422,7 +107422,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1427,
+          "sentenceCount": 1426,
           "contentFile": "books/Mushoku Tensei/derived/volume-15.json"
         },
         {
@@ -107430,7 +107430,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 16",
           "position": 16,
-          "durationMs": 25481370,
+          "durationMs": 25466750,
           "isSample": true,
           "illustrations": [
             {
@@ -107532,7 +107532,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1320,
+          "sentenceCount": 1319,
           "contentFile": "books/Mushoku Tensei/derived/volume-16.json"
         },
         {
@@ -107540,7 +107540,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 17",
           "position": 17,
-          "durationMs": 26315140,
+          "durationMs": 26300520,
           "isSample": true,
           "illustrations": [
             {
@@ -107642,7 +107642,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1431,
+          "sentenceCount": 1430,
           "contentFile": "books/Mushoku Tensei/derived/volume-17.json"
         },
         {
@@ -107650,7 +107650,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 18",
           "position": 18,
-          "durationMs": 26782980,
+          "durationMs": 26768360,
           "isSample": true,
           "illustrations": [
             {
@@ -107766,7 +107766,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1331,
+          "sentenceCount": 1330,
           "contentFile": "books/Mushoku Tensei/derived/volume-18.json"
         },
         {
@@ -107774,7 +107774,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 19",
           "position": 19,
-          "durationMs": 28400640,
+          "durationMs": 28386020,
           "isSample": true,
           "illustrations": [
             {
@@ -107876,7 +107876,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1478,
+          "sentenceCount": 1477,
           "contentFile": "books/Mushoku Tensei/derived/volume-19.json"
         },
         {
@@ -107884,7 +107884,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 20",
           "position": 20,
-          "durationMs": 24708660,
+          "durationMs": 24694040,
           "isSample": true,
           "illustrations": [
             {
@@ -107994,7 +107994,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1204,
+          "sentenceCount": 1203,
           "contentFile": "books/Mushoku Tensei/derived/volume-20.json"
         },
         {
@@ -108002,7 +108002,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 21",
           "position": 21,
-          "durationMs": 22923730,
+          "durationMs": 22909110,
           "isSample": true,
           "illustrations": [
             {
@@ -108098,7 +108098,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1126,
+          "sentenceCount": 1125,
           "contentFile": "books/Mushoku Tensei/derived/volume-21.json"
         },
         {
@@ -108106,7 +108106,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 22",
           "position": 22,
-          "durationMs": 22343660,
+          "durationMs": 22329040,
           "isSample": true,
           "illustrations": [
             {
@@ -108202,7 +108202,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1154,
+          "sentenceCount": 1153,
           "contentFile": "books/Mushoku Tensei/derived/volume-22.json"
         },
         {
@@ -108210,7 +108210,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 23",
           "position": 23,
-          "durationMs": 24723710,
+          "durationMs": 24709090,
           "isSample": true,
           "illustrations": [
             {
@@ -108312,7 +108312,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1240,
+          "sentenceCount": 1239,
           "contentFile": "books/Mushoku Tensei/derived/volume-23.json"
         },
         {
@@ -108320,7 +108320,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 24",
           "position": 24,
-          "durationMs": 21034310,
+          "durationMs": 21019690,
           "isSample": true,
           "illustrations": [
             {
@@ -108417,7 +108417,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 1050,
+          "sentenceCount": 1049,
           "contentFile": "books/Mushoku Tensei/derived/volume-24.json"
         },
         {
@@ -108425,7 +108425,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 25",
           "position": 25,
-          "durationMs": 19440300,
+          "durationMs": 19425680,
           "isSample": true,
           "illustrations": [
             {
@@ -108570,7 +108570,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 921,
+          "sentenceCount": 920,
           "contentFile": "books/Mushoku Tensei/derived/volume-25.json"
         },
         {
@@ -108578,7 +108578,7 @@
           "bookId": "book-mushoku-tensei",
           "title": "المجلد 26",
           "position": 26,
-          "durationMs": 17311800,
+          "durationMs": 17297610,
           "isSample": true,
           "illustrations": [
             {
@@ -109052,7 +109052,7 @@
             }
           ],
           "sentences": [],
-          "sentenceCount": 764,
+          "sentenceCount": 763,
           "contentFile": "books/Mushoku Tensei/derived/volume-26.json"
         }
       ]

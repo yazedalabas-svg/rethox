@@ -10,9 +10,6 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from pypdf import PdfReader
-
-
 BOOK_ID = "book-mushoku-tensei"
 BOOK_SLUG = "mushoku-tensei-arabic"
 BOOK_TITLE = "موشوكو تينسي: التجسد العاطل"
@@ -21,6 +18,8 @@ SPACE = re.compile(r"\s+")
 PAGE_NUMBER = re.compile(r"^(?:Page\s+)?\d+$", re.I)
 AD_MARKERS = (
     "stay up to date on light novels",
+    "get the latest news on your favorite seven seas books",
+    "visit us online: gomanga.com/newsletter",
     "download all your favorite light novels",
     "zerobooks universal",
     "jnovels.com",
@@ -272,6 +271,12 @@ def polish_translation(value: str) -> str:
     value = value.replace("\u00a0", " ").replace("...", "…").replace("***", "—")
     for old, new in EDITORIAL_FIXES.items():
         value = value.replace(old, new)
+    for marker in (
+        "احصل على آخر الأخبار حول كتب Seven Seas",
+        "أو قم بزيارتنا عبر الإنترنت: gomanga.com/newsletter",
+    ):
+        if marker in value:
+            value = value.split(marker, 1)[0].rstrip()
     if value.startswith("يقوم الفريق بإنشاء تحويل عن طريق الحصول على"):
         value = (
             "خطة الفرق: يتولى فريق سيلفي، برفقة غيسلين وإيزولدي، إحضار نينا من حرم السيف "
@@ -300,6 +305,8 @@ def extract_volume(pdf_path: Path, cache_dir: Path, asset_root: Path) -> dict[st
     extracted_path = cache_dir / f"volume-{number:02d}-extracted.json"
     if extracted_path.exists():
         return json.loads(extracted_path.read_text(encoding="utf-8"))
+
+    from pypdf import PdfReader
 
     reader = PdfReader(str(pdf_path))
     if reader.is_encrypted and not reader.decrypt(""):
@@ -363,11 +370,14 @@ def build_volume(extracted: dict[str, Any], translated: dict[str, Any]) -> dict[
     sentences: list[dict[str, Any]] = []
     illustrations: list[dict[str, Any]] = []
     sentence_pages: list[tuple[int, str]] = []
-    for position, block in enumerate(translated["sourceBlocks"], start=1):
+    for block in translated["sourceBlocks"]:
+        paragraph = polish_translation(translated["blocks"][block["id"]])
+        if not paragraph:
+            continue
+        position = len(sentences) + 1
         sentence_id = f"mt-v{number:02d}-p{position:05d}"
-        paragraph = translated["blocks"][block["id"]]
         sentences.append(
-            {"id": sentence_id, "position": position, "text": polish_translation(paragraph), "tokens": []}
+            {"id": sentence_id, "position": position, "text": paragraph, "tokens": []}
         )
         sentence_pages.append((int(block["endPage"]), sentence_id))
     for page in extracted["pages"]:
@@ -413,7 +423,7 @@ def update_stores(project: Path, volumes: list[dict[str, Any]], page_counts: dic
         meta["contentFile"] = f"books/Mushoku Tensei/derived/{filename}"
         chapter_meta.append(meta)
 
-    cover = "/Mushoku%20Tensei/assets/volume-01/page-001-image-01.jpg"
+    cover = "/covers/mushoku-tensei.jpg"
     book = {
         "id": BOOK_ID,
         "slug": BOOK_SLUG,
