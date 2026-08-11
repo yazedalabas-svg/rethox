@@ -379,7 +379,7 @@ const writePersistedAuthSession = (session: PersistedAuthSession | null) => {
 function AuthProvider({ children }: { children: ReactNode }) {
   const initialSession = useMemo(readPersistedAuthSession, []);
   const [session, setSession] = useState<PersistedAuthSession | null>(initialSession);
-  const [ready, setReady] = useState(Boolean(initialSession));
+  const [ready, setReady] = useState(false);
   const logoutInFlight = useRef<Promise<void> | null>(null);
   const applySession = useCallback((next: PersistedAuthSession | null) => {
     setToken(next?.accessToken ?? null);
@@ -3337,6 +3337,10 @@ function ReaderPage() {
     if (!target) return;
     if (target.locked) {
       setLockedChapter(target);
+      return;
+    }
+    if (target.id === chapterId) {
+      setShowChapterList(false);
       return;
     }
     stopAllPlayback();
