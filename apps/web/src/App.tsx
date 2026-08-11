@@ -2593,6 +2593,7 @@ function ReaderPage() {
     promise: Promise<PreparedNarrationSegment[]>;
   } | null>(null);
   const animationRef = useRef(0);
+  const trackingFramePendingRef = useRef(false);
   const lastTrackedBoundaryRef = useRef(-1);
   const currentSegmentRef = useRef(0);
   const readerBodyRef = useRef<HTMLElement | null>(null);
@@ -2686,6 +2687,7 @@ function ReaderPage() {
   const stopAllPlayback = () => {
     const session = ++playbackSessionRef.current;
     cancelAnimationFrame(animationRef.current);
+    trackingFramePendingRef.current = false;
     releaseAudio(audioRef.current);
     releaseAudio(previewAudioRef.current);
     audioRef.current = null;
@@ -3234,8 +3236,13 @@ function ReaderPage() {
             revealActiveWord(latestToken.id);
           }
         }
-        if (!audio.paused && !audio.ended)
-          animationRef.current = requestAnimationFrame(updateTracking);
+        if (!audio.paused && !audio.ended && !trackingFramePendingRef.current) {
+          trackingFramePendingRef.current = true;
+          animationRef.current = requestAnimationFrame(() => {
+            trackingFramePendingRef.current = false;
+            updateTracking();
+          });
+        }
       };
       audio.ontimeupdate = updateTracking;
       audio.onplay = () => {
@@ -3245,6 +3252,7 @@ function ReaderPage() {
       };
       audio.onpause = () => {
         cancelAnimationFrame(animationRef.current);
+        trackingFramePendingRef.current = false;
         setPlaying(false);
         // No glow while paused; it re-lights when the next word is spoken.
         activeWordRef.current = "";
@@ -3253,6 +3261,7 @@ function ReaderPage() {
       audio.onended = async () => {
         if (session !== playbackSessionRef.current) return;
         cancelAnimationFrame(animationRef.current);
+        trackingFramePendingRef.current = false;
         if (segmentIndex + 1 < prepared.length) {
           void playPreparedSegment(prepared, segmentIndex + 1, 0, session);
         } else if (backgroundNarrationRef.current) {
