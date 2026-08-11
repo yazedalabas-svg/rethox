@@ -275,6 +275,7 @@ const findActiveBoundary = (
 type ReadingSettings = {
   fontSize: number;
   lineHeight: number;
+  wordSpacing: number;
   playbackSpeed: number;
   volume: number;
   autoNarration: boolean;
@@ -283,7 +284,7 @@ type ReadingSettings = {
 };
 type ReadingHistoryItem = LastRead & { visitedAt: string; seconds: number };
 const defaultReadingSettings: ReadingSettings = {
-  fontSize: 32, lineHeight: 2.25, playbackSpeed: 1, volume: 1,
+  fontSize: 32, lineHeight: 2.25, wordSpacing: 0.14, playbackSpeed: 1, volume: 1,
   autoNarration: false, notifications: true, privateHistory: true,
 };
 const readSettings = (): ReadingSettings => {
@@ -2177,6 +2178,7 @@ function SettingsPage() {
           <header><div><span className="kicker">القراءة</span><h2>النص والصفحة</h2></div></header>
           <label><span>حجم الخط <b>{settings.fontSize}</b></span><input type="range" min="22" max="46" step="2" value={settings.fontSize} onChange={(e) => updateSetting("fontSize", Number(e.target.value))} /></label>
           <label><span>تباعد السطور <b>{settings.lineHeight.toFixed(1)}</b></span><input type="range" min="1.7" max="2.8" step="0.1" value={settings.lineHeight} onChange={(e) => updateSetting("lineHeight", Number(e.target.value))} /></label>
+          <label><span>تباعد الكلمات <b>{settings.wordSpacing.toFixed(2)} em</b></span><input type="range" min="0" max="0.36" step="0.02" value={settings.wordSpacing} onChange={(e) => updateSetting("wordSpacing", Number(e.target.value))} /></label>
           <label className="setting-toggle"><span><b>إشعارات التقدم</b><small>تنبيه هادئ عند إنهاء الفصل</small></span><input type="checkbox" checked={settings.notifications} onChange={(e) => updateSetting("notifications", e.target.checked)} /></label>
         </article>
         <article className="settings-panel">
@@ -2621,6 +2623,7 @@ function ReaderPage() {
   const initialSettings = useMemo(readSettings, []);
   const [fontSize, setFontSize] = useState(initialSettings.fontSize);
   const [lineHeight] = useState(initialSettings.lineHeight);
+  const [wordSpacing] = useState(initialSettings.wordSpacing);
   const [summary, setSummary] = useState("");
   const [summaryBusy, setSummaryBusy] = useState(false);
   const [activeSentence, setActiveSentence] = useState<Sentence | null>(null);
@@ -4021,7 +4024,7 @@ function ReaderPage() {
           <i style={{ top: `calc(${(scrollRatio * 100).toFixed(2)}% - ${(scrollRatio * 46).toFixed(1)}px)` }} />
         </div>
         <article
-          style={{ fontSize, lineHeight }}
+          style={{ fontSize, lineHeight, "--reader-word-gap": `${wordSpacing}em` } as CSSProperties}
           onCopy={(event) => event.preventDefault()}
           onCut={(event) => event.preventDefault()}
         >

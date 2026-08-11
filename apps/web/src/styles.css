@@ -1971,6 +1971,7 @@ button {
   font: inherit;
   border: 0;
   background: transparent;
+  margin-inline-start: var(--reader-word-gap, .14em);
   padding: 0 2px;
   border-radius: 5px;
   touch-action: manipulation;
