@@ -1803,6 +1803,8 @@ button {
 .reader-body article {
   font-family: "Noto Naskh Arabic";
   line-height: 2.35;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .chapter-opening-illustration {
   width: min(100%, 500px);
@@ -1935,6 +1937,8 @@ button {
   position: relative;
   margin: 0 0 26px;
   text-align: right;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 150px;
 }
 .reader-body article > p.saved-paragraph {
   border-right: 3px solid var(--purple);
@@ -1963,6 +1967,7 @@ button {
   background: transparent;
   padding: 0 2px;
   border-radius: 5px;
+  touch-action: manipulation;
 }
 .reader-body article > p > button:hover {
   background: rgba(115, 86, 216, 0.12);
@@ -2065,8 +2070,8 @@ html:has(.reader-index.open) .theme-fab {
   background: rgba(115, 86, 216, 0.12);
 }
 .reader-tools button {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-bottom: 1px solid var(--line);
   font-size: 10px;
 }
@@ -2781,12 +2786,36 @@ html:has(.reader-index.open) .theme-fab {
 .reader-index>div { display:flex;justify-content:space-between;align-items:center;margin-bottom:18px; }
 .reader-index>div button { border:0;background:transparent; }
 .reader-index nav { height:calc(100vh - 80px);overflow:auto;display:grid;align-content:start;gap:4px; }
-.reader-index nav button { display:grid;grid-template-columns:30px 1fr;align-items:center;gap:8px;padding:10px;border:0;border-radius:10px;background:transparent;text-align:right;color:var(--ink); }
+.reader-index nav button { min-height:44px;display:grid;grid-template-columns:30px 1fr;align-items:center;gap:8px;padding:10px;border:0;border-radius:10px;background:transparent;text-align:right;color:var(--ink);touch-action:manipulation; }
 .reader-index nav button:hover { background:var(--bg); }
 .reader-index nav button.current { background:rgba(115,86,216,.12);color:var(--purple); }
 .reader-index nav i { width:25px;height:25px;display:grid;place-items:center;border-radius:50%;background:var(--bg);font-style:normal;font-size:8px; }
 .reader-index nav .completed i { background:#2f9b70;color:#fff; }
 .reader-index nav svg { width:12px; }
+.reader-index-group { display:block;margin:18px 8px 5px;color:var(--muted);font:700 10px/1.5 "Alexandria";letter-spacing:.03em; }
+.reader-index nav .reader-section-link { grid-template-columns:30px 1fr;min-height:48px;background:color-mix(in srgb,var(--purple) 7%,transparent); }
+.reader-index nav .reader-section-link:hover,.reader-index nav .reader-section-link:focus-visible { background:color-mix(in srgb,var(--purple) 14%,transparent);color:var(--purple); }
+.volume-contents-page { min-height:calc(100dvh - 70px);padding:58px 0 100px;background:radial-gradient(circle at 85% 0,color-mix(in srgb,var(--purple) 13%,transparent),transparent 35%); }
+.volume-contents-wrap { width:min(760px,calc(100% - 32px)); }
+.volume-contents-head { margin:26px 0 28px;padding:34px;overflow:hidden;border:1px solid color-mix(in srgb,var(--purple) 24%,var(--line));border-radius:24px;background:linear-gradient(135deg,var(--surface),color-mix(in srgb,var(--surface) 86%,var(--purple)));box-shadow:0 20px 55px rgba(30,23,38,.08); }
+.volume-contents-head h1 { margin:8px 0 10px;font-family:"Noto Naskh Arabic";font-size:clamp(30px,5vw,48px); }
+.volume-contents-head p { max-width:500px;margin:0 0 24px;color:var(--muted);line-height:1.85; }
+.volume-contents-head .btn { min-height:48px; }
+.volume-section-list { display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:volume-section; }
+.volume-section-list button { width:100%;min-height:58px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:14px;padding:10px 16px;border:1px solid var(--line);border-radius:15px;background:var(--surface);color:var(--ink);text-align:right;font:600 14px/1.5 "Alexandria";cursor:pointer;touch-action:manipulation;transition:transform .2s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease; }
+.volume-section-list button i { width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:color-mix(in srgb,var(--purple) 11%,var(--bg));color:var(--purple);font:700 10px/1 "Alexandria";font-style:normal; }
+.volume-section-list button svg { color:var(--muted); }
+.volume-section-list button:hover,.volume-section-list button:focus-visible { border-color:color-mix(in srgb,var(--purple) 45%,var(--line));background:color-mix(in srgb,var(--purple) 8%,var(--surface));box-shadow:0 10px 22px rgba(55,40,98,.1);transform:translateX(-2px); }
+.volume-section-list button:active { transform:scale(.985); }
+@media (max-width:600px) {
+  .volume-contents-page { padding:34px 0 72px; }
+  .volume-contents-wrap { width:min(calc(100% - 24px),760px); }
+  .volume-contents-head { margin-top:18px;padding:26px 20px;border-radius:19px; }
+  .volume-section-list button { min-height:56px;padding:9px 12px;font-size:13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .volume-section-list button,.reader-index,.reader-body .active-word { animation:none !important;transition:none !important; }
+}
 .reader-chapter-nav>button { min-height:86px;display:grid;grid-template-columns:auto 1fr;align-content:center;gap:4px 9px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);text-align:right; }
 .reader-chapter-nav>button:last-child { text-align:left;grid-template-columns:1fr auto; }
 .reader-chapter-nav button span { color:var(--muted);font-size:9px; }
@@ -2975,7 +3004,7 @@ html:has(.reader) .theme-fab { top:100px;right:68px;bottom:auto;left:auto;width:
   .reader-body article>p>button { padding:1px 2px; }
   .reader-tools { display:flex;top:70px;right:8px;left:54px;max-width:calc(100vw - 62px);overflow-x:auto;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);scrollbar-width:none; }
   html:has(.reader) .theme-fab { top:70px;right:auto;left:8px;bottom:auto;width:38px;height:38px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12); }
-  .reader-tools button { flex:0 0 42px;width:42px;height:42px;border-bottom:0;border-left:1px solid var(--line); }
+  .reader-tools button { flex:0 0 44px;width:44px;height:44px;border-bottom:0;border-left:1px solid var(--line); }
   .reader-index { z-index:40;width:100vw;padding:18px 14px calc(18px + env(safe-area-inset-bottom)); }
   .reader-index>div { min-height:44px;margin-bottom:10px; }
   .reader-index>div button { width:44px;height:44px;display:grid;place-items:center; }

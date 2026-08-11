@@ -16,6 +16,9 @@ BOOK_TITLE = "موشوكو تينسي: التجسد العاطل"
 BOOK_AUTHOR = "ريفوجين نا ماغونوتي"
 SPACE = re.compile(r"\s+")
 PAGE_NUMBER = re.compile(r"^(?:Page\s+)?\d+$", re.I)
+SECTION_HEADING = re.compile(
+    r"^(?:prologue|epilogue|interlude|chapter\s+\d+|extra chapter|side story)", re.I
+)
 AD_MARKERS = (
     "stay up to date on light novels",
     "get the latest news on your favorite seven seas books",
@@ -122,6 +125,8 @@ def clean_source_page(value: str) -> str:
             continue
         if "goldenagato" in lowered or "mp4directs.com" in lowered:
             continue
+        if "zerobooks" in lowered or ("discord" in lowered and "ln" in lowered):
+            continue
         if any(marker in lowered for marker in AD_MARKERS):
             continue
         lines.append(line)
@@ -136,9 +141,8 @@ def source_paragraphs(value: str) -> list[str]:
     lines = [line.strip() for line in value.splitlines() if line.strip()]
     result: list[str] = []
     buffer = ""
-    heading = re.compile(r"^(?:prologue|epilogue|interlude|chapter\s+\d+|extra chapter|side story)", re.I)
     for line in lines:
-        if heading.search(line):
+        if SECTION_HEADING.search(line):
             if buffer:
                 result.append(buffer)
                 buffer = ""
@@ -182,9 +186,6 @@ def source_blocks(extracted: dict[str, Any]) -> list[dict[str, Any]]:
     blocks: list[dict[str, Any]] = []
     buffer = ""
     buffer_page = 0
-    heading = re.compile(
-        r"^(?:prologue|epilogue|interlude|chapter\s+\d+|extra chapter|side story)", re.I
-    )
 
     def flush(end_page: int) -> None:
         nonlocal buffer, buffer_page
@@ -207,7 +208,7 @@ def source_blocks(extracted: dict[str, Any]) -> list[dict[str, Any]]:
             continue
         lines = [line.strip() for line in page["text"].splitlines() if line.strip()]
         for line in lines:
-            if heading.search(line):
+            if SECTION_HEADING.search(line):
                 flush(page_number)
                 blocks.append(
                     {
@@ -269,6 +270,9 @@ def translate_group(group: list[dict[str, Any]]) -> dict[str, str]:
 def polish_translation(value: str) -> str:
     value = value.replace("\u200e", "").replace("\u200f", "")
     value = value.replace("\u00a0", " ").replace("...", "…").replace("***", "—")
+    lowered = value.lower()
+    if "zerobooks" in lowered or ("discord" in lowered and "ln" in lowered):
+        return ""
     for old, new in EDITORIAL_FIXES.items():
         value = value.replace(old, new)
     for marker in (
@@ -368,6 +372,7 @@ def translate_volume(extracted: dict[str, Any], cache_dir: Path) -> dict[str, An
 def build_volume(extracted: dict[str, Any], translated: dict[str, Any]) -> dict[str, Any]:
     number = int(extracted["volume"])
     sentences: list[dict[str, Any]] = []
+    sections: list[dict[str, Any]] = []
     illustrations: list[dict[str, Any]] = []
     sentence_pages: list[tuple[int, str]] = []
     for block in translated["sourceBlocks"]:
@@ -376,6 +381,26 @@ def build_volume(extracted: dict[str, Any], translated: dict[str, Any]) -> dict[
             continue
         position = len(sentences) + 1
         sentence_id = f"mt-v{number:02d}-p{position:05d}"
+        if SECTION_HEADING.search(block["text"]):
+            heading = paragraph.strip().strip(".:")
+            source_heading = block["text"].lower()
+            if source_heading.startswith("interlude"):
+                heading = "فاصل"
+            elif source_heading.startswith("side story"):
+                heading = "قصة جانبية"
+            elif source_heading.startswith("extra chapter"):
+                heading = "فصل إضافي"
+            duplicate_count = sum(item["title"].split(" — ", 1)[0] == heading for item in sections)
+            if duplicate_count:
+                heading = f"{heading} — {duplicate_count + 1}"
+            sections.append(
+                {
+                    "id": f"mt-v{number:02d}-section-{len(sections) + 1:02d}",
+                    "title": heading,
+                    "sentenceId": sentence_id,
+                    "position": len(sections) + 1,
+                }
+            )
         sentences.append(
             {"id": sentence_id, "position": position, "text": paragraph, "tokens": []}
         )
@@ -405,6 +430,7 @@ def build_volume(extracted: dict[str, Any], translated: dict[str, Any]) -> dict[
         "durationMs": max(1, words * 430),
         "isSample": True,
         "sentences": sentences,
+        "sections": sections,
         "illustrations": illustrations,
     }
 

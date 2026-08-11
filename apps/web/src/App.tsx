@@ -230,14 +230,17 @@ const findActiveBoundary = (
 ) => {
   let low = 0;
   let high = boundaries.length - 1;
+  let active = -1;
   while (low <= high) {
     const middle = (low + high) >> 1;
     const item = boundaries[middle];
     if (time < item.startMs) high = middle - 1;
-    else if (time >= item.endMs) low = middle + 1;
-    else return middle;
+    else {
+      active = middle;
+      low = middle + 1;
+    }
   }
-  return -1;
+  return active;
 };
 type ReadingSettings = {
   fontSize: number;
@@ -628,6 +631,7 @@ function App() {
           <Routes>
             <Route element={<Shell />}>
               <Route index element={<Home />} />
+              <Route path="book/:slug/volume/:volumeId" element={<VolumeContentsPage />} />
               <Route path="book/:slug" element={<BookPage />} />
               <Route path="login" element={<AuthPage />} />
               <Route path="register" element={<AuthPage register />} />
@@ -1245,7 +1249,10 @@ function BookPage() {
               )}
             </button>
             {sample && (
-              <Link className="btn secondary" to={`/reader/${sample.id}`}>
+              <Link
+                className="btn secondary"
+                to={sample.sections?.length ? `/book/${book.slug}/volume/${sample.id}` : `/reader/${sample.id}`}
+              >
                 <Play size={16} />
                 استمع للعينة
               </Link>
@@ -1293,7 +1300,11 @@ function BookPage() {
                       {content}
                     </button>
                   ) : (
-                    <Link className={`chapter-row ${chapterState(chapter)}`} key={chapter.id} to={`/reader/${chapter.id}`}>
+                    <Link
+                      className={`chapter-row ${chapterState(chapter)}`}
+                      key={chapter.id}
+                      to={chapter.sections?.length ? `/book/${book.slug}/volume/${chapter.id}` : `/reader/${chapter.id}`}
+                    >
                       {content}
                     </Link>
                   );
@@ -1394,6 +1405,64 @@ function BookPage() {
         </article>
       </div>
       <LockedChapterPrompt book={book} chapter={lockedChapter} onClose={() => setLockedChapter(null)} />
+    </section>
+  );
+}
+
+function VolumeContentsPage() {
+  const { slug, volumeId } = useParams();
+  const nav = useNavigate();
+  const [book, setBook] = useState<Book | null>(null);
+  const [chapter, setChapter] = useState<Chapter | null>(null);
+  useEffect(() => {
+    if (!volumeId) return;
+    api<{ book: Book; chapter: Chapter }>(`/chapters/${volumeId}/content`)
+      .then((result) => {
+        if (slug && result.book.slug !== slug) {
+          nav(`/book/${result.book.slug}/volume/${volumeId}`, { replace: true });
+          return;
+        }
+        setBook(result.book);
+        setChapter(result.chapter);
+      })
+      .catch(() => nav(slug ? `/book/${slug}` : "/", { replace: true }));
+  }, [slug, volumeId]);
+  if (!book || !chapter) return <Loading />;
+  const sections = chapter.sections?.length
+    ? chapter.sections
+    : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: chapter.sentences[0]?.id || "", position: 1 }];
+  const goToSection = (sentenceId: string) => {
+    const query = sentenceId ? `?section=${encodeURIComponent(sentenceId)}` : "";
+    nav(`/reader/${chapter.id}${query}`);
+  };
+  return (
+    <section className="volume-contents-page">
+      <div className="wrap volume-contents-wrap">
+        <nav className="crumb" aria-label="مسار التنقل">
+          <Link to={`/book/${book.slug}`}>الرواية</Link>
+          <ChevronLeft size={14} />
+          <span>{chapter.title}</span>
+        </nav>
+        <header className="volume-contents-head">
+          <span className="kicker">فهرس المجلد</span>
+          <h1>{chapter.title}</h1>
+          <p>اختر مقطعًا للانتقال إليه مباشرة، أو ابدأ القراءة من البداية.</p>
+          <button className="btn primary" type="button" onClick={() => goToSection(sections[0]?.sentenceId || "")}>
+            <Play size={17} /> ابدأ من البداية
+          </button>
+        </header>
+        <ol className="volume-section-list" aria-label={`أقسام ${chapter.title}`}>
+          {sections.map((section) => (
+            <li key={section.id}>
+              <button type="button" onClick={() => goToSection(section.sentenceId)}>
+                <i>{String(section.position).padStart(2, "0")}</i>
+                <span>{section.title}</span>
+                <ChevronLeft size={18} />
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
     </section>
   );
 }
@@ -2437,6 +2506,8 @@ function AccountPage() {
 function ReaderPage() {
   const { chapterId } = useParams();
   const nav = useNavigate();
+  const location = useLocation();
+  const sectionSentenceId = new URLSearchParams(location.search).get("section") || "";
   const { user, ready } = useAuth();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [book, setBook] = useState<any>(null);
@@ -2518,10 +2589,11 @@ function ReaderPage() {
   const speedRef = useRef(speed);
   const backgroundNarrationRef = useRef<Promise<void> | null>(null);
   const preparationRef = useRef<{
-    chapterId: string;
+    key: string;
     promise: Promise<PreparedNarrationSegment[]>;
   } | null>(null);
   const animationRef = useRef(0);
+  const lastTrackedBoundaryRef = useRef(-1);
   const currentSegmentRef = useRef(0);
   const readerBodyRef = useRef<HTMLElement | null>(null);
   const historyEntryRef = useRef("");
@@ -2530,15 +2602,16 @@ function ReaderPage() {
   const playingRef = useRef(playing);
   const atChapterEndRef = useRef(atChapterEnd);
   const lastTimelinePaintRef = useRef(0);
-  const lastSpotSaveRef = useRef({ sentenceIndex: -1, at: 0 });
+  const lastSpotSaveRef = useRef({ sentenceIndex: -1, wordId: "", at: 0 });
   const lastAutoScrollRef = useRef(0);
   const rememberReadingSpot = (sentenceIndex: number, wordId = activeWordRef.current) => {
     const now = Date.now();
     if (
       lastSpotSaveRef.current.sentenceIndex === sentenceIndex &&
-      now - lastSpotSaveRef.current.at < 1000
+      lastSpotSaveRef.current.wordId === wordId &&
+      now - lastSpotSaveRef.current.at < 250
     ) return;
-    lastSpotSaveRef.current = { sentenceIndex, at: now };
+    lastSpotSaveRef.current = { sentenceIndex, wordId, at: now };
     localStorage.setItem(`rethox-sentence-${chapterId}`, String(sentenceIndex));
     if (wordId) localStorage.setItem(`rethox-word-${chapterId}`, wordId);
     if (book && chapter) {
@@ -2618,6 +2691,8 @@ function ReaderPage() {
     audioRef.current = null;
     previewAudioRef.current = null;
     browserSpeechActiveRef.current = false;
+    backgroundNarrationRef.current = null;
+    lastTrackedBoundaryRef.current = -1;
     window.speechSynthesis.cancel();
     setPlaying(false);
     return session;
@@ -2667,6 +2742,13 @@ function ReaderPage() {
           } catch {
             // The local reading spot remains a safe offline fallback.
           }
+        }
+        const requestedSectionIndex = sectionSentenceId
+          ? r.chapter.sentences.findIndex((sentence: Sentence) => sentence.id === sectionSentenceId)
+          : -1;
+        if (requestedSectionIndex >= 0) {
+          savedIndex = requestedSectionIndex;
+          savedWordId = "";
         }
         savedIndex = Math.min(Math.max(0, savedIndex), Math.max(0, r.chapter.sentences.length - 1));
         localStorage.setItem(`rethox-sentence-${chapterId}`, String(savedIndex));
@@ -2722,7 +2804,7 @@ function ReaderPage() {
     fetchChapterComments(chapterId)
       .then((items) => setChapterComments(items))
       .catch(() => setChapterComments([]));
-  }, [chapterId, ready, user?.id]);
+  }, [chapterId, ready, sectionSentenceId, user?.id]);
   useEffect(() => {
     if (!chapter) return;
     const timer = window.setInterval(() => {
@@ -2754,19 +2836,22 @@ function ReaderPage() {
   }, [volume]);
   useEffect(() => {
     if (!chapter) return;
-    const savedWord = localStorage.getItem(`rethox-word-${chapterId}`) || "";
-    const savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
+    const savedWord = sectionSentenceId ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
+    const savedIndex = sectionSentenceId
+      ? Math.max(0, chapter.sentences.findIndex((sentence) => sentence.id === sectionSentenceId))
+      : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
     window.requestAnimationFrame(() => {
       const target =
+        (sectionSentenceId && document.querySelector(`[data-sentence-id="${sectionSentenceId}"]`)) ||
         (savedWord && document.querySelector(`[data-word-id="${savedWord}"]`)) ||
         document.querySelector(`[data-sentence-index="${savedIndex}"]`);
-      target?.scrollIntoView({ block: "center", behavior: "smooth" });
+      target?.scrollIntoView({ block: "center", behavior: sectionSentenceId ? "auto" : "smooth" });
       if (savedWord) {
         activeWordRef.current = savedWord;
         setActiveWordId(savedWord);
       }
     });
-  }, [chapter?.id, chapterId]);
+  }, [chapter?.id, chapterId, sectionSentenceId]);
   useEffect(
     () => () => {
       playbackSessionRef.current += 1;
@@ -2996,19 +3081,25 @@ function ReaderPage() {
     }
     throw lastError;
   };
-  const buildNarrationDrafts = () => {
+  const buildNarrationDrafts = (startSentenceIndex = 0, startWordIndex = 0) => {
     if (!chapter) return [];
     const segments: { textParts: string[]; tokens: PreparedNarrationSegment["tokens"] }[] = [];
     let current = { textParts: [] as string[], tokens: [] as PreparedNarrationSegment["tokens"] };
-    chapter.sentences.forEach((sentence, sentenceIndex) => {
-      const nextLength = current.textParts.join(" ").length + sentence.text.length + 1;
+    chapter.sentences.slice(Math.max(0, startSentenceIndex)).forEach((sentence, offset) => {
+      const sentenceIndex = Math.max(0, startSentenceIndex) + offset;
+      const tokens = sentenceTokens(sentence).slice(
+        sentenceIndex === startSentenceIndex ? Math.max(0, startWordIndex) : 0,
+      );
+      if (!tokens.length) return;
+      const text = tokens.map((token) => token.text).join(" ");
+      const nextLength = current.textParts.join(" ").length + text.length + 1;
       if (current.textParts.length && nextLength > 1500) {
         segments.push(current);
         current = { textParts: [], tokens: [] };
       }
-      current.textParts.push(sentence.text);
+      current.textParts.push(text);
       current.tokens.push(
-        ...sentenceTokens(sentence).map((token) => ({
+        ...tokens.map((token) => ({
           id: token.id,
           text: token.text,
           sentenceIndex,
@@ -3021,11 +3112,16 @@ function ReaderPage() {
       tokens: segment.tokens,
     }));
   };
-  const prepareChapterNarration = () => {
+  const prepareChapterNarration = (
+    startSentenceIndex = 0,
+    startWordIndex = 0,
+    session = playbackSessionRef.current,
+  ) => {
     if (!chapter) return Promise.reject(new Error("chapter-not-ready"));
-    if (preparationRef.current?.chapterId === chapter.id)
+    const key = `${chapter.id}:${startSentenceIndex}:${startWordIndex}`;
+    if (preparationRef.current?.key === key)
       return preparationRef.current.promise;
-    const drafts = buildNarrationDrafts();
+    const drafts = buildNarrationDrafts(startSentenceIndex, startWordIndex);
     const prepared: PreparedNarrationSegment[] = [];
     const loadBatch = async (batch: ReturnType<typeof buildNarrationDrafts>) => {
       const results = await Promise.all(batch.map((item) => requestVoiceReliable(item.text)));
@@ -3038,19 +3134,23 @@ function ReaderPage() {
     };
     const promise = (async () => {
       const firstBatch = drafts.slice(0, 1);
+      if (!firstBatch.length) throw new Error("narration-empty");
       prepared.push(...(await loadBatch(firstBatch)));
       const background = (async () => {
         for (let offset = 1; offset < drafts.length; offset += 1) {
+          if (session !== playbackSessionRef.current) return;
           await new Promise((resolve) => window.setTimeout(resolve, 120));
+          if (session !== playbackSessionRef.current) return;
           prepared.push(...(await loadBatch(drafts.slice(offset, offset + 1))));
         }
       })();
-      backgroundNarrationRef.current = background.finally(() => {
-        if (backgroundNarrationRef.current === background) backgroundNarrationRef.current = null;
+      const trackedBackground = background.finally(() => {
+        if (backgroundNarrationRef.current === trackedBackground) backgroundNarrationRef.current = null;
       });
+      backgroundNarrationRef.current = trackedBackground;
       return prepared;
     })();
-    preparationRef.current = { chapterId: chapter.id, promise };
+    preparationRef.current = { key, promise };
     promise.catch(() => {
       if (preparationRef.current?.promise === promise) preparationRef.current = null;
     });
@@ -3105,28 +3205,37 @@ function ReaderPage() {
       audio.currentTime = start / 1000;
       const updateTracking = () => {
         if (session !== playbackSessionRef.current) return;
-        const time = audio.currentTime * 1000 + 90;
+        const time = audio.currentTime * 1000;
         currentMsRef.current = time;
         const now = performance.now();
-        if (now - lastTimelinePaintRef.current > 200) {
+        if (now - lastTimelinePaintRef.current > 100) {
           lastTimelinePaintRef.current = now;
           setCurrentMs(time);
         }
         const activeBoundary = findActiveBoundary(segment.result.boundaries, time);
-        if (activeBoundary >= 0) {
-          const token = segment.boundaryTokens[activeBoundary];
-          const id = token?.id;
-          if (!id) return;
-          if (activeWordRef.current !== id) {
-            activeWordRef.current = id;
-            setActiveWordId(id);
-            if (token) {
-              setCurrentSentenceIndex(token.sentenceIndex);
-              rememberReadingSpot(token.sentenceIndex, id);
-            }
-            revealActiveWord(id);
+        if (activeBoundary >= 0 && activeBoundary > lastTrackedBoundaryRef.current) {
+          let latestToken: { id: string; sentenceIndex: number } | null = null;
+          for (
+            let boundary = Math.max(0, lastTrackedBoundaryRef.current + 1);
+            boundary <= activeBoundary;
+            boundary += 1
+          ) {
+            const token = segment.boundaryTokens[boundary];
+            if (!token) continue;
+            latestToken = token;
+            rememberReadingSpot(token.sentenceIndex, token.id);
+          }
+          lastTrackedBoundaryRef.current = activeBoundary;
+          if (latestToken) {
+            activeWordRef.current = latestToken.id;
+            currentSentenceIndexRef.current = latestToken.sentenceIndex;
+            setActiveWordId(latestToken.id);
+            setCurrentSentenceIndex(latestToken.sentenceIndex);
+            revealActiveWord(latestToken.id);
           }
         }
+        if (!audio.paused && !audio.ended)
+          animationRef.current = requestAnimationFrame(updateTracking);
       };
       audio.ontimeupdate = updateTracking;
       audio.onplay = () => {
@@ -3135,6 +3244,7 @@ function ReaderPage() {
         updateTracking();
       };
       audio.onpause = () => {
+        cancelAnimationFrame(animationRef.current);
         setPlaying(false);
         // No glow while paused; it re-lights when the next word is spoken.
         activeWordRef.current = "";
@@ -3142,6 +3252,7 @@ function ReaderPage() {
       };
       audio.onended = async () => {
         if (session !== playbackSessionRef.current) return;
+        cancelAnimationFrame(animationRef.current);
         if (segmentIndex + 1 < prepared.length) {
           void playPreparedSegment(prepared, segmentIndex + 1, 0, session);
         } else if (backgroundNarrationRef.current) {
@@ -3165,8 +3276,12 @@ function ReaderPage() {
         }
       };
       currentSegmentRef.current = segmentIndex;
+      lastTrackedBoundaryRef.current = Math.max(-1, boundaryIndex - 1);
       const firstToken = segment.boundaryTokens[boundaryIndex];
-      if (firstToken) setCurrentSentenceIndex(firstToken.sentenceIndex);
+      if (firstToken) {
+        currentSentenceIndexRef.current = firstToken.sentenceIndex;
+        setCurrentSentenceIndex(firstToken.sentenceIndex);
+      }
       setTtsBoundaries(segment.result.boundaries);
       setNarrationDuration(segment.result.durationMs);
       setCurrentMs(start);
@@ -3202,19 +3317,18 @@ function ReaderPage() {
     setNarrationBusy(true);
     setPlayerError("");
     try {
-      const prepared = await prepareChapterNarration();
-      if (session !== playbackSessionRef.current) return;
-      let savedSegment = prepared.findIndex((segment) =>
-        segment.tokens.some((token) => token.sentenceIndex === currentSentenceIndex),
+      const startSentenceIndex = Math.min(
+        Math.max(0, currentSentenceIndexRef.current),
+        Math.max(0, (chapter?.sentences.length || 1) - 1),
       );
-      if (savedSegment < 0 && backgroundNarrationRef.current) {
-        setNarrationBusy(true);
-        await backgroundNarrationRef.current.catch(() => {});
-        savedSegment = prepared.findIndex((segment) =>
-          segment.tokens.some((token) => token.sentenceIndex === currentSentenceIndex),
-        );
-      }
-      await playPreparedSegment(prepared, Math.max(0, savedSegment), 0, session);
+      const startWordIndex = chapter
+        ? Math.max(0, sentenceTokens(chapter.sentences[startSentenceIndex]).findIndex(
+          (token) => token.id === activeWordRef.current,
+        ))
+        : 0;
+      const prepared = await prepareChapterNarration(startSentenceIndex, startWordIndex, session);
+      if (session !== playbackSessionRef.current) return;
+      await playPreparedSegment(prepared, 0, 0, session);
     } catch {
       if (session !== playbackSessionRef.current) return;
       try {
@@ -3265,39 +3379,20 @@ function ReaderPage() {
     setNarrationBusy(true);
     setPlayerError("");
     try {
-      const prepared = await prepareChapterNarration();
+      const tokenId = chapter
+        ? sentenceTokens(chapter.sentences[sentenceIndex])[wordIndex]?.id
+        : "";
+      if (!tokenId) throw new Error("token-not-found");
+      activeWordRef.current = tokenId;
+      currentSentenceIndexRef.current = sentenceIndex;
+      setActiveWordId(tokenId);
+      setCurrentSentenceIndex(sentenceIndex);
+      rememberReadingSpot(sentenceIndex, tokenId);
+      const prepared = await prepareChapterNarration(sentenceIndex, wordIndex, session);
       if (session !== playbackSessionRef.current || !chapter) return;
-      const tokenId = sentenceTokens(chapter.sentences[sentenceIndex])[wordIndex]?.id;
-      if (tokenId) {
-        activeWordRef.current = tokenId;
-        setActiveWordId(tokenId);
-        setCurrentSentenceIndex(sentenceIndex);
-        rememberReadingSpot(sentenceIndex, tokenId);
-      }
-      let segmentIndex = prepared.findIndex((segment) =>
-        segment.tokens.some((token) => token.id === tokenId),
-      );
-      if (segmentIndex < 0 && backgroundNarrationRef.current) {
-        await backgroundNarrationRef.current.catch(() => {});
-        if (session !== playbackSessionRef.current) return;
-        segmentIndex = prepared.findIndex((segment) =>
-          segment.tokens.some((token) => token.id === tokenId),
-        );
-      }
-      if (segmentIndex < 0) throw new Error("token segment not ready");
-      const segment = prepared[Math.max(0, segmentIndex)];
-      const exactBoundary = segment.boundaryTokens.findIndex(
-        (token) => token?.id === tokenId,
-      );
-      const tokenPosition = segment.tokens.findIndex((token) => token.id === tokenId);
-      const proportionalBoundary = Math.round(
-        (Math.max(0, tokenPosition) / Math.max(1, segment.tokens.length - 1)) *
-          Math.max(0, segment.result.boundaries.length - 1),
-      );
-      const boundaryIndex = exactBoundary >= 0 ? exactBoundary : proportionalBoundary;
-      await playPreparedSegment(prepared, Math.max(0, segmentIndex), boundaryIndex, session);
+      await playPreparedSegment(prepared, 0, 0, session);
     } catch {
-      if (session === playbackSessionRef.current) {
+      if (session !== playbackSessionRef.current) {
         setPlayerError("تعذر تجهيز صوت حامد لهذه الكلمة.");
         return;
       }
@@ -3570,10 +3665,19 @@ function ReaderPage() {
   const jumpToSentence = (sentence: Sentence) => {
     setActiveSentence(sentence);
     const index = chapter?.sentences.findIndex((item) => item.id === sentence.id) ?? -1;
-    if (index >= 0)
+    if (index >= 0) {
+      currentSentenceIndexRef.current = index;
+      setCurrentSentenceIndex(index);
+      rememberReadingSpot(index, "");
       document
         .querySelector(`[data-sentence-index="${index}"]`)
         ?.scrollIntoView({ block: "center", behavior: "smooth" });
+    }
+  };
+  const jumpToSection = (sentenceId: string) => {
+    const sentence = chapter?.sentences.find((item) => item.id === sentenceId);
+    setShowChapterList(false);
+    if (sentence) jumpToSentence(sentence);
   };
   if (!chapter || !book) return <Loading dark />;
   let completedChapters: string[] = [];
@@ -3723,10 +3827,22 @@ function ReaderPage() {
         </aside>
         <aside className={`reader-index ${showChapterList ? "open" : ""}`}>
           <div>
-            <span>فهرس الرواية</span>
+            <span>{chapter.sections?.length ? "فهرس المجلد والرواية" : "فهرس الرواية"}</span>
             <button onClick={() => setShowChapterList(false)}><X /></button>
           </div>
           <nav>
+            {!!chapter.sections?.length && (
+              <>
+                <b className="reader-index-group">أقسام {chapter.title}</b>
+                {chapter.sections.map((section) => (
+                  <button key={section.id} className="reader-section-link" onClick={() => jumpToSection(section.sentenceId)}>
+                    <i>{String(section.position).padStart(2, "0")}</i>
+                    <span>{section.title}</span>
+                  </button>
+                ))}
+                <b className="reader-index-group">مجلدات الرواية</b>
+              </>
+            )}
             {chapterList.map((item) => (
               <button
                 key={item.id}
@@ -3785,7 +3901,11 @@ function ReaderPage() {
         >
           <i style={{ top: `calc(${(scrollRatio * 100).toFixed(2)}% - ${(scrollRatio * 46).toFixed(1)}px)` }} />
         </div>
-        <article style={{ fontSize, lineHeight }}>
+        <article
+          style={{ fontSize, lineHeight }}
+          onCopy={(event) => event.preventDefault()}
+          onCut={(event) => event.preventDefault()}
+        >
           <nav className="reader-chapter-nav reader-chapter-jump" aria-label="تنقل سريع بين الفصول">
             {chapterNav.previous ? (
               <button onClick={() => goToChapter(chapterNav.previous)}>
@@ -3810,6 +3930,7 @@ function ReaderPage() {
             <Fragment key={s.id}>
               <p
               data-sentence-index={sentenceIndex}
+              data-sentence-id={s.id}
               className={savedSentenceIds.includes(s.id) ? "saved-paragraph" : ""}
               onMouseEnter={() => setActiveSentence(s)}
             >
