@@ -1448,6 +1448,7 @@ function VolumeContentsPage() {
     : initialBook?.chapters?.find((item) => item.id === volumeId) || null;
   const [book, setBook] = useState<Book | null>(initialBook);
   const [chapter, setChapter] = useState<ChapterMeta | null>(initialChapter);
+  const [resolvedSections, setResolvedSections] = useState<NonNullable<ChapterMeta["sections"]>>([]);
   useEffect(() => {
     if (book && chapter?.id === volumeId) return;
     if (!slug || !volumeId) {
@@ -1481,10 +1482,26 @@ function VolumeContentsPage() {
     const timer = window.setTimeout(prefetch, 250);
     return () => window.clearTimeout(timer);
   }, [chapter?.id]);
+  useEffect(() => {
+    setResolvedSections([]);
+    if (!chapter || chapter.sections?.length) return;
+    let active = true;
+    // Some older cached book payloads only contain the volume metadata.  In
+    // that case, restore the in-volume table of contents from the chapter
+    // response instead of replacing it with a single “start” entry.
+    void getChapterContent(chapter.id)
+      .then((result) => {
+        if (active) setResolvedSections(result.chapter.sections || []);
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [chapter?.id, chapter?.sections?.length]);
   if (!book || !chapter) return <Loading />;
   const sections = chapter.sections?.length
     ? chapter.sections
-    : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: "", position: 1 }];
+    : resolvedSections.length
+      ? resolvedSections
+      : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: "", position: 1 }];
   const goToSection = (sentenceId: string) => {
     const query = sentenceId ? `?section=${encodeURIComponent(sentenceId)}` : "";
     nav(`/reader/${chapter.id}${query}`);
