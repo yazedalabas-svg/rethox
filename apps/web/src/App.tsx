@@ -3056,13 +3056,6 @@ function ReaderPage() {
     });
     return promise;
   };
-  useEffect(() => {
-    if (!chapter) return;
-    const id = window.setTimeout(() => {
-      void prepareChapterNarration().catch(() => {});
-    }, 350);
-    return () => window.clearTimeout(id);
-  }, [chapter?.id]);
   const playPreparedSegment = async (
     prepared: PreparedNarrationSegment[],
     segmentIndex: number,
@@ -3611,7 +3604,7 @@ function ReaderPage() {
         <img
           src={illustration.src}
           alt={illustration.alt}
-          loading={inline ? "lazy" : "eager"}
+          loading="lazy"
           decoding="async"
         />
         <span>اضغط للتكبير</span>
