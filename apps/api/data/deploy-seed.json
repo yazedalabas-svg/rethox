@@ -105506,6 +105506,3556 @@
           "contentFile": "books/القس المجنون/derived/volume-06.json"
         }
       ]
+    },
+    {
+      "id": "book-mushoku-tensei",
+      "slug": "mushoku-tensei-arabic",
+      "title": "موشوكو تينسي: التجسد العاطل",
+      "author": "ريفوجين نا ماغونوتي",
+      "synopsis": "يُمنح رجل أخفق في حياته فرصة جديدة حين يولد في عالم من السحر والسيوف باسم روديوس غريرات، فيعزم على عيش حياته الثانية بلا ندم.",
+      "priceMinor": 0,
+      "currency": "SAR",
+      "genre": "فانتازيا",
+      "tags": [
+        "موشوكو تينسي",
+        "إيسيكاي",
+        "فانتازيا",
+        "رواية مترجمة"
+      ],
+      "coverTheme": "indigo",
+      "coverUrl": "/Mushoku%20Tensei/assets/volume-01/page-001-image-01.jpg",
+      "status": "DRAFT",
+      "rating": 0,
+      "contentUnitLabel": "مجلد",
+      "contentUnitLabelPlural": "مجلدات",
+      "pageCount": 5934,
+      "chapters": [
+        {
+          "id": "ch-mushoku-tensei-vol-01",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 1",
+          "position": 1,
+          "durationMs": 22140270,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v01-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v01-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v01-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v01-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v01-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v01-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v01-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v01-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v01-page012-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-012-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 12",
+              "position": 9,
+              "afterSentenceId": "mt-v01-p00014"
+            },
+            {
+              "id": "mt-v01-page039-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-039-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 39",
+              "position": 10,
+              "afterSentenceId": "mt-v01-p00158"
+            },
+            {
+              "id": "mt-v01-page054-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-054-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 54",
+              "position": 11,
+              "afterSentenceId": "mt-v01-p00240"
+            },
+            {
+              "id": "mt-v01-page075-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-075-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 75",
+              "position": 12,
+              "afterSentenceId": "mt-v01-p00361"
+            },
+            {
+              "id": "mt-v01-page095-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-095-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 95",
+              "position": 13,
+              "afterSentenceId": "mt-v01-p00469"
+            },
+            {
+              "id": "mt-v01-page108-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-108-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 108",
+              "position": 14,
+              "afterSentenceId": "mt-v01-p00539"
+            },
+            {
+              "id": "mt-v01-page131-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-131-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 131",
+              "position": 15,
+              "afterSentenceId": "mt-v01-p00678"
+            },
+            {
+              "id": "mt-v01-page152-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-152-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 152",
+              "position": 16,
+              "afterSentenceId": "mt-v01-p00794"
+            },
+            {
+              "id": "mt-v01-page181-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-181-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 181",
+              "position": 17,
+              "afterSentenceId": "mt-v01-p00963"
+            },
+            {
+              "id": "mt-v01-page189-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-189-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 189",
+              "position": 18,
+              "afterSentenceId": "mt-v01-p01002"
+            },
+            {
+              "id": "mt-v01-page213-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-213-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 213",
+              "position": 19,
+              "afterSentenceId": "mt-v01-p01142"
+            },
+            {
+              "id": "mt-v01-page214-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-214-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 214",
+              "position": 20,
+              "afterSentenceId": "mt-v01-p01142"
+            },
+            {
+              "id": "mt-v01-page215-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-215-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 215",
+              "position": 21,
+              "afterSentenceId": "mt-v01-p01142"
+            },
+            {
+              "id": "mt-v01-page216-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-216-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 216",
+              "position": 22,
+              "afterSentenceId": "mt-v01-p01142"
+            },
+            {
+              "id": "mt-v01-page217-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-217-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 217",
+              "position": 23,
+              "afterSentenceId": "mt-v01-p01142"
+            },
+            {
+              "id": "mt-v01-page218-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-01/page-218-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 1 - الصفحة 218",
+              "position": 24,
+              "afterSentenceId": "mt-v01-p01142"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1143,
+          "contentFile": "books/Mushoku Tensei/derived/volume-01.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-02",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 2",
+          "position": 2,
+          "durationMs": 20535510,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v02-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v02-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v02-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v02-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v02-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v02-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v02-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v02-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v02-page016-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-016-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 16",
+              "position": 9,
+              "afterSentenceId": "mt-v02-p00033"
+            },
+            {
+              "id": "mt-v02-page023-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-023-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 23",
+              "position": 10,
+              "afterSentenceId": "mt-v02-p00070"
+            },
+            {
+              "id": "mt-v02-page049-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-049-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 49",
+              "position": 11,
+              "afterSentenceId": "mt-v02-p00219"
+            },
+            {
+              "id": "mt-v02-page063-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-063-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 63",
+              "position": 12,
+              "afterSentenceId": "mt-v02-p00293"
+            },
+            {
+              "id": "mt-v02-page099-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-099-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 99",
+              "position": 13,
+              "afterSentenceId": "mt-v02-p00506"
+            },
+            {
+              "id": "mt-v02-page110-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-110-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 110",
+              "position": 14,
+              "afterSentenceId": "mt-v02-p00569"
+            },
+            {
+              "id": "mt-v02-page152-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-152-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 152",
+              "position": 15,
+              "afterSentenceId": "mt-v02-p00818"
+            },
+            {
+              "id": "mt-v02-page180-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-180-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 180",
+              "position": 16,
+              "afterSentenceId": "mt-v02-p00976"
+            },
+            {
+              "id": "mt-v02-page183-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-183-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 183",
+              "position": 17,
+              "afterSentenceId": "mt-v02-p00988"
+            },
+            {
+              "id": "mt-v02-page192-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-192-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 192",
+              "position": 18,
+              "afterSentenceId": "mt-v02-p01036"
+            },
+            {
+              "id": "mt-v02-page208-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-208-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 208",
+              "position": 19,
+              "afterSentenceId": "mt-v02-p01131"
+            },
+            {
+              "id": "mt-v02-page209-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-02/page-209-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 2 - الصفحة 209",
+              "position": 20,
+              "afterSentenceId": "mt-v02-p01131"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1134,
+          "contentFile": "books/Mushoku Tensei/derived/volume-02.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-03",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 3",
+          "position": 3,
+          "durationMs": 28902020,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v03-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v03-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v03-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v03-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v03-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v03-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v03-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v03-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v03-page032-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-032-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 32",
+              "position": 9,
+              "afterSentenceId": "mt-v03-p00127"
+            },
+            {
+              "id": "mt-v03-page050-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-050-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 50",
+              "position": 10,
+              "afterSentenceId": "mt-v03-p00223"
+            },
+            {
+              "id": "mt-v03-page069-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-069-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 69",
+              "position": 11,
+              "afterSentenceId": "mt-v03-p00330"
+            },
+            {
+              "id": "mt-v03-page110-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-110-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 110",
+              "position": 12,
+              "afterSentenceId": "mt-v03-p00562"
+            },
+            {
+              "id": "mt-v03-page133-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-133-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 133",
+              "position": 13,
+              "afterSentenceId": "mt-v03-p00684"
+            },
+            {
+              "id": "mt-v03-page202-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-202-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 202",
+              "position": 14,
+              "afterSentenceId": "mt-v03-p01105"
+            },
+            {
+              "id": "mt-v03-page243-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-03/page-243-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 3 - الصفحة 243",
+              "position": 15,
+              "afterSentenceId": "mt-v03-p01350"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1510,
+          "contentFile": "books/Mushoku Tensei/derived/volume-03.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-04",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 4",
+          "position": 4,
+          "durationMs": 23508100,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v04-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v04-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v04-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v04-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v04-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v04-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v04-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v04-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v04-page009-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-009-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 9",
+              "position": 9
+            },
+            {
+              "id": "mt-v04-page032-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-032-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 32",
+              "position": 10,
+              "afterSentenceId": "mt-v04-p00110"
+            },
+            {
+              "id": "mt-v04-page042-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-042-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 42",
+              "position": 11,
+              "afterSentenceId": "mt-v04-p00169"
+            },
+            {
+              "id": "mt-v04-page056-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-056-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 56",
+              "position": 12,
+              "afterSentenceId": "mt-v04-p00243"
+            },
+            {
+              "id": "mt-v04-page067-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-067-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 67",
+              "position": 13,
+              "afterSentenceId": "mt-v04-p00301"
+            },
+            {
+              "id": "mt-v04-page092-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-092-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 92",
+              "position": 14,
+              "afterSentenceId": "mt-v04-p00445"
+            },
+            {
+              "id": "mt-v04-page108-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-108-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 108",
+              "position": 15,
+              "afterSentenceId": "mt-v04-p00531"
+            },
+            {
+              "id": "mt-v04-page132-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-132-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 132",
+              "position": 16,
+              "afterSentenceId": "mt-v04-p00674"
+            },
+            {
+              "id": "mt-v04-page165-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-165-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 165",
+              "position": 17,
+              "afterSentenceId": "mt-v04-p00876"
+            },
+            {
+              "id": "mt-v04-page191-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-191-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 191",
+              "position": 18,
+              "afterSentenceId": "mt-v04-p01023"
+            },
+            {
+              "id": "mt-v04-page200-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-04/page-200-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 4 - الصفحة 200",
+              "position": 19,
+              "afterSentenceId": "mt-v04-p01067"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1219,
+          "contentFile": "books/Mushoku Tensei/derived/volume-04.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-05",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 5",
+          "position": 5,
+          "durationMs": 25136940,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v05-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v05-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v05-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v05-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v05-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v05-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v05-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v05-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v05-page009-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-009-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 9",
+              "position": 9
+            },
+            {
+              "id": "mt-v05-page023-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-023-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 23",
+              "position": 10,
+              "afterSentenceId": "mt-v05-p00068"
+            },
+            {
+              "id": "mt-v05-page042-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-042-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 42",
+              "position": 11,
+              "afterSentenceId": "mt-v05-p00173"
+            },
+            {
+              "id": "mt-v05-page067-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-067-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 67",
+              "position": 12,
+              "afterSentenceId": "mt-v05-p00312"
+            },
+            {
+              "id": "mt-v05-page086-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-086-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 86",
+              "position": 13,
+              "afterSentenceId": "mt-v05-p00420"
+            },
+            {
+              "id": "mt-v05-page104-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-104-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 104",
+              "position": 14,
+              "afterSentenceId": "mt-v05-p00528"
+            },
+            {
+              "id": "mt-v05-page126-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-126-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 126",
+              "position": 15,
+              "afterSentenceId": "mt-v05-p00652"
+            },
+            {
+              "id": "mt-v05-page167-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-167-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 167",
+              "position": 16,
+              "afterSentenceId": "mt-v05-p00895"
+            },
+            {
+              "id": "mt-v05-page188-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-188-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 188",
+              "position": 17,
+              "afterSentenceId": "mt-v05-p01016"
+            },
+            {
+              "id": "mt-v05-page231-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-231-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 231",
+              "position": 18,
+              "afterSentenceId": "mt-v05-p01278"
+            },
+            {
+              "id": "mt-v05-page232-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-232-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 232",
+              "position": 19,
+              "afterSentenceId": "mt-v05-p01278"
+            },
+            {
+              "id": "mt-v05-page233-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-05/page-233-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 5 - الصفحة 233",
+              "position": 20,
+              "afterSentenceId": "mt-v05-p01278"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1279,
+          "contentFile": "books/Mushoku Tensei/derived/volume-05.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-06",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 6",
+          "position": 6,
+          "durationMs": 23972500,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v06-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v06-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v06-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v06-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v06-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v06-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v06-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v06-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v06-page027-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-027-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 27",
+              "position": 9,
+              "afterSentenceId": "mt-v06-p00099"
+            },
+            {
+              "id": "mt-v06-page043-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-043-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 43",
+              "position": 10,
+              "afterSentenceId": "mt-v06-p00188"
+            },
+            {
+              "id": "mt-v06-page075-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-075-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 75",
+              "position": 11,
+              "afterSentenceId": "mt-v06-p00384"
+            },
+            {
+              "id": "mt-v06-page116-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-116-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 116",
+              "position": 12,
+              "afterSentenceId": "mt-v06-p00626"
+            },
+            {
+              "id": "mt-v06-page151-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-151-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 151",
+              "position": 13,
+              "afterSentenceId": "mt-v06-p00832"
+            },
+            {
+              "id": "mt-v06-page174-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-174-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 174",
+              "position": 14,
+              "afterSentenceId": "mt-v06-p00962"
+            },
+            {
+              "id": "mt-v06-page199-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-06/page-199-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 6 - الصفحة 199",
+              "position": 15,
+              "afterSentenceId": "mt-v06-p01100"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1202,
+          "contentFile": "books/Mushoku Tensei/derived/volume-06.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-07",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 7",
+          "position": 7,
+          "durationMs": 22915560,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v07-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v07-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v07-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v07-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v07-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v07-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v07-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v07-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v07-page027-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-027-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 27",
+              "position": 9,
+              "afterSentenceId": "mt-v07-p00102"
+            },
+            {
+              "id": "mt-v07-page044-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-044-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 44",
+              "position": 10,
+              "afterSentenceId": "mt-v07-p00199"
+            },
+            {
+              "id": "mt-v07-page067-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-067-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 67",
+              "position": 11,
+              "afterSentenceId": "mt-v07-p00327"
+            },
+            {
+              "id": "mt-v07-page088-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-088-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 88",
+              "position": 12,
+              "afterSentenceId": "mt-v07-p00448"
+            },
+            {
+              "id": "mt-v07-page128-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-128-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 128",
+              "position": 13,
+              "afterSentenceId": "mt-v07-p00691"
+            },
+            {
+              "id": "mt-v07-page158-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-158-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 158",
+              "position": 14,
+              "afterSentenceId": "mt-v07-p00871"
+            },
+            {
+              "id": "mt-v07-page179-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-179-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 179",
+              "position": 15,
+              "afterSentenceId": "mt-v07-p00995"
+            },
+            {
+              "id": "mt-v07-page183-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-183-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 183",
+              "position": 16,
+              "afterSentenceId": "mt-v07-p01013"
+            },
+            {
+              "id": "mt-v07-page205-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-205-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 205",
+              "position": 17,
+              "afterSentenceId": "mt-v07-p01134"
+            },
+            {
+              "id": "mt-v07-page206-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-206-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 206",
+              "position": 18,
+              "afterSentenceId": "mt-v07-p01134"
+            },
+            {
+              "id": "mt-v07-page207-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-207-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 207",
+              "position": 19,
+              "afterSentenceId": "mt-v07-p01134"
+            },
+            {
+              "id": "mt-v07-page208-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-07/page-208-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 7 - الصفحة 208",
+              "position": 20,
+              "afterSentenceId": "mt-v07-p01134"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1136,
+          "contentFile": "books/Mushoku Tensei/derived/volume-07.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-08",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 8",
+          "position": 8,
+          "durationMs": 21477640,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v08-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v08-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v08-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v08-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v08-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v08-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v08-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v08-page051-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-051-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 51",
+              "position": 8,
+              "afterSentenceId": "mt-v08-p00232"
+            },
+            {
+              "id": "mt-v08-page067-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-067-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 67",
+              "position": 9,
+              "afterSentenceId": "mt-v08-p00321"
+            },
+            {
+              "id": "mt-v08-page085-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-085-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 85",
+              "position": 10,
+              "afterSentenceId": "mt-v08-p00420"
+            },
+            {
+              "id": "mt-v08-page141-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-141-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 141",
+              "position": 11,
+              "afterSentenceId": "mt-v08-p00736"
+            },
+            {
+              "id": "mt-v08-page159-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-159-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 159",
+              "position": 12,
+              "afterSentenceId": "mt-v08-p00829"
+            },
+            {
+              "id": "mt-v08-page175-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-175-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 175",
+              "position": 13,
+              "afterSentenceId": "mt-v08-p00924"
+            },
+            {
+              "id": "mt-v08-page197-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-197-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 197",
+              "position": 14,
+              "afterSentenceId": "mt-v08-p01043"
+            },
+            {
+              "id": "mt-v08-page198-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-198-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 198",
+              "position": 15,
+              "afterSentenceId": "mt-v08-p01043"
+            },
+            {
+              "id": "mt-v08-page199-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-08/page-199-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 8 - الصفحة 199",
+              "position": 16,
+              "afterSentenceId": "mt-v08-p01043"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1045,
+          "contentFile": "books/Mushoku Tensei/derived/volume-08.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-09",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 9",
+          "position": 9,
+          "durationMs": 28717980,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v09-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v09-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v09-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v09-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v09-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v09-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v09-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v09-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v09-page020-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-020-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 20",
+              "position": 9,
+              "afterSentenceId": "mt-v09-p00054"
+            },
+            {
+              "id": "mt-v09-page058-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-058-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 58",
+              "position": 10,
+              "afterSentenceId": "mt-v09-p00275"
+            },
+            {
+              "id": "mt-v09-page071-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-071-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 71",
+              "position": 11,
+              "afterSentenceId": "mt-v09-p00343"
+            },
+            {
+              "id": "mt-v09-page093-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-093-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 93",
+              "position": 12,
+              "afterSentenceId": "mt-v09-p00461"
+            },
+            {
+              "id": "mt-v09-page124-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-124-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 124",
+              "position": 13,
+              "afterSentenceId": "mt-v09-p00651"
+            },
+            {
+              "id": "mt-v09-page154-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-154-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 154",
+              "position": 14,
+              "afterSentenceId": "mt-v09-p00825"
+            },
+            {
+              "id": "mt-v09-page215-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-09/page-215-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 9 - الصفحة 215",
+              "position": 15,
+              "afterSentenceId": "mt-v09-p01196"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1432,
+          "contentFile": "books/Mushoku Tensei/derived/volume-09.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-10",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 10",
+          "position": 10,
+          "durationMs": 21993640,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v10-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v10-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v10-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v10-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v10-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v10-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v10-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v10-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v10-page018-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-018-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 18",
+              "position": 9,
+              "afterSentenceId": "mt-v10-p00046"
+            },
+            {
+              "id": "mt-v10-page043-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-043-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 43",
+              "position": 10,
+              "afterSentenceId": "mt-v10-p00180"
+            },
+            {
+              "id": "mt-v10-page067-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-067-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 67",
+              "position": 11,
+              "afterSentenceId": "mt-v10-p00316"
+            },
+            {
+              "id": "mt-v10-page101-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-101-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 101",
+              "position": 12,
+              "afterSentenceId": "mt-v10-p00519"
+            },
+            {
+              "id": "mt-v10-page110-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-110-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 110",
+              "position": 13,
+              "afterSentenceId": "mt-v10-p00569"
+            },
+            {
+              "id": "mt-v10-page158-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-158-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 158",
+              "position": 14,
+              "afterSentenceId": "mt-v10-p00850"
+            },
+            {
+              "id": "mt-v10-page184-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-10/page-184-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 10 - الصفحة 184",
+              "position": 15,
+              "afterSentenceId": "mt-v10-p01006"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1128,
+          "contentFile": "books/Mushoku Tensei/derived/volume-10.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-11",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 11",
+          "position": 11,
+          "durationMs": 29630870,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v11-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v11-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v11-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v11-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v11-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v11-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v11-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v11-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v11-page040-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-040-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 40",
+              "position": 9,
+              "afterSentenceId": "mt-v11-p00189"
+            },
+            {
+              "id": "mt-v11-page076-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-076-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 76",
+              "position": 10,
+              "afterSentenceId": "mt-v11-p00400"
+            },
+            {
+              "id": "mt-v11-page124-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-124-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 124",
+              "position": 11,
+              "afterSentenceId": "mt-v11-p00696"
+            },
+            {
+              "id": "mt-v11-page156-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-156-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 156",
+              "position": 12,
+              "afterSentenceId": "mt-v11-p00888"
+            },
+            {
+              "id": "mt-v11-page172-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-172-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 172",
+              "position": 13,
+              "afterSentenceId": "mt-v11-p00978"
+            },
+            {
+              "id": "mt-v11-page218-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-218-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 218",
+              "position": 14,
+              "afterSentenceId": "mt-v11-p01248"
+            },
+            {
+              "id": "mt-v11-page260-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-11/page-260-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 11 - الصفحة 260",
+              "position": 15,
+              "afterSentenceId": "mt-v11-p01505"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1595,
+          "contentFile": "books/Mushoku Tensei/derived/volume-11.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-12",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 12",
+          "position": 12,
+          "durationMs": 25365700,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v12-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v12-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v12-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v12-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v12-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v12-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v12-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v12-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v12-page021-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-021-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 21",
+              "position": 9,
+              "afterSentenceId": "mt-v12-p00060"
+            },
+            {
+              "id": "mt-v12-page044-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-044-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 44",
+              "position": 10,
+              "afterSentenceId": "mt-v12-p00194"
+            },
+            {
+              "id": "mt-v12-page084-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-084-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 84",
+              "position": 11,
+              "afterSentenceId": "mt-v12-p00431"
+            },
+            {
+              "id": "mt-v12-page123-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-123-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 123",
+              "position": 12,
+              "afterSentenceId": "mt-v12-p00652"
+            },
+            {
+              "id": "mt-v12-page142-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-142-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 142",
+              "position": 13,
+              "afterSentenceId": "mt-v12-p00761"
+            },
+            {
+              "id": "mt-v12-page164-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-164-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 164",
+              "position": 14,
+              "afterSentenceId": "mt-v12-p00882"
+            },
+            {
+              "id": "mt-v12-page220-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-220-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 220",
+              "position": 15,
+              "afterSentenceId": "mt-v12-p01225"
+            },
+            {
+              "id": "mt-v12-page237-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-12/page-237-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 12 - الصفحة 237",
+              "position": 16,
+              "afterSentenceId": "mt-v12-p01322"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1325,
+          "contentFile": "books/Mushoku Tensei/derived/volume-12.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-13",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 13",
+          "position": 13,
+          "durationMs": 27695870,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v13-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v13-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v13-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v13-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v13-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v13-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v13-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v13-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v13-page026-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-026-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 26",
+              "position": 9,
+              "afterSentenceId": "mt-v13-p00094"
+            },
+            {
+              "id": "mt-v13-page071-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-071-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 71",
+              "position": 10,
+              "afterSentenceId": "mt-v13-p00359"
+            },
+            {
+              "id": "mt-v13-page110-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-110-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 110",
+              "position": 11,
+              "afterSentenceId": "mt-v13-p00593"
+            },
+            {
+              "id": "mt-v13-page151-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-151-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 151",
+              "position": 12,
+              "afterSentenceId": "mt-v13-p00850"
+            },
+            {
+              "id": "mt-v13-page188-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-188-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 188",
+              "position": 13,
+              "afterSentenceId": "mt-v13-p01079"
+            },
+            {
+              "id": "mt-v13-page228-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-228-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 228",
+              "position": 14,
+              "afterSentenceId": "mt-v13-p01322"
+            },
+            {
+              "id": "mt-v13-page239-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-13/page-239-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 13 - الصفحة 239",
+              "position": 15,
+              "afterSentenceId": "mt-v13-p01382"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1583,
+          "contentFile": "books/Mushoku Tensei/derived/volume-13.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-14",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 14",
+          "position": 14,
+          "durationMs": 25426330,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v14-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v14-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v14-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v14-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v14-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v14-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v14-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v14-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v14-page026-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-026-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 26",
+              "position": 9,
+              "afterSentenceId": "mt-v14-p00093"
+            },
+            {
+              "id": "mt-v14-page059-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-059-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 59",
+              "position": 10,
+              "afterSentenceId": "mt-v14-p00286"
+            },
+            {
+              "id": "mt-v14-page074-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-074-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 74",
+              "position": 11,
+              "afterSentenceId": "mt-v14-p00370"
+            },
+            {
+              "id": "mt-v14-page122-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-122-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 122",
+              "position": 12,
+              "afterSentenceId": "mt-v14-p00646"
+            },
+            {
+              "id": "mt-v14-page163-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-163-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 163",
+              "position": 13,
+              "afterSentenceId": "mt-v14-p00900"
+            },
+            {
+              "id": "mt-v14-page175-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-175-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 175",
+              "position": 14,
+              "afterSentenceId": "mt-v14-p00959"
+            },
+            {
+              "id": "mt-v14-page205-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-14/page-205-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 14 - الصفحة 205",
+              "position": 15,
+              "afterSentenceId": "mt-v14-p01123"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1294,
+          "contentFile": "books/Mushoku Tensei/derived/volume-14.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-15",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 15",
+          "position": 15,
+          "durationMs": 27038400,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v15-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v15-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v15-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v15-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v15-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v15-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v15-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v15-page009-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-009-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 9",
+              "position": 8,
+              "afterSentenceId": "mt-v15-p00006"
+            },
+            {
+              "id": "mt-v15-page022-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-022-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 22",
+              "position": 9,
+              "afterSentenceId": "mt-v15-p00070"
+            },
+            {
+              "id": "mt-v15-page042-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-042-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 42",
+              "position": 10,
+              "afterSentenceId": "mt-v15-p00178"
+            },
+            {
+              "id": "mt-v15-page092-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-092-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 92",
+              "position": 11,
+              "afterSentenceId": "mt-v15-p00486"
+            },
+            {
+              "id": "mt-v15-page119-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-119-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 119",
+              "position": 12,
+              "afterSentenceId": "mt-v15-p00661"
+            },
+            {
+              "id": "mt-v15-page134-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-134-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 134",
+              "position": 13,
+              "afterSentenceId": "mt-v15-p00745"
+            },
+            {
+              "id": "mt-v15-page147-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-147-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 147",
+              "position": 14,
+              "afterSentenceId": "mt-v15-p00825"
+            },
+            {
+              "id": "mt-v15-page185-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-185-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 185",
+              "position": 15,
+              "afterSentenceId": "mt-v15-p01048"
+            },
+            {
+              "id": "mt-v15-page243-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-243-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 243",
+              "position": 16,
+              "afterSentenceId": "mt-v15-p01411"
+            },
+            {
+              "id": "mt-v15-page247-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-247-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 247",
+              "position": 17,
+              "afterSentenceId": "mt-v15-p01425"
+            },
+            {
+              "id": "mt-v15-page248-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-248-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 248",
+              "position": 18,
+              "afterSentenceId": "mt-v15-p01425"
+            },
+            {
+              "id": "mt-v15-page249-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-249-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 249",
+              "position": 19,
+              "afterSentenceId": "mt-v15-p01425"
+            },
+            {
+              "id": "mt-v15-page250-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-15/page-250-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 15 - الصفحة 250",
+              "position": 20,
+              "afterSentenceId": "mt-v15-p01425"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1427,
+          "contentFile": "books/Mushoku Tensei/derived/volume-15.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-16",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 16",
+          "position": 16,
+          "durationMs": 25990490,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v16-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v16-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 4",
+              "position": 2,
+              "afterSentenceId": "mt-v16-p00001"
+            },
+            {
+              "id": "mt-v16-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 5",
+              "position": 3,
+              "afterSentenceId": "mt-v16-p00001"
+            },
+            {
+              "id": "mt-v16-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 6",
+              "position": 4,
+              "afterSentenceId": "mt-v16-p00001"
+            },
+            {
+              "id": "mt-v16-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 7",
+              "position": 5,
+              "afterSentenceId": "mt-v16-p00001"
+            },
+            {
+              "id": "mt-v16-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 8",
+              "position": 6,
+              "afterSentenceId": "mt-v16-p00001"
+            },
+            {
+              "id": "mt-v16-page009-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-009-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 9",
+              "position": 7,
+              "afterSentenceId": "mt-v16-p00001"
+            },
+            {
+              "id": "mt-v16-page018-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-018-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 18",
+              "position": 8,
+              "afterSentenceId": "mt-v16-p00050"
+            },
+            {
+              "id": "mt-v16-page042-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-042-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 42",
+              "position": 9,
+              "afterSentenceId": "mt-v16-p00192"
+            },
+            {
+              "id": "mt-v16-page109-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-109-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 109",
+              "position": 10,
+              "afterSentenceId": "mt-v16-p00598"
+            },
+            {
+              "id": "mt-v16-page147-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-147-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 147",
+              "position": 11,
+              "afterSentenceId": "mt-v16-p00826"
+            },
+            {
+              "id": "mt-v16-page188-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-188-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 188",
+              "position": 12,
+              "afterSentenceId": "mt-v16-p01068"
+            },
+            {
+              "id": "mt-v16-page209-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-209-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 209",
+              "position": 13,
+              "afterSentenceId": "mt-v16-p01193"
+            },
+            {
+              "id": "mt-v16-page231-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-16/page-231-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 16 - الصفحة 231",
+              "position": 14,
+              "afterSentenceId": "mt-v16-p01317"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1320,
+          "contentFile": "books/Mushoku Tensei/derived/volume-16.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-17",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 17",
+          "position": 17,
+          "durationMs": 26702140,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v17-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v17-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v17-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v17-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v17-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v17-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v17-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v17-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v17-page040-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-040-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 40",
+              "position": 9,
+              "afterSentenceId": "mt-v17-p00183"
+            },
+            {
+              "id": "mt-v17-page082-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-082-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 82",
+              "position": 10,
+              "afterSentenceId": "mt-v17-p00439"
+            },
+            {
+              "id": "mt-v17-page118-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-118-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 118",
+              "position": 11,
+              "afterSentenceId": "mt-v17-p00643"
+            },
+            {
+              "id": "mt-v17-page172-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-172-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 172",
+              "position": 12,
+              "afterSentenceId": "mt-v17-p00955"
+            },
+            {
+              "id": "mt-v17-page200-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-200-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 200",
+              "position": 13,
+              "afterSentenceId": "mt-v17-p01119"
+            },
+            {
+              "id": "mt-v17-page221-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-221-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 221",
+              "position": 14,
+              "afterSentenceId": "mt-v17-p01240"
+            },
+            {
+              "id": "mt-v17-page239-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-17/page-239-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 17 - الصفحة 239",
+              "position": 15,
+              "afterSentenceId": "mt-v17-p01339"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1431,
+          "contentFile": "books/Mushoku Tensei/derived/volume-17.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-18",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 18",
+          "position": 18,
+          "durationMs": 27210400,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v18-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v18-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v18-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v18-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v18-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v18-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v18-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v18-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v18-page011-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-011-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 11",
+              "position": 9,
+              "afterSentenceId": "mt-v18-p00001"
+            },
+            {
+              "id": "mt-v18-page023-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-023-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 23",
+              "position": 10,
+              "afterSentenceId": "mt-v18-p00063"
+            },
+            {
+              "id": "mt-v18-page037-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-037-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 37",
+              "position": 11,
+              "afterSentenceId": "mt-v18-p00139"
+            },
+            {
+              "id": "mt-v18-page075-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-075-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 75",
+              "position": 12,
+              "afterSentenceId": "mt-v18-p00374"
+            },
+            {
+              "id": "mt-v18-page144-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-144-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 144",
+              "position": 13,
+              "afterSentenceId": "mt-v18-p00785"
+            },
+            {
+              "id": "mt-v18-page173-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-173-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 173",
+              "position": 14,
+              "afterSentenceId": "mt-v18-p00948"
+            },
+            {
+              "id": "mt-v18-page188-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-188-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 188",
+              "position": 15,
+              "afterSentenceId": "mt-v18-p01030"
+            },
+            {
+              "id": "mt-v18-page220-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-220-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 220",
+              "position": 16,
+              "afterSentenceId": "mt-v18-p01213"
+            },
+            {
+              "id": "mt-v18-page226-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-18/page-226-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 18 - الصفحة 226",
+              "position": 17,
+              "afterSentenceId": "mt-v18-p01240"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1331,
+          "contentFile": "books/Mushoku Tensei/derived/volume-18.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-19",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 19",
+          "position": 19,
+          "durationMs": 28823330,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v19-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v19-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v19-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v19-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v19-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v19-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v19-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v19-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v19-page030-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-030-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 30",
+              "position": 9,
+              "afterSentenceId": "mt-v19-p00116"
+            },
+            {
+              "id": "mt-v19-page122-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-122-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 122",
+              "position": 10,
+              "afterSentenceId": "mt-v19-p00686"
+            },
+            {
+              "id": "mt-v19-page167-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-167-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 167",
+              "position": 11,
+              "afterSentenceId": "mt-v19-p00959"
+            },
+            {
+              "id": "mt-v19-page188-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-188-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 188",
+              "position": 12,
+              "afterSentenceId": "mt-v19-p01080"
+            },
+            {
+              "id": "mt-v19-page202-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-202-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 202",
+              "position": 13,
+              "afterSentenceId": "mt-v19-p01167"
+            },
+            {
+              "id": "mt-v19-page228-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-228-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 228",
+              "position": 14,
+              "afterSentenceId": "mt-v19-p01319"
+            },
+            {
+              "id": "mt-v19-page250-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-19/page-250-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 19 - الصفحة 250",
+              "position": 15,
+              "afterSentenceId": "mt-v19-p01439"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1478,
+          "contentFile": "books/Mushoku Tensei/derived/volume-19.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-20",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 20",
+          "position": 20,
+          "durationMs": 25019550,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v20-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v20-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v20-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v20-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v20-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v20-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v20-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v20-page029-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-029-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 29",
+              "position": 8,
+              "afterSentenceId": "mt-v20-p00117"
+            },
+            {
+              "id": "mt-v20-page065-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-065-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 65",
+              "position": 9,
+              "afterSentenceId": "mt-v20-p00346"
+            },
+            {
+              "id": "mt-v20-page094-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-094-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 94",
+              "position": 10,
+              "afterSentenceId": "mt-v20-p00520"
+            },
+            {
+              "id": "mt-v20-page113-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-113-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 113",
+              "position": 11,
+              "afterSentenceId": "mt-v20-p00626"
+            },
+            {
+              "id": "mt-v20-page145-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-145-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 145",
+              "position": 12,
+              "afterSentenceId": "mt-v20-p00808"
+            },
+            {
+              "id": "mt-v20-page164-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-164-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 164",
+              "position": 13,
+              "afterSentenceId": "mt-v20-p00912"
+            },
+            {
+              "id": "mt-v20-page194-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-194-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 194",
+              "position": 14,
+              "afterSentenceId": "mt-v20-p01094"
+            },
+            {
+              "id": "mt-v20-page214-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-214-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 214",
+              "position": 15,
+              "afterSentenceId": "mt-v20-p01201"
+            },
+            {
+              "id": "mt-v20-page215-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-20/page-215-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 20 - الصفحة 215",
+              "position": 16,
+              "afterSentenceId": "mt-v20-p01201"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1204,
+          "contentFile": "books/Mushoku Tensei/derived/volume-20.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-21",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 21",
+          "position": 21,
+          "durationMs": 23236340,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v21-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v21-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v21-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v21-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v21-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v21-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v21-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v21-page014-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-014-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 14",
+              "position": 8,
+              "afterSentenceId": "mt-v21-p00021"
+            },
+            {
+              "id": "mt-v21-page063-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-063-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 63",
+              "position": 9,
+              "afterSentenceId": "mt-v21-p00317"
+            },
+            {
+              "id": "mt-v21-page096-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-096-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 96",
+              "position": 10,
+              "afterSentenceId": "mt-v21-p00528"
+            },
+            {
+              "id": "mt-v21-page121-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-121-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 121",
+              "position": 11,
+              "afterSentenceId": "mt-v21-p00678"
+            },
+            {
+              "id": "mt-v21-page146-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-146-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 146",
+              "position": 12,
+              "afterSentenceId": "mt-v21-p00816"
+            },
+            {
+              "id": "mt-v21-page159-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-159-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 159",
+              "position": 13,
+              "afterSentenceId": "mt-v21-p00891"
+            },
+            {
+              "id": "mt-v21-page196-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-21/page-196-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 21 - الصفحة 196",
+              "position": 14,
+              "afterSentenceId": "mt-v21-p01116"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1126,
+          "contentFile": "books/Mushoku Tensei/derived/volume-21.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-22",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 22",
+          "position": 22,
+          "durationMs": 22772800,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v22-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v22-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v22-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v22-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v22-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v22-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v22-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v22-page015-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-015-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 15",
+              "position": 8,
+              "afterSentenceId": "mt-v22-p00029"
+            },
+            {
+              "id": "mt-v22-page074-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-074-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 74",
+              "position": 9,
+              "afterSentenceId": "mt-v22-p00385"
+            },
+            {
+              "id": "mt-v22-page086-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-086-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 86",
+              "position": 10,
+              "afterSentenceId": "mt-v22-p00449"
+            },
+            {
+              "id": "mt-v22-page091-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-091-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 91",
+              "position": 11,
+              "afterSentenceId": "mt-v22-p00475"
+            },
+            {
+              "id": "mt-v22-page097-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-097-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 97",
+              "position": 12,
+              "afterSentenceId": "mt-v22-p00501"
+            },
+            {
+              "id": "mt-v22-page111-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-111-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 111",
+              "position": 13,
+              "afterSentenceId": "mt-v22-p00575"
+            },
+            {
+              "id": "mt-v22-page170-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-22/page-170-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 22 - الصفحة 170",
+              "position": 14,
+              "afterSentenceId": "mt-v22-p00949"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1154,
+          "contentFile": "books/Mushoku Tensei/derived/volume-22.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-23",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 23",
+          "position": 23,
+          "durationMs": 25116300,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v23-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v23-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v23-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v23-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v23-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v23-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v23-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v23-page008-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-008-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 8",
+              "position": 8
+            },
+            {
+              "id": "mt-v23-page032-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-032-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 32",
+              "position": 9,
+              "afterSentenceId": "mt-v23-p00126"
+            },
+            {
+              "id": "mt-v23-page066-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-066-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 66",
+              "position": 10,
+              "afterSentenceId": "mt-v23-p00338"
+            },
+            {
+              "id": "mt-v23-page083-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-083-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 83",
+              "position": 11,
+              "afterSentenceId": "mt-v23-p00431"
+            },
+            {
+              "id": "mt-v23-page138-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-138-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 138",
+              "position": 12,
+              "afterSentenceId": "mt-v23-p00752"
+            },
+            {
+              "id": "mt-v23-page163-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-163-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 163",
+              "position": 13,
+              "afterSentenceId": "mt-v23-p00908"
+            },
+            {
+              "id": "mt-v23-page180-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-180-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 180",
+              "position": 14,
+              "afterSentenceId": "mt-v23-p01001"
+            },
+            {
+              "id": "mt-v23-page202-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-23/page-202-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 23 - الصفحة 202",
+              "position": 15,
+              "afterSentenceId": "mt-v23-p01133"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1240,
+          "contentFile": "books/Mushoku Tensei/derived/volume-23.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-24",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 24",
+          "position": 24,
+          "durationMs": 21416150,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v24-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v24-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v24-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v24-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v24-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v24-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v24-page009-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-009-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 9",
+              "position": 7,
+              "afterSentenceId": "mt-v24-p00001"
+            },
+            {
+              "id": "mt-v24-page023-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-023-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 23",
+              "position": 8,
+              "afterSentenceId": "mt-v24-p00080"
+            },
+            {
+              "id": "mt-v24-page054-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-054-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 54",
+              "position": 9,
+              "afterSentenceId": "mt-v24-p00266"
+            },
+            {
+              "id": "mt-v24-page061-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-061-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 61",
+              "position": 10,
+              "afterSentenceId": "mt-v24-p00301"
+            },
+            {
+              "id": "mt-v24-page081-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-081-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 81",
+              "position": 11,
+              "afterSentenceId": "mt-v24-p00411"
+            },
+            {
+              "id": "mt-v24-page095-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-095-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 95",
+              "position": 12,
+              "afterSentenceId": "mt-v24-p00491"
+            },
+            {
+              "id": "mt-v24-page120-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-120-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 120",
+              "position": 13,
+              "afterSentenceId": "mt-v24-p00643"
+            },
+            {
+              "id": "mt-v24-page184-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-24/page-184-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 24 - الصفحة 184",
+              "position": 14,
+              "afterSentenceId": "mt-v24-p01031"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 1050,
+          "contentFile": "books/Mushoku Tensei/derived/volume-24.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-25",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 25",
+          "position": 25,
+          "durationMs": 19687550,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v25-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v25-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v25-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v25-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v25-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v25-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v25-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v25-page010-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-010-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 10",
+              "position": 8,
+              "afterSentenceId": "mt-v25-p00001"
+            },
+            {
+              "id": "mt-v25-page031-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-031-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 31",
+              "position": 9,
+              "afterSentenceId": "mt-v25-p00117"
+            },
+            {
+              "id": "mt-v25-page040-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-040-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 40",
+              "position": 10,
+              "afterSentenceId": "mt-v25-p00162"
+            },
+            {
+              "id": "mt-v25-page056-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-056-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 56",
+              "position": 11,
+              "afterSentenceId": "mt-v25-p00257"
+            },
+            {
+              "id": "mt-v25-page072-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-072-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 72",
+              "position": 12,
+              "afterSentenceId": "mt-v25-p00348"
+            },
+            {
+              "id": "mt-v25-page093-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-093-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 93",
+              "position": 13,
+              "afterSentenceId": "mt-v25-p00470"
+            },
+            {
+              "id": "mt-v25-page127-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-127-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 127",
+              "position": 14,
+              "afterSentenceId": "mt-v25-p00670"
+            },
+            {
+              "id": "mt-v25-page140-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-140-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 140",
+              "position": 15,
+              "afterSentenceId": "mt-v25-p00747"
+            },
+            {
+              "id": "mt-v25-page171-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-171-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 171",
+              "position": 16,
+              "afterSentenceId": "mt-v25-p00918"
+            },
+            {
+              "id": "mt-v25-page172-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-172-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 172",
+              "position": 17,
+              "afterSentenceId": "mt-v25-p00918"
+            },
+            {
+              "id": "mt-v25-page173-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-173-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 173",
+              "position": 18,
+              "afterSentenceId": "mt-v25-p00918"
+            },
+            {
+              "id": "mt-v25-page174-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-174-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 174",
+              "position": 19,
+              "afterSentenceId": "mt-v25-p00918"
+            },
+            {
+              "id": "mt-v25-page175-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-175-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 175",
+              "position": 20,
+              "afterSentenceId": "mt-v25-p00918"
+            },
+            {
+              "id": "mt-v25-page176-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-25/page-176-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 25 - الصفحة 176",
+              "position": 21,
+              "afterSentenceId": "mt-v25-p00918"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 921,
+          "contentFile": "books/Mushoku Tensei/derived/volume-25.json"
+        },
+        {
+          "id": "ch-mushoku-tensei-vol-26",
+          "bookId": "book-mushoku-tensei",
+          "title": "المجلد 26",
+          "position": 26,
+          "durationMs": 17478210,
+          "isSample": true,
+          "illustrations": [
+            {
+              "id": "mt-v26-page001-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-001-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 1",
+              "position": 1
+            },
+            {
+              "id": "mt-v26-page002-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-002-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 2",
+              "position": 2
+            },
+            {
+              "id": "mt-v26-page003-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-003-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 3",
+              "position": 3
+            },
+            {
+              "id": "mt-v26-page004-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-004-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 4",
+              "position": 4
+            },
+            {
+              "id": "mt-v26-page005-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-005-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 5",
+              "position": 5
+            },
+            {
+              "id": "mt-v26-page006-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-006-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 6",
+              "position": 6
+            },
+            {
+              "id": "mt-v26-page007-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-007-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 7",
+              "position": 7
+            },
+            {
+              "id": "mt-v26-page010-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-010-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 10",
+              "position": 8,
+              "afterSentenceId": "mt-v26-p00001"
+            },
+            {
+              "id": "mt-v26-page023-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-023-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 23",
+              "position": 9,
+              "afterSentenceId": "mt-v26-p00067"
+            },
+            {
+              "id": "mt-v26-page050-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-050-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 50",
+              "position": 10,
+              "afterSentenceId": "mt-v26-p00208"
+            },
+            {
+              "id": "mt-v26-page053-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-053-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 53",
+              "position": 11,
+              "afterSentenceId": "mt-v26-p00214"
+            },
+            {
+              "id": "mt-v26-page064-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-064-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 64",
+              "position": 12,
+              "afterSentenceId": "mt-v26-p00275"
+            },
+            {
+              "id": "mt-v26-page068-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-068-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 68",
+              "position": 13,
+              "afterSentenceId": "mt-v26-p00293"
+            },
+            {
+              "id": "mt-v26-page081-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-081-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 81",
+              "position": 14,
+              "afterSentenceId": "mt-v26-p00358"
+            },
+            {
+              "id": "mt-v26-page102-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-102-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 102",
+              "position": 15,
+              "afterSentenceId": "mt-v26-p00470"
+            },
+            {
+              "id": "mt-v26-page107-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-107-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 107",
+              "position": 16,
+              "afterSentenceId": "mt-v26-p00491"
+            },
+            {
+              "id": "mt-v26-page124-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-124-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 124",
+              "position": 17,
+              "afterSentenceId": "mt-v26-p00581"
+            },
+            {
+              "id": "mt-v26-page131-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-131-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 131",
+              "position": 18,
+              "afterSentenceId": "mt-v26-p00606"
+            },
+            {
+              "id": "mt-v26-page161-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-161-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 161",
+              "position": 19,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page162-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-162-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 162",
+              "position": 20,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page163-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-163-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 163",
+              "position": 21,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page164-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-164-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 164",
+              "position": 22,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page165-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-165-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 165",
+              "position": 23,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page166-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-166-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 166",
+              "position": 24,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page167-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-167-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 167",
+              "position": 25,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page168-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-168-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 168",
+              "position": 26,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page169-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-169-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 169",
+              "position": 27,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page170-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-170-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 170",
+              "position": 28,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page171-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-171-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 171",
+              "position": 29,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page172-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-172-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 172",
+              "position": 30,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page173-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-173-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 173",
+              "position": 31,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page174-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-174-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 174",
+              "position": 32,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page175-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-175-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 175",
+              "position": 33,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page176-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-176-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 176",
+              "position": 34,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page177-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-177-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 177",
+              "position": 35,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page178-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-178-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 178",
+              "position": 36,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page179-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-179-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 179",
+              "position": 37,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page180-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-180-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 180",
+              "position": 38,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page181-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-181-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 181",
+              "position": 39,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page182-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-182-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 182",
+              "position": 40,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page183-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-183-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 183",
+              "position": 41,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page184-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-184-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 184",
+              "position": 42,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page185-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-185-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 185",
+              "position": 43,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page186-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-186-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 186",
+              "position": 44,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page187-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-187-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 187",
+              "position": 45,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page188-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-188-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 188",
+              "position": 46,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page189-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-189-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 189",
+              "position": 47,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page190-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-190-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 190",
+              "position": 48,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page191-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-191-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 191",
+              "position": 49,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page192-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-192-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 192",
+              "position": 50,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page193-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-193-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 193",
+              "position": 51,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page194-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-194-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 194",
+              "position": 52,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page195-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-195-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 195",
+              "position": 53,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page196-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-196-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 196",
+              "position": 54,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page197-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-197-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 197",
+              "position": 55,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page198-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-198-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 198",
+              "position": 56,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page199-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-199-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 199",
+              "position": 57,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page200-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-200-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 200",
+              "position": 58,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page201-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-201-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 201",
+              "position": 59,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page202-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-202-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 202",
+              "position": 60,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page203-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-203-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 203",
+              "position": 61,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page204-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-204-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 204",
+              "position": 62,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page205-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-205-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 205",
+              "position": 63,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page206-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-206-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 206",
+              "position": 64,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page207-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-207-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 207",
+              "position": 65,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page208-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-208-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 208",
+              "position": 66,
+              "afterSentenceId": "mt-v26-p00761"
+            },
+            {
+              "id": "mt-v26-page210-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-210-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 210",
+              "position": 67,
+              "afterSentenceId": "mt-v26-p00763"
+            },
+            {
+              "id": "mt-v26-page211-img01",
+              "src": "/Mushoku%20Tensei/assets/volume-26/page-211-image-01.jpg",
+              "alt": "رسم أصلي من المجلد 26 - الصفحة 211",
+              "position": 68,
+              "afterSentenceId": "mt-v26-p00763"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 764,
+          "contentFile": "books/Mushoku Tensei/derived/volume-26.json"
+        }
+      ]
     }
   ],
   "orders": [],
