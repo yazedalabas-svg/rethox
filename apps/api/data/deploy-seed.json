@@ -79840,7 +79840,15 @@
             }
           ],
           "sentenceCount": 48,
-          "contentFile": "books/القس المجنون/derived/volume-01.json"
+          "contentFile": "books/القس المجنون/derived/volume-01.json",
+          "illustrations": [
+            {
+              "id": "ri-pdf-cover",
+              "src": "/reverend-insanity/assets/pdf-cover.jpg",
+              "alt": "رسم الغلاف الأصلي من ملفات PDF لرواية القس المجنون",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-reverend-insanity-0002",
@@ -82029,7 +82037,15 @@
           "isSample": false,
           "sentences": [],
           "sentenceCount": 51,
-          "contentFile": "books/القس المجنون/derived/volume-02.json"
+          "contentFile": "books/القس المجنون/derived/volume-02.json",
+          "illustrations": [
+            {
+              "id": "ri-pdf-cover",
+              "src": "/reverend-insanity/assets/pdf-cover.jpg",
+              "alt": "رسم الغلاف الأصلي من ملفات PDF لرواية القس المجنون",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-reverend-insanity-0201",
@@ -84295,7 +84311,15 @@
           "isSample": false,
           "sentences": [],
           "sentenceCount": 42,
-          "contentFile": "books/القس المجنون/derived/volume-03.json"
+          "contentFile": "books/القس المجنون/derived/volume-03.json",
+          "illustrations": [
+            {
+              "id": "ri-pdf-cover",
+              "src": "/reverend-insanity/assets/pdf-cover.jpg",
+              "alt": "رسم الغلاف الأصلي من ملفات PDF لرواية القس المجنون",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-reverend-insanity-0407",
@@ -86979,7 +87003,15 @@
           "isSample": false,
           "sentences": [],
           "sentenceCount": 45,
-          "contentFile": "books/القس المجنون/derived/volume-04.json"
+          "contentFile": "books/القس المجنون/derived/volume-04.json",
+          "illustrations": [
+            {
+              "id": "ri-pdf-cover",
+              "src": "/reverend-insanity/assets/pdf-cover.jpg",
+              "alt": "رسم الغلاف الأصلي من ملفات PDF لرواية القس المجنون",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-reverend-insanity-0651",
@@ -91071,7 +91103,15 @@
           "isSample": false,
           "sentences": [],
           "sentenceCount": 45,
-          "contentFile": "books/القس المجنون/derived/volume-05.json"
+          "contentFile": "books/القس المجنون/derived/volume-05.json",
+          "illustrations": [
+            {
+              "id": "ri-pdf-cover",
+              "src": "/reverend-insanity/assets/pdf-cover.jpg",
+              "alt": "رسم الغلاف الأصلي من ملفات PDF لرواية القس المجنون",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-reverend-insanity-1023",
