@@ -59,6 +59,39 @@ EDITORIAL_FIXES = {
     "في منتصف طريقي للاستمناء": "أمارس العادة السرية",
     "مقدمات فرص العمل": "تعريف الباحثين بفرص العمل",
     "شخصًا غريب الأطوار ظهر كما فعلت": "شخصًا مريبًا ظهر بتلك الهيئة",
+    "There were three reasons for this.": "كانت هناك ثلاثة أسباب لذلك.",
+    "Dragon Meat، Nanahoshi Style Alba Fish Stew": "لحم التنين، وحساء سمك ألبا على طريقة ناناهوشي",
+    "Fittoa Liege Lord James Boreas Greyrat": "حاكم فيتوا الإقطاعي، جيمس بورياس غريرات",
+    "Berserker Sword King Eris": "إيريس، ملكة السيف الهائجة",
+    "Sword King Nina Farion": "نينا فاريون، ملكة السيف",
+    "Sword King Nina Falion": "نينا فاريون، ملكة السيف",
+    "Abyssal Dragon King Maxwell": "ملك التنين السحيق ماكسويل",
+    "Maniacal Dragon King Chaos": "ملك التنين المجنون كايوس",
+    "King Dragon Blade Kajakut": "نصل ملك التنين كاجاكوت",
+    "King Dragon Blade Kajukut": "نصل ملك التنين كاجاكوت",
+    "Dragon God Urupen": "إله التنين أوروبين",
+    "Armored Dragon King Perugius": "ملك التنين المدرع بيروغيوس",
+    "Dragoned Dragon King Perugius": "ملك التنين المدرع بيروغيوس",
+    "Dragon God Orsted": "إله التنين أورستد",
+    "MAGIC ARMOR VERSION ZERO": "الدرع السحري، الإصدار صفر",
+    "MAGIC ARMOR VERSION THREE": "الدرع السحري، الإصدار الثالث",
+    "Magic Armor Version Zero": "الدرع السحري، الإصدار صفر",
+    "Magic Armor": "الدرع السحري",
+    "Sword Sanctum": "حرم السيف",
+    "Ghislaine": "غيسلين",
+    "Isolde": "إيزولدي",
+    "Sylphie": "سيلفي",
+    "Zanoba": "زانوبا",
+    "Julia": "جولي",
+    "Ginger": "جينجر",
+    "Rudeus": "روديوس",
+    "Eris": "إيريس",
+    "Roxy": "روكسي",
+    "Geese": "غيس",
+    "Linia Dedoldia": "لينيا ديدولديا",
+    "Pursena Adoldia": "بورسينا أدولديا",
+    "Silent Sevenstar": "النجمة السباعية الصامتة",
+    "Immortal Demon King Badigadi": "ملك الشياطين الخالد باديغادي",
 }
 
 
@@ -236,11 +269,22 @@ def translate_group(group: list[dict[str, Any]]) -> dict[str, str]:
 
 def polish_translation(value: str) -> str:
     value = value.replace("\u200e", "").replace("\u200f", "")
-    value = value.replace("\u00a0", " ").replace("...", "…")
+    value = value.replace("\u00a0", " ").replace("...", "…").replace("***", "—")
     for old, new in EDITORIAL_FIXES.items():
         value = value.replace(old, new)
+    if value.startswith("يقوم الفريق بإنشاء تحويل عن طريق الحصول على"):
+        value = (
+            "خطة الفرق: يتولى فريق سيلفي، برفقة غيسلين وإيزولدي، إحضار نينا من حرم السيف "
+            "لصنع تمويه. يتوجه زانوبا وجولي وجينجر إلى العاصمة، وروديوس إلى المدينة الثانية، "
+            "وإيريس وروكسي إلى المدينة الثالثة. ينشئ كل فريق دائرة انتقال آني، ثم يبدأ البحث "
+            "عن غيس وإله الشمال. وستلتزم سيلفي بالخطة التي ناقشناها."
+        )
     value = re.sub(r"\s+([،؛؟.!])", r"\1", value)
     value = re.sub(r"([،؛؟])(?=\S)", r"\1 ", value)
+    value = re.sub(r"([،؛؟.!…])\s+\"", r'\1"', value)
+    value = value.replace("كانت زانوبا", "كان زانوبا").replace("قالت زانوبا", "قال زانوبا")
+    value = value.replace("زانوبا هي الوحيدة", "زانوبا هو الوحيد")
+    value = value.replace("نبوءة الإنسان الإله", "نبوءة إله البشر")
     return SPACE.sub(" ", value).strip()
 
 
@@ -382,7 +426,7 @@ def update_stores(project: Path, volumes: list[dict[str, Any]], page_counts: dic
         "tags": ["موشوكو تينسي", "إيسيكاي", "فانتازيا", "رواية مترجمة"],
         "coverTheme": "indigo",
         "coverUrl": cover,
-        "status": "DRAFT",
+        "status": "PUBLISHED",
         "rating": 0,
         "contentUnitLabel": "مجلد",
         "contentUnitLabelPlural": "مجلدات",

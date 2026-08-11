@@ -1301,10 +1301,12 @@ function BookPage() {
               </div>
             </div>
           )}
-          <div className="detail-note">
-            <LockKeyhole />
-            {contentUnitLabel === "فصل" ? "الفصل الأول عينة مجانية، وبقية الفصول تفتح بعد الشراء." : `المجلد الأول عينة مجانية، وبقية ${contentUnitLabelPlural} تفتح بعد الشراء.`}
-          </div>
+          {book.priceMinor > 0 && (
+            <div className="detail-note">
+              <LockKeyhole />
+              {contentUnitLabel === "فصل" ? "الفصل الأول عينة مجانية، وبقية الفصول تفتح بعد الشراء." : `المجلد الأول عينة مجانية، وبقية ${contentUnitLabelPlural} تفتح بعد الشراء.`}
+            </div>
+          )}
         </div>
       </div>
       <div className="wrap book-extras reveal-section book-community-only">
@@ -3650,7 +3652,7 @@ function ReaderPage() {
       </header>
       <main className="reader-body" ref={readerBodyRef}>
         <aside className={`reader-tools ${showChapterList ? "index-open" : ""}`}>
-          <button onClick={() => setShowChapterList((value) => !value)} title="فهرس الفصول">
+          <button onClick={() => setShowChapterList((value) => !value)} title={`فهرس ${book.contentUnitLabelPlural || "الفصول"}`}>
             <List />
           </button>
           <button onClick={() => setFocusMode((value) => !value)} title="وضع التركيز">
@@ -3692,8 +3694,8 @@ function ReaderPage() {
           <button
             className={showSearch ? "saved" : ""}
             onClick={() => setShowSearch((value) => !value)}
-            title="البحث في الفصل"
-            aria-label="البحث في الفصل"
+            title={`البحث في ${book.contentUnitLabel || "الفصل"}`}
+            aria-label={`البحث في ${book.contentUnitLabel || "الفصل"}`}
           >
             <Search />
           </button>
@@ -3707,7 +3709,7 @@ function ReaderPage() {
         </aside>
         <aside className={`reader-index saved-panel ${showSavedList ? "open" : ""}`}>
           <div>
-            <span>محفوظاتك في هذا الفصل</span>
+            <span>محفوظاتك في هذا {book.contentUnitLabel || "الفصل"}</span>
             <button onClick={() => setShowSavedList(false)}><X /></button>
           </div>
           {savedSentences.length ? (
@@ -3759,7 +3761,7 @@ function ReaderPage() {
                 }
                 if (event.key === "Escape") setShowSearch(false);
               }}
-              placeholder="ابحث عن كلمة أو جملة في الفصل..."
+              placeholder={`ابحث عن كلمة أو جملة في ${book.contentUnitLabel || "الفصل"}...`}
             />
             <span className="search-count">
               {searchQuery.trim()
@@ -3795,13 +3797,13 @@ function ReaderPage() {
             {chapterNav.previous ? (
               <button onClick={() => goToChapter(chapterNav.previous)}>
                 <ArrowLeft size={15} />
-                <span>الفصل السابق</span>
+                <span>{book.contentUnitLabel || "الفصل"} السابق</span>
                 <b>{chapterNav.previous.title}</b>
               </button>
             ) : <span />}
             {chapterNav.next ? (
               <button onClick={() => goToChapter(chapterNav.next)}>
-                <span>الفصل التالي</span>
+                <span>{book.contentUnitLabel || "الفصل"} التالي</span>
                 <b>{chapterNav.next.title}</b>
                 <ChevronLeft size={15} />
               </button>
@@ -3856,7 +3858,7 @@ function ReaderPage() {
             <div className="chapter-community-head">
               <div>
                 <span className="kicker">مجلس القرّاء</span>
-                <h2>ما رأيك في هذا الفصل؟</h2>
+                <h2>ما رأيك في هذا {book.contentUnitLabel || "الفصل"}؟</h2>
               </div>
               <span>{rootChapterComments.length} تعليق</span>
               <span className="rating-summary">
@@ -3895,7 +3897,7 @@ function ReaderPage() {
             </form>
             <AuthPrompt open={showAuthPrompt} onClose={() => setShowAuthPrompt(false)} />
             {!!chapterComments.length && (
-              <div className="rating-filter" aria-label="تصفية تعليقات الفصل">
+              <div className="rating-filter" aria-label={`تصفية تعليقات ${book.contentUnitLabel || "الفصل"}`}>
                 <button type="button" className={!chapterRatingFilter ? "active" : ""} onClick={() => setChapterRatingFilter(0)}>الكل</button>
                 {[5, 4, 3, 2, 1].map((star) => (
                   <button type="button" key={star} className={chapterRatingFilter === star ? "active" : ""} onClick={() => setChapterRatingFilter(star)}>
@@ -3965,11 +3967,11 @@ function ReaderPage() {
               ))}
             </div>
           </section>
-          <nav className={`reader-chapter-nav ${atChapterEnd ? "reached-end" : ""}`} aria-label="التنقل بين الفصول">
+          <nav className={`reader-chapter-nav ${atChapterEnd ? "reached-end" : ""}`} aria-label={`التنقل بين ${book.contentUnitLabelPlural || "الفصول"}`}>
             {chapterNav.previous ? (
               <button onClick={() => goToChapter(chapterNav.previous)}>
                 <ArrowLeft size={15} />
-                <span>الفصل السابق</span>
+                <span>{book.contentUnitLabel || "الفصل"} السابق</span>
                 <b>{chapterNav.previous.title}</b>
               </button>
             ) : (
@@ -3977,7 +3979,7 @@ function ReaderPage() {
             )}
             {chapterNav.next && (
               <button className="next-chapter" onClick={() => goToChapter(chapterNav.next)}>
-                <span>{atChapterEnd ? "جاهز؟ تابع الرحلة" : "الفصل التالي"}</span>
+                <span>{atChapterEnd ? "جاهز؟ تابع الرحلة" : `${book.contentUnitLabel || "الفصل"} التالي`}</span>
                 <b>{chapterNav.next.title}</b>
                 <small>نحو {Math.max(1, Math.ceil((chapterNav.next.sentenceCount || 1) / 3))} دقائق قراءة</small>
                 <ChevronLeft size={15} />
@@ -4007,7 +4009,7 @@ function ReaderPage() {
           <button
             className="scroll-top"
             onClick={() => readerBodyRef.current?.scrollTo({ top: 0, behavior: "smooth" })}
-            aria-label="العودة إلى أعلى الفصل"
+            aria-label={`العودة إلى أعلى ${book.contentUnitLabel || "الفصل"}`}
           >
             <ArrowUp />
           </button>
@@ -4043,7 +4045,7 @@ function ReaderPage() {
             <button type="button" className="report-close" onClick={() => setShowReport(false)}><X /></button>
             <span className="kicker">ملاحظة للقائمين على النص</span>
             <h2>أبلغ عن خطأ</h2>
-            <p>سنرفق الفصل وموضع القراءة تلقائيًا. اكتب المشكلة باختصار.</p>
+            <p>سنرفق {book.contentUnitLabel || "الفصل"} وموضع القراءة تلقائيًا. اكتب المشكلة باختصار.</p>
             {activeSentence && <blockquote dir="auto">{activeSentence.text}</blockquote>}
             <textarea value={reportText} onChange={(event) => setReportText(event.target.value)} minLength={3} maxLength={500} required placeholder="مثال: كلمة ناقصة، ترتيب غير صحيح، أو خطأ في النطق..." />
             {reportNotice && <small>{reportNotice}</small>}
@@ -4068,7 +4070,7 @@ function ReaderPage() {
             disabled={narrationBusy}
             aria-label={
               narrationBusy
-                ? "جاري تحميل الفصل كاملًا"
+                ? `جاري تحميل ${book.contentUnitLabel || "الفصل"} كاملًا`
                 : playing
                   ? "إيقاف"
                   : "تشغيل"
@@ -4467,7 +4469,7 @@ function AdminPage() {
               </div>
               <label>ملف الصورة<input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required /></label>
               <label>وصف بديل<input name="alt" minLength={2} maxLength={180} required placeholder="وصف واضح للصورة" /></label>
-              <label>موضع الصورة<select name="afterSentenceId"><option value="">بداية الفصل</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
+              <label>موضع الصورة<select name="afterSentenceId"><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
               <button className="btn primary" disabled={contentBusy}><ImagePlus size={17} /> {contentBusy ? "جارٍ الحفظ..." : "رفع وإضافة"}</button>
             </form>
             <div className="admin-image-list">
@@ -4478,7 +4480,7 @@ function AdminPage() {
                     <div className="admin-image-controls">
                       <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
                         <label>الوصف<input name="alt" defaultValue={illustration.alt} required /></label>
-                        <label>الموضع<select name="afterSentenceId" defaultValue={illustration.afterSentenceId || ""}><option value="">بداية الفصل</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
+                        <label>الموضع<select name="afterSentenceId" defaultValue={illustration.afterSentenceId || ""}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
                         <button className="btn secondary" disabled={contentBusy}>حفظ الموضع والوصف</button>
                       </form>
                       <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
