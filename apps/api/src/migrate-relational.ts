@@ -25,7 +25,7 @@ if (!existsSync(runtimePath) || !existsSync(seedPath))
 const runtime = JSON.parse(readFileSync(runtimePath, "utf8")) as Store;
 const seed = JSON.parse(readFileSync(seedPath, "utf8")) as Store;
 const visibleBookIds = new Set(
-  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-reverend-insanity")
+  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-reverend-insanity,book-mushoku-tensei")
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean),

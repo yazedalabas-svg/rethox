@@ -61,7 +61,12 @@ const catalogSignature = (books: Book[]) =>
       id: book.id,
       slug: book.slug,
       title: book.title,
+      author: book.author,
+      synopsis: book.synopsis,
       priceMinor: book.priceMinor,
+      coverTheme: book.coverTheme,
+      coverUrl: book.coverUrl,
+      pageCount: book.pageCount,
       status: book.status,
       chapters: book.chapters.map((chapter) => [
         chapter.id,
@@ -552,6 +557,8 @@ export const loadRelationalStore = async (
       status: row.status,
       rating: seeded?.rating || 0,
       chapters: loadedChapters,
+      contentUnitLabel: seeded?.contentUnitLabel,
+      contentUnitLabelPlural: seeded?.contentUnitLabelPlural,
       documentFile: seeded?.documentFile,
       pageCount: row.page_count ?? seeded?.pageCount,
     };

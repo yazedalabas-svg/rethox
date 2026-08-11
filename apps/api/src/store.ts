@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Store } from "./types.js";
 import { emptyStore } from "./seed.js";
-import { loadRelationalStore, syncRelationalStore } from "./relational-store.js";
+import { loadRelationalStore, syncCatalog, syncRelationalStore } from "./relational-store.js";
 
 const dataDir = process.env.DATA_DIR
   ? resolve(process.env.DATA_DIR)
@@ -13,7 +13,7 @@ const progressFile = resolve(dataDir, "runtime-progress.json");
 const sessionsFile = resolve(dataDir, "runtime-sessions.json");
 const deploySeed = resolve(process.cwd(), "data/deploy-seed.json");
 const visibleBookIds = new Set(
-  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-reverend-insanity")
+  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-reverend-insanity,book-mushoku-tensei")
     .split(",")
     .map((id) => id.trim())
     .filter(Boolean),
@@ -190,7 +190,15 @@ export const connectRemoteStore = async (client: SupabaseClient | null) => {
     const relational = await loadRelationalStore(client, seeded?.books || state.books);
     if (relational) {
       state = relational;
+      if (seeded?.books?.length) {
+        const shippedIds = new Set(seeded.books.map((book) => book.id));
+        state.books = [
+          ...seeded.books,
+          ...state.books.filter((book) => !shippedIds.has(book.id)),
+        ];
+      }
       state.books = state.books.filter((book) => visibleBookIds.has(book.id));
+      await syncCatalog(client, state.books);
       relationalEnabled = true;
       remoteStore = client;
       lastRemoteErrorAt = null;
