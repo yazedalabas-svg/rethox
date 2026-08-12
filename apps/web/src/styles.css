@@ -2818,20 +2818,14 @@ html:has(.reader-index.open) .theme-fab {
 .volume-contents-head h1 { margin:8px 0 10px;font-family:"Noto Naskh Arabic";font-size:clamp(30px,5vw,48px); }
 .volume-contents-head p { max-width:500px;margin:0 0 24px;color:var(--muted);line-height:1.85; }
 .volume-contents-head .btn { min-height:48px; }
-.volume-section-list { display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:volume-section; }
-.volume-section-list button { width:100%;min-height:58px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:14px;padding:10px 16px;border:1px solid var(--line);border-radius:15px;background:var(--surface);color:var(--ink);text-align:right;font:600 14px/1.5 "Alexandria";cursor:pointer;touch-action:manipulation;transition:transform .2s ease,background-color .2s ease,border-color .2s ease,box-shadow .2s ease; }
-.volume-section-list button i { width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:color-mix(in srgb,var(--purple) 11%,var(--bg));color:var(--purple);font:700 10px/1 "Alexandria";font-style:normal; }
-.volume-section-list button svg { color:var(--muted); }
-.volume-section-list button:hover,.volume-section-list button:focus-visible { border-color:color-mix(in srgb,var(--purple) 45%,var(--line));background:color-mix(in srgb,var(--purple) 8%,var(--surface));box-shadow:0 10px 22px rgba(55,40,98,.1);transform:translateX(-2px); }
-.volume-section-list button:active { transform:scale(.985); }
+.volume-contents-wrap .chapter-directory-list { max-height:none;overflow-y:visible;gap:10px;padding-left:0; }
 @media (max-width:600px) {
   .volume-contents-page { padding:34px 0 72px; }
   .volume-contents-wrap { width:min(calc(100% - 24px),760px); }
   .volume-contents-head { margin-top:18px;padding:26px 20px;border-radius:19px; }
-  .volume-section-list button { min-height:56px;padding:9px 12px;font-size:13px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .volume-section-list button,.reader-index,.reader-body .active-word { animation:none !important;transition:none !important; }
+  .reader-index,.reader-body .active-word { animation:none !important;transition:none !important; }
 }
 .reader-chapter-nav>button { min-height:86px;display:grid;grid-template-columns:auto 1fr;align-content:center;gap:4px 9px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);text-align:right; }
 .reader-chapter-nav>button:last-child { text-align:left;grid-template-columns:1fr auto; }

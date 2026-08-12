@@ -1599,17 +1599,21 @@ function VolumeContentsPage() {
             <Play size={17} /> ابدأ من البداية
           </button>
         </header>
-        <ol className="volume-section-list" aria-label={`أقسام ${chapter.title}`}>
+        <div className="chapter-directory-list" aria-label={`أقسام ${chapter.title}`}>
           {sections.map((section) => (
-            <li key={section.id}>
-              <button type="button" className={section.locked ? "locked" : ""} onClick={() => goToSection(section)}>
-                <i>{String(section.position).padStart(2, "0")}</i>
-                <span>{section.title}</span>
-                {section.locked ? <LockKeyhole size={18} /> : <ChevronLeft size={18} />}
-              </button>
-            </li>
+            <button
+              key={section.id}
+              type="button"
+              className={`chapter-row ${section.locked ? "locked" : ""}`}
+              onClick={() => goToSection(section)}
+            >
+              <span>{String(section.position).padStart(2, "0")}</span>
+              <b>{section.title}{section.locked && <small>يفتح بعد الشراء</small>}</b>
+              <em />
+              {section.locked ? <LockKeyhole size={15} /> : <ChevronLeft size={16} />}
+            </button>
           ))}
-        </ol>
+        </div>
       </div>
       <LockedChapterPrompt book={book} chapter={lockedSection} onClose={() => setLockedSection(null)} />
     </section>
