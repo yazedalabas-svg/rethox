@@ -2737,6 +2737,13 @@ function ReaderPage() {
   const manualProgressFrameRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
+  // Segments finish loading well before the reader reaches them (see
+  // prepareChapterNarration's background loop). Warming a hidden <audio> for
+  // each one as soon as its URL is known lets the browser fetch the mp3 into
+  // its cache ahead of time, so the segment-to-segment handoff in
+  // playPreparedSegment reads from cache instead of hitting the network —
+  // no audible gap when one sentence's narration ends and the next begins.
+  const preloadAudioRefs = useRef<HTMLAudioElement[]>([]);
   const browserSpeechActiveRef = useRef(false);
   const playbackSessionRef = useRef(0);
   const activeWordRef = useRef("");
@@ -2847,6 +2854,8 @@ function ReaderPage() {
     releaseAudio(previewAudioRef.current);
     audioRef.current = null;
     previewAudioRef.current = null;
+    preloadAudioRefs.current.forEach(releaseAudio);
+    preloadAudioRefs.current = [];
     browserSpeechActiveRef.current = false;
     backgroundNarrationRef.current = null;
     lastTrackedBoundaryRef.current = -1;
@@ -3086,6 +3095,8 @@ function ReaderPage() {
       releaseAudio(previewAudioRef.current);
       audioRef.current = null;
       previewAudioRef.current = null;
+      preloadAudioRefs.current.forEach(releaseAudio);
+      preloadAudioRefs.current = [];
       window.speechSynthesis.cancel();
     },
     [],
@@ -3356,6 +3367,13 @@ function ReaderPage() {
         result: results[index],
         boundaryTokens: alignBoundaries(results[index].boundaries, item.tokens),
       }));
+      // Start fetching each segment's mp3 into the browser cache the moment its
+      // URL is known, well ahead of when playback actually reaches it.
+      loaded.forEach((segment) => {
+        const preload = new Audio(segment.result.audioUrl);
+        preload.preload = "auto";
+        preloadAudioRefs.current.push(preload);
+      });
       return loaded;
     };
     const promise = (async () => {
