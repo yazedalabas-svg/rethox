@@ -1535,6 +1535,7 @@ function VolumeContentsPage() {
   const [book, setBook] = useState<Book | null>(initialBook);
   const [chapter, setChapter] = useState<ChapterMeta | null>(initialChapter);
   const [resolvedSections, setResolvedSections] = useState<NonNullable<ChapterMeta["sections"]>>([]);
+  const [lockedSection, setLockedSection] = useState<ChapterSection | null>(null);
   useEffect(() => {
     if (book && chapter?.id === volumeId) return;
     if (!slug || !volumeId) {
@@ -1577,8 +1578,9 @@ function VolumeContentsPage() {
     : resolvedSections.length
       ? resolvedSections
       : [{ id: `${chapter.id}-start`, title: "بداية المجلد", sentenceId: "", position: 1 }];
-  const goToSection = (sectionId: string) => {
-    const query = sectionId ? `?section=${encodeURIComponent(sectionId)}` : "";
+  const goToSection = (section: ChapterSection) => {
+    if (section.locked) { setLockedSection(section); return; }
+    const query = section.id ? `?section=${encodeURIComponent(section.id)}` : "";
     nav(`/reader/${chapter.id}${query}`);
   };
   return (
@@ -1593,22 +1595,23 @@ function VolumeContentsPage() {
           <span className="kicker">فهرس المجلد</span>
           <h1>{chapter.title}</h1>
           <p>اختر مقطعًا للانتقال إليه مباشرة، أو ابدأ القراءة من البداية.</p>
-          <button className="btn primary" type="button" onClick={() => goToSection(sections[0]?.id || "")}>
+          <button className="btn primary" type="button" onClick={() => sections[0] && goToSection(sections[0])}>
             <Play size={17} /> ابدأ من البداية
           </button>
         </header>
         <ol className="volume-section-list" aria-label={`أقسام ${chapter.title}`}>
           {sections.map((section) => (
             <li key={section.id}>
-              <button type="button" onClick={() => goToSection(section.id)}>
+              <button type="button" className={section.locked ? "locked" : ""} onClick={() => goToSection(section)}>
                 <i>{String(section.position).padStart(2, "0")}</i>
                 <span>{section.title}</span>
-                <ChevronLeft size={18} />
+                {section.locked ? <LockKeyhole size={18} /> : <ChevronLeft size={18} />}
               </button>
             </li>
           ))}
         </ol>
       </div>
+      <LockedChapterPrompt book={book} chapter={lockedSection} onClose={() => setLockedSection(null)} />
     </section>
   );
 }

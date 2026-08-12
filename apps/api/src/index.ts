@@ -1119,6 +1119,13 @@ app.get("/api/books/:slug", optionalAuth, (req: AuthRequest, res) => {
         locked: !chapter.isSample && !owns,
         rating: chapterRating(chapter.id),
         sentenceCount: chapter.sentenceCount ?? sentences.length,
+        // A chapter can bundle many real chapters as "sections" (e.g. a whole
+        // novel volume). Flag which of those are locked individually so a
+        // sample volume can still hold paid chapters past the free preview.
+        sections: chapter.sections?.map((section) => ({
+          ...section,
+          locked: section.isSample === false && !owns,
+        })),
       })),
     },
   });
@@ -1163,17 +1170,39 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
     logger.error({ chapterId: chapterMeta.id, error: String(error) }, "chapter content unavailable");
     return res.status(503).json({ message: "تعذر تجهيز الفصل الآن" });
   }
+  const sections = chapter.sections || [];
   const requestedSectionId = String(req.query.section || "");
   const requestedSectionIndex = requestedSectionId
-    ? (chapter.sections || []).findIndex(
+    ? sections.findIndex(
         (section) => section.id === requestedSectionId || section.sentenceId === requestedSectionId,
       )
     : -1;
-  const activeSection = requestedSectionIndex >= 0 ? chapter.sections?.[requestedSectionIndex] : undefined;
-  const nextSection = activeSection ? chapter.sections?.[requestedSectionIndex + 1] : undefined;
-  const visibleChapter = activeSection
+  // A chapter can bundle many real chapters as "sections" (e.g. a whole novel
+  // volume) — gate reading at the section boundary when some of those are
+  // locked behind purchase, even though the parent chapter itself is a
+  // sample. Falling back to index 0 handles both an explicit request past
+  // the free portion and the implicit "no section" full-chapter view.
+  const firstLockedSectionIndex = owns
+    ? -1
+    : sections.findIndex((section) => section.isSample === false);
+  const effectiveSectionIndex = requestedSectionIndex >= 0 ? requestedSectionIndex : 0;
+  if (firstLockedSectionIndex >= 0 && effectiveSectionIndex >= firstLockedSectionIndex)
+    return res.status(403).json({
+      message: "اشترِ الكتاب لفتح هذا الفصل",
+      book: { id: book.id, slug: book.slug, title: book.title, priceMinor: book.priceMinor },
+      chapter: { id: chapterMeta.id, title: chapterMeta.title },
+    });
+  const activeSection = requestedSectionIndex >= 0 ? sections[requestedSectionIndex] : undefined;
+  const nextSection = activeSection
+    ? sections[requestedSectionIndex + 1]
+    : firstLockedSectionIndex >= 0
+      ? sections[firstLockedSectionIndex]
+      : undefined;
+  const visibleChapter = activeSection || nextSection
     ? (() => {
-        const startIndex = chapter.sentences.findIndex((sentence) => sentence.id === activeSection.sentenceId);
+        const startIndex = activeSection
+          ? chapter.sentences.findIndex((sentence) => sentence.id === activeSection.sentenceId)
+          : 0;
         const endIndex = nextSection
           ? chapter.sentences.findIndex((sentence) => sentence.id === nextSection.sentenceId)
           : chapter.sentences.length;
@@ -1185,7 +1214,7 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
           illustrations: chapter.illustrations?.filter(
             (illustration) => illustration.afterSentenceId
               ? sentenceIds.has(illustration.afterSentenceId)
-              : requestedSectionIndex === 0,
+              : effectiveSectionIndex === 0,
           ),
         };
       })()
@@ -1211,7 +1240,14 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       contentUnitLabelPlural: book.contentUnitLabelPlural,
       priceMinor: book.priceMinor,
     },
-    chapter: { ...visibleChapter, contentFile: undefined },
+    chapter: {
+      ...visibleChapter,
+      contentFile: undefined,
+      sections: visibleChapter.sections?.map((section) => ({
+        ...section,
+        locked: section.isSample === false && !owns,
+      })),
+    },
     chapterList: book.chapters.map((item) => ({
       id: item.id,
       title: item.title,
