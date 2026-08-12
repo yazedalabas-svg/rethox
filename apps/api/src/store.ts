@@ -36,6 +36,30 @@ const mergeLatestProgress = (...sources: Store["progress"][]) => {
   }
   return [...progressByKey.values()];
 };
+// Refreshes the shipped catalog from the immutable deploy seed (titles,
+// chapter structure, pricing, ...) while keeping each chapter's *current*
+// illustrations. Illustrations uploaded through the admin panel live only in
+// Supabase (chapter_assets), never in the seed file — blindly overwriting a
+// shipped book with the raw seed on every boot silently reverted every
+// admin-added image back to whatever static illustrations shipped in git.
+const applyShippedCatalog = (books: Store["books"]): Store["books"] => {
+  if (!seeded?.books?.length) return books;
+  const shippedIds = new Set(seeded.books.map((book) => book.id));
+  const currentById = new Map(books.map((book) => [book.id, book]));
+  const refreshed = seeded.books.map((seededBook) => {
+    const current = currentById.get(seededBook.id);
+    if (!current) return seededBook;
+    const currentChaptersById = new Map(current.chapters.map((chapter) => [chapter.id, chapter]));
+    return {
+      ...seededBook,
+      chapters: seededBook.chapters.map((chapter) => {
+        const currentChapter = currentChaptersById.get(chapter.id);
+        return currentChapter ? { ...chapter, illustrations: currentChapter.illustrations } : chapter;
+      }),
+    };
+  });
+  return [...refreshed, ...books.filter((book) => !shippedIds.has(book.id))];
+};
 try {
   seeded = existsSync(deploySeed)
     ? JSON.parse(readFileSync(deploySeed, "utf8"))
@@ -73,13 +97,7 @@ try {
 }
 // A persistent Render disk can contain an older catalog. Merge shipped books on
 // every boot while preserving accounts, orders, reviews and reading progress.
-if (seeded?.books?.length) {
-  const shippedIds = new Set(seeded.books.map((book) => book.id));
-  state.books = [
-    ...seeded.books,
-    ...state.books.filter((book) => !shippedIds.has(book.id)),
-  ];
-}
+state.books = applyShippedCatalog(state.books);
 state.books = state.books.filter((book) => visibleBookIds.has(book.id));
 export const db = () => state;
 const writeAtomicJson = (target: string, value: unknown) => {
@@ -190,13 +208,7 @@ export const connectRemoteStore = async (client: SupabaseClient | null) => {
     const relational = await loadRelationalStore(client, seeded?.books || state.books);
     if (relational) {
       state = relational;
-      if (seeded?.books?.length) {
-        const shippedIds = new Set(seeded.books.map((book) => book.id));
-        state.books = [
-          ...seeded.books,
-          ...state.books.filter((book) => !shippedIds.has(book.id)),
-        ];
-      }
+      state.books = applyShippedCatalog(state.books);
       state.books = state.books.filter((book) => visibleBookIds.has(book.id));
       await syncCatalog(client, state.books);
       relationalEnabled = true;
@@ -218,13 +230,7 @@ export const connectRemoteStore = async (client: SupabaseClient | null) => {
       remote.readingList ??= [];
       remote.reports ??= [];
       remote.progress = mergeLatestProgress(remote.progress || [], state.progress);
-      if (seeded?.books?.length) {
-        const shippedIds = new Set(seeded.books.map((book) => book.id));
-        remote.books = [
-          ...seeded.books,
-          ...(remote.books || []).filter((book) => !shippedIds.has(book.id)),
-        ];
-      }
+      remote.books = applyShippedCatalog(remote.books || []);
       remote.books = remote.books.filter((book) => visibleBookIds.has(book.id));
       state = remote;
       remoteStore = client;
