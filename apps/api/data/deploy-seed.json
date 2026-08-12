@@ -30,7 +30,7 @@
           "isSample": true,
           "illustrations": [
             {
-              "src": "/illustrations/rezero-arc-6/chapter-01-opening.png",
+              "src": "/illustrations/rezero-arc-6/chapter-01-opening.jpg",
               "alt": "لوحة افتتاح الفصل الأول"
             }
           ],
@@ -2485,7 +2485,7 @@
           "isSample": false,
           "illustrations": [
             {
-              "src": "/illustrations/rezero-arc-6/chapter-04-petra-scene.png",
+              "src": "/illustrations/rezero-arc-6/chapter-04-petra-scene.jpg",
               "alt": "بترا في مشهد من الفصل الرابع",
               "afterSentenceId": "rz6-c04-p0024"
             }
