@@ -1045,6 +1045,7 @@ function BookPage() {
   const [reviewMenuId, setReviewMenuId] = useState<string | null>(null);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
   const [lockedChapter, setLockedChapter] = useState<ChapterMeta | null>(null);
+  const [expandedVolume, setExpandedVolume] = useState<number | null>(null);
   const [progress, setProgress] = useState<Progress | null>(null);
   const [readingLater, setReadingLater] = useState(false);
   const [ownsBook, setOwnsBook] = useState(false);
@@ -1170,6 +1171,18 @@ function BookPage() {
   if (!book) return <Loading />;
   const contentUnitLabel = book.contentUnitLabel || "فصل";
   const contentUnitLabelPlural = book.contentUnitLabelPlural || "فصول";
+  const chapterVolumes = (() => {
+    const chapters = book.chapters || [];
+    if (!chapters.some((chapter) => typeof chapter.volumeNumber === "number")) return [];
+    const grouped = new Map<number, ChapterMeta[]>();
+    for (const chapter of chapters) {
+      const volume = chapter.volumeNumber || 1;
+      grouped.set(volume, [...(grouped.get(volume) || []), chapter]);
+    }
+    return [...grouped.entries()]
+      .sort(([left], [right]) => left - right)
+      .map(([volume, chapters]) => ({ volume, chapters }));
+  })();
   const sample = book.chapters?.find((c) => c.isSample);
   const filteredReviews = reviewFilter
     ? reviews.filter((review) => review.rating === reviewFilter)
@@ -1315,7 +1328,51 @@ function BookPage() {
                 <span>{book.chapters.length} {contentUnitLabelPlural}</span>
               </div>
               <div className="chapter-directory-list">
-                {book.chapters.map((chapter) => {
+                {chapterVolumes.length ? chapterVolumes.map(({ volume, chapters }, index) => {
+                  const expanded = expandedVolume === null ? index === 0 : expandedVolume === volume;
+                  return <section className="chapter-volume-group" key={volume}>
+                    <button
+                      className="chapter-volume-toggle"
+                      type="button"
+                      aria-expanded={expanded}
+                      aria-controls={`volume-${book.id}-${volume}`}
+                      onClick={() => setExpandedVolume(expanded ? null : volume)}
+                    >
+                      <span>المجلد {volume}</span>
+                      <small>{chapters.length} {contentUnitLabelPlural}</small>
+                      <ChevronDown size={16} />
+                    </button>
+                    {expanded && <div className="chapter-volume-list" id={`volume-${book.id}-${volume}`}>
+                      {chapters.map((chapter) => {
+                        const content = <>
+                          <span>{String(chapter.volumePosition ?? chapter.position).padStart(2, "0")}</span>
+                          <b>
+                            {chapter.title}
+                            {chapter.locked ? <small>يفتح بعد الشراء</small> : chapterStatus(chapter) && <small>{chapterStatus(chapter)}</small>}
+                          </b>
+                          <em className={chapter.rating ? "has-rating" : ""}>
+                            {"★"} {chapter.rating ? chapter.rating.toFixed(1) : "لم يُقيّم"}
+                          </em>
+                          {chapter.locked ? <LockKeyhole size={15} /> : <ChevronLeft size={16} />}
+                        </>;
+                        return chapter.locked ? (
+                          <button className="chapter-row locked" type="button" key={chapter.id} onClick={() => setLockedChapter(chapter)}>
+                            {content}
+                          </button>
+                        ) : (
+                          <Link
+                            className={`chapter-row ${chapterState(chapter)}`}
+                            key={chapter.id}
+                            to={chapter.sections?.length ? `/book/${book.slug}/volume/${chapter.id}` : `/reader/${chapter.id}`}
+                            state={chapter.sections?.length ? { book, chapter } : undefined}
+                          >
+                            {content}
+                          </Link>
+                        );
+                      })}
+                    </div>}
+                  </section>;
+                }) : book.chapters.map((chapter) => {
                   const content = <>
                     <span>{String(chapter.position).padStart(2, "0")}</span>
                     <b>
