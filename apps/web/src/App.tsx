@@ -128,6 +128,28 @@ const getChapterContent = (chapterId: string, sectionId = "") => {
   chapterContentRequests.set(cacheKey, request);
   return request;
 };
+
+// Groups sentence text the same way the real narration player does (consecutive
+// sentences joined up to ~1500 chars, starting at word 0) so a warmup request's
+// cache key can match a real playback request that later starts at the same spot.
+const warmupSentenceText = (sentence: Sentence) =>
+  (sentence.tokens.length
+    ? sentence.tokens.map((token) => token.text)
+    : sentence.text.split(/\s+/).filter(Boolean)
+  ).join(" ");
+const buildWarmupSegment = (sentences: Sentence[], startIndex: number) => {
+  const parts: string[] = [];
+  for (let index = startIndex; index < sentences.length; index += 1) {
+    const text = warmupSentenceText(sentences[index]);
+    if (!text) continue;
+    if (parts.length && parts.join(" ").length + text.length + 1 > 1500) break;
+    parts.push(text);
+  }
+  return parts.join(" ");
+};
+// Books already warmed in this browser session, so we only run the background
+// cache-warming pass once per book instead of on every chapter navigation.
+const novelWarmupStarted = new Set<string>();
 const saveChapterComment = ({
   chapterId,
   ...input
@@ -2952,6 +2974,60 @@ function ReaderPage() {
       .catch(() => setChapterComments([]));
     return () => { active = false; };
   }, [chapterId, ready, sectionSentenceId, user?.id]);
+  // Background cache warmup: the moment the reader opens the book, quietly ask
+  // the TTS endpoint to synthesize a few random spots across the novel so the
+  // audio is already cached whenever the reader actually gets there. This never
+  // touches playback state or the audio element — it only pre-populates the
+  // server-side TTS cache. It always yields to real narration requests so it
+  // can never be the reason a real "play" feels slow.
+  useEffect(() => {
+    if (!book?.id || !chapterList.length) return;
+    if (novelWarmupStarted.has(book.id)) return;
+    novelWarmupStarted.add(book.id);
+    let cancelled = false;
+    const wait = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+    const run = async () => {
+      const targets = chapterList
+        .filter((item) => !item.locked)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 5);
+      for (const target of targets) {
+        if (cancelled) return;
+        while (
+          !cancelled &&
+          (playingRef.current || preparationRef.current || backgroundNarrationRef.current)
+        ) {
+          await wait(4000);
+        }
+        if (cancelled) return;
+        try {
+          const content = await getChapterContent(target.id);
+          const sentences = content.chapter.sentences;
+          if (sentences.length) {
+            const startIndex = Math.floor(Math.random() * sentences.length);
+            const text = buildWarmupSegment(sentences, startIndex);
+            if (text) await requestVoice(text).catch(() => {});
+          }
+        } catch {
+          // Best-effort only — warmup failures must never surface to the reader.
+        }
+        if (cancelled) return;
+        await wait(3000);
+      }
+    };
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: () => void) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const idleId = idleWindow.requestIdleCallback
+      ? idleWindow.requestIdleCallback(() => void run())
+      : window.setTimeout(() => void run(), 1500);
+    return () => {
+      cancelled = true;
+      if (idleWindow.cancelIdleCallback) idleWindow.cancelIdleCallback(idleId as number);
+      else window.clearTimeout(idleId as number);
+    };
+  }, [book?.id, chapterList]);
   useEffect(() => {
     if (!chapter) return;
     const timer = window.setInterval(() => {
