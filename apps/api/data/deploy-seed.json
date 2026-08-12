@@ -105582,79 +105582,92 @@
               "id": "mt-v01-section-01",
               "title": "مقدمة",
               "sentenceId": "mt-v01-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": true
             },
             {
               "id": "mt-v01-section-02",
               "title": "الفصل الأول: هل هذا عالم آخر؟",
               "sentenceId": "mt-v01-p00048",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-03",
               "title": "الفصل الثاني: الخادمة المرتابة",
               "sentenceId": "mt-v01-p00086",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-04",
               "title": "الفصل الثالث: كتاب السحر",
               "sentenceId": "mt-v01-p00131",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-05",
               "title": "الفصل الرابع: المعلم",
               "sentenceId": "mt-v01-p00206",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-06",
               "title": "الفصل الخامس: السيوف والسحر",
               "sentenceId": "mt-v01-p00353",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-07",
               "title": "الفصل السادس: أسباب الاحترام",
               "sentenceId": "mt-v01-p00408",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-08",
               "title": "الفصل السابع: الأصدقاء",
               "sentenceId": "mt-v01-p00488",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-09",
               "title": "الفصل الثامن: النسيان",
               "sentenceId": "mt-v01-p00630",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-10",
               "title": "الفصل التاسع: الاجتماع العائلي الطارئ",
               "sentenceId": "mt-v01-p00744",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-11",
               "title": "الفصل العاشر: توقف النمو",
               "sentenceId": "mt-v01-p00841",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-12",
               "title": "الفصل الحادي عشر: الفراق",
               "sentenceId": "mt-v01-p00979",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v01-section-13",
               "title": "فصل إضافي: والدة عائلة جريرات",
               "sentenceId": "mt-v01-p01070",
-              "position": 13
+              "position": 13,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -105835,73 +105848,85 @@
               "id": "mt-v02-section-01",
               "title": "مقدمة",
               "sentenceId": "mt-v02-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-02",
               "title": "الفصل الأول: عنف السيدة الشابة",
               "sentenceId": "mt-v02-p00012",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-03",
               "title": "الفصل الثاني: كل شيء حسب الخطة؟",
               "sentenceId": "mt-v02-p00110",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-04",
               "title": "قصة جانبية: العواقب وأسلوب تحية بورياس",
               "sentenceId": "mt-v02-p00233",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-05",
               "title": "الفصل الثالث: شراستها بلا هوادة",
               "sentenceId": "mt-v02-p00278",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-06",
               "title": "الفصل الرابع: اجتماع الموظفين والأحد",
               "sentenceId": "mt-v02-p00377",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-07",
               "title": "الفصل الخامس: الآنسة الشابة تبلغ العاشرة من عمرها",
               "sentenceId": "mt-v02-p00475",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-08",
               "title": "الفصل السادس: تعلم لغة أجنبية",
               "sentenceId": "mt-v02-p00612",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-09",
               "title": "الفصل السابع: الوعد المطلق",
               "sentenceId": "mt-v02-p00733",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-10",
               "title": "الفصل الثامن: نقطة التحول",
               "sentenceId": "mt-v02-p00895",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-11",
               "title": "خاتمة",
               "sentenceId": "mt-v02-p00991",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v02-section-12",
               "title": "فصل إضافي: آلهة الغابة",
               "sentenceId": "mt-v02-p01037",
-              "position": 12
+              "position": 12,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -106054,91 +106079,106 @@
               "id": "mt-v03-section-01",
               "title": "الفصل الأول: الدجال الذي ادّعى أنه إله",
               "sentenceId": "mt-v03-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-02",
               "title": "الفصل الثاني: السوبرد",
               "sentenceId": "mt-v03-p00051",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-03",
               "title": "الفصل الثالث: أسرار الماجستير",
               "sentenceId": "mt-v03-p00132",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-04",
               "title": "الفصل الرابع: أسس الثقة",
               "sentenceId": "mt-v03-p00204",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-05",
               "title": "الفصل الخامس: ثلاثة أيام إلى أقرب مدينة",
               "sentenceId": "mt-v03-p00278",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-06",
               "title": "الفصل السادس: التسلل وانتحال الشخصية",
               "sentenceId": "mt-v03-p00379",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-07",
               "title": "الفصل السابع: نقابة المغامرين",
               "sentenceId": "mt-v03-p00466",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-08",
               "title": "الفصل الثامن: نزل المغامرين",
               "sentenceId": "mt-v03-p00585",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-09",
               "title": "الفصل التاسع: الوظيفة الأولى: قيمة الحياة",
               "sentenceId": "mt-v03-p00694",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-10",
               "title": "الفصل العاشر: اكتملت المهمة الأولى",
               "sentenceId": "mt-v03-p00808",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-11",
               "title": "الفصل الحادي عشر: بداية سلسة",
               "sentenceId": "mt-v03-p00921",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-12",
               "title": "الفصل الثاني عشر: الأطفال والمحاربون",
               "sentenceId": "mt-v03-p01014",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-13",
               "title": "الفصل الثالث عشر: الفشل والفوضى والعزم",
               "sentenceId": "mt-v03-p01148",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-14",
               "title": "الفصل الرابع عشر: بداية رحلتنا",
               "sentenceId": "mt-v03-p01286",
-              "position": 14
+              "position": 14,
+              "isSample": false
             },
             {
               "id": "mt-v03-section-15",
               "title": "فصل إضافي: أميرة أسورا والملاك",
               "sentenceId": "mt-v03-p01412",
-              "position": 15
+              "position": 15,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -106256,73 +106296,85 @@
               "id": "mt-v04-section-01",
               "title": "الفصل الأول: ميناء الرياح",
               "sentenceId": "mt-v04-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-02",
               "title": "الفصل الثاني: لقاءات فائتة، المقدمة",
               "sentenceId": "mt-v04-p00092",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-03",
               "title": "الفصل الثالث: لقاءات فائتة، التكملة",
               "sentenceId": "mt-v04-p00173",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-04",
               "title": "قصة جانبية: لقاءات فائتة، قصة إضافية",
               "sentenceId": "mt-v04-p00299",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-05",
               "title": "الفصل الرابع: الحكيم على متن السفينة",
               "sentenceId": "mt-v04-p00391",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-06",
               "title": "الفصل الخامس: الشيطان في المستودع",
               "sentenceId": "mt-v04-p00467",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-07",
               "title": "الفصل السادس: أطفال الوحوش",
               "sentenceId": "mt-v04-p00532",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-08",
               "title": "الفصل السابع: شقة مجانية",
               "sentenceId": "mt-v04-p00636",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-09",
               "title": "الفصل الثامن: طوارئ الحريق",
               "sentenceId": "mt-v04-p00729",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-10",
               "title": "الفصل التاسع: الحياة البطيئة في قرية دولديا",
               "sentenceId": "mt-v04-p00860",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-11",
               "title": "الفصل العاشر: طريق السيف المقدس",
               "sentenceId": "mt-v04-p00962",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v04-section-12",
               "title": "فصل إضافي: فيتز الحارس",
               "sentenceId": "mt-v04-p01068",
-              "position": 12
+              "position": 12,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -106467,67 +106519,78 @@
               "id": "mt-v05-section-01",
               "title": "الفصل الأول: بلاد ميليس المقدسة",
               "sentenceId": "mt-v05-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-02",
               "title": "الفصل الثاني: قصة بولس",
               "sentenceId": "mt-v05-p00174",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-03",
               "title": "الفصل الثالث: الشجار العائلي",
               "sentenceId": "mt-v05-p00257",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-04",
               "title": "الفصل الرابع: لم الشمل",
               "sentenceId": "mt-v05-p00366",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-05",
               "title": "الفصل الخامس: تأكيد الأهداف",
               "sentenceId": "mt-v05-p00529",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-06",
               "title": "الفصل السادس: أسبوع في ميليشيون",
               "sentenceId": "mt-v05-p00645",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-07",
               "title": "فاصل: إيريس قاتلة الغوبلن",
               "sentenceId": "mt-v05-p00784",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-08",
               "title": "الفصل السابع: إلى القارة الوسطى",
               "sentenceId": "mt-v05-p00918",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-09",
               "title": "فاصل: عودة روكسي للوطن",
               "sentenceId": "mt-v05-p01050",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-10",
               "title": "الفصل الإضافي الأول: لحم التنين، على طريقة ناناهوشي",
               "sentenceId": "mt-v05-p01094",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v05-section-11",
               "title": "الفصل الإضافي الثاني: موت آرييل",
               "sentenceId": "mt-v05-p01154",
-              "position": 11
+              "position": 11,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -106679,91 +106742,106 @@
               "id": "mt-v06-section-01",
               "title": "الفصل الأول: اختيار الطريق",
               "sentenceId": "mt-v06-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-02",
               "title": "الفصل الثاني: الأرز",
               "sentenceId": "mt-v06-p00066",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-03",
               "title": "الفصل الثالث: مملكة شيروني",
               "sentenceId": "mt-v06-p00128",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-04",
               "title": "الفصل الرابع: لا إله",
               "sentenceId": "mt-v06-p00206",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-05",
               "title": "الفصل الخامس: الأمير الثالث",
               "sentenceId": "mt-v06-p00355",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-06",
               "title": "الفصل السادس: الحل السريع",
               "sentenceId": "mt-v06-p00444",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-07",
               "title": "الفصل السابع: ولادة أختي الصغيرة، الخادمة",
               "sentenceId": "mt-v06-p00513",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-08",
               "title": "الفصل الثامن: بالغ",
               "sentenceId": "mt-v06-p00568",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-09",
               "title": "الفصل التاسع: نقطة التحول الثانية",
               "sentenceId": "mt-v06-p00621",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-10",
               "title": "الفصل العاشر: الفجوة الكبيرة في صدري",
               "sentenceId": "mt-v06-p00702",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-11",
               "title": "الفصل الحادي عشر: نهاية الرحلة",
               "sentenceId": "mt-v06-p00755",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-12",
               "title": "الفصل الثاني عشر: حقيقة النكبة",
               "sentenceId": "mt-v06-p00833",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-13",
               "title": "الفصل الثالث عشر: قرار السيدة الشابة",
               "sentenceId": "mt-v06-p00926",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-14",
               "title": "فاصل: الفتاتان اللتان قابلتهما",
               "sentenceId": "mt-v06-p01040",
-              "position": 14
+              "position": 14,
+              "isSample": false
             },
             {
               "id": "mt-v06-section-15",
               "title": "فصل إضافي: مشوه، ولكن دون تغيير",
               "sentenceId": "mt-v06-p01145",
-              "position": 15
+              "position": 15,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -106881,55 +106959,64 @@
               "id": "mt-v07-section-01",
               "title": "مقدمة",
               "sentenceId": "mt-v07-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-02",
               "title": "الفصل الأول: الساحر المنكسر القلب",
               "sentenceId": "mt-v07-p00037",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-03",
               "title": "الفصل الثاني: غريزليز لوستر",
               "sentenceId": "mt-v07-p00113",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-04",
               "title": "الفصل الثالث: روديوس المستنقع",
               "sentenceId": "mt-v07-p00250",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-05",
               "title": "الفصل الرابع: الغابة في الليل",
               "sentenceId": "mt-v07-p00532",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-06",
               "title": "الفصل الخامس: الاقتراب المفاجئ",
               "sentenceId": "mt-v07-p00708",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-07",
               "title": "الفصل السادس: الساحر العاجز",
               "sentenceId": "mt-v07-p00819",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-08",
               "title": "خاتمة",
               "sentenceId": "mt-v07-p01014",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v07-section-09",
               "title": "فصل إضافي: حاكم جامعة رانوا للسحر",
               "sentenceId": "mt-v07-p01048",
-              "position": 9
+              "position": 9,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -107082,79 +107169,92 @@
               "id": "mt-v08-section-01",
               "title": "مقدمة: المستنقع، المغامر",
               "sentenceId": "mt-v08-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-02",
               "title": "الفصل الأول: خطاب الدعوة",
               "sentenceId": "mt-v08-p00065",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-03",
               "title": "الفصل الثاني: امتحان القبول",
               "sentenceId": "mt-v08-p00173",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-04",
               "title": "الفصل الثالث: أول يوم دراسي",
               "sentenceId": "mt-v08-p00261",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-05",
               "title": "قصة جانبية: سيلفييت (الجزء الأول)",
               "sentenceId": "mt-v08-p00453",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-06",
               "title": "الفصل الرابع: بداية حياتي المدرسية",
               "sentenceId": "mt-v08-p00526",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-07",
               "title": "الفصل الخامس: قوة لا يمكن الوصول إليها (الجزء الأول)",
               "sentenceId": "mt-v08-p00592",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-08",
               "title": "الفصل السادس: قوة لا يمكن الوصول إليها (الجزء الثاني)",
               "sentenceId": "mt-v08-p00643",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-09",
               "title": "الفصل السابع: اختطاف وحبس الفتيات الوحوش (الجزء الأول)",
               "sentenceId": "mt-v08-p00738",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-10",
               "title": "الفصل الثامن: اختطاف وحبس الفتيات الوحوش (الجزء الثاني)",
               "sentenceId": "mt-v08-p00823",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-11",
               "title": "قصة جانبية: سيلفييت (الجزء الثاني)",
               "sentenceId": "mt-v08-p00938",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-12",
               "title": "خاتمة",
               "sentenceId": "mt-v08-p00967",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v08-section-13",
               "title": "فصل إضافي: جولييت وآداب السلوك",
               "sentenceId": "mt-v08-p01007",
-              "position": 13
+              "position": 13,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -107280,91 +107380,106 @@
               "id": "mt-v09-section-01",
               "title": "الفصل الأول: سر العبقرية (الجزء الأول)",
               "sentenceId": "mt-v09-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-02",
               "title": "الفصل الثاني: سر العبقرية (الجزء الثاني)",
               "sentenceId": "mt-v09-p00096",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-03",
               "title": "قصة جانبية: سيلفييت (الجزء الثالث)",
               "sentenceId": "mt-v09-p00193",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-04",
               "title": "الفصل الثالث: الخطيب المنيع (الجزء الأول)",
               "sentenceId": "mt-v09-p00203",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-05",
               "title": "الفصل الرابع: الخطيب المنيع (الجزء الثاني)",
               "sentenceId": "mt-v09-p00277",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-06",
               "title": "الفصل الخامس: القناع الأبيض (الجزء الأول)",
               "sentenceId": "mt-v09-p00395",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-07",
               "title": "الفصل السادس: القناع الأبيض (الجزء الثاني)",
               "sentenceId": "mt-v09-p00498",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-08",
               "title": "قصة جانبية: سيلفييت (الجزء الرابع)",
               "sentenceId": "mt-v09-p00594",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-09",
               "title": "الفصل السابع: يوم في جامعة السحر",
               "sentenceId": "mt-v09-p00607",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-10",
               "title": "الفصل الثامن: غافل لكنه ثاقب البصيرة",
               "sentenceId": "mt-v09-p00718",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-11",
               "title": "الفصل التاسع: المطر في الغابة (الجزء الأول)",
               "sentenceId": "mt-v09-p00867",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-12",
               "title": "الفصل العاشر: المطر في الغابة (الجزء الثاني)",
               "sentenceId": "mt-v09-p01000",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-13",
               "title": "الفصل الحادي عشر: الدفعة الأخيرة",
               "sentenceId": "mt-v09-p01102",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-14",
               "title": "قصة جانبية: سيلفييت (الجزء 0)",
               "sentenceId": "mt-v09-p01212",
-              "position": 14
+              "position": 14,
+              "isSample": false
             },
             {
               "id": "mt-v09-section-15",
               "title": "فصل إضافي: غضب الكلب المجنون",
               "sentenceId": "mt-v09-p01323",
-              "position": 15
+              "position": 15,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -107482,85 +107597,99 @@
               "id": "mt-v10-section-01",
               "title": "الفصل الأول: الدعم",
               "sentenceId": "mt-v10-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-02",
               "title": "الفصل الثاني: الأمور التي يجب الاستعداد لها قبل الزواج (الجزء الأول)",
               "sentenceId": "mt-v10-p00082",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-03",
               "title": "الفصل الثالث: الأمور التي يجب الاستعداد لها قبل الزواج (الجزء الثاني)",
               "sentenceId": "mt-v10-p00167",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-04",
               "title": "الفصل الرابع: دراماتيكي",
               "sentenceId": "mt-v10-p00255",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-05",
               "title": "الفصل الخامس: تحضيرات حفل الزفاف",
               "sentenceId": "mt-v10-p00348",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-06",
               "title": "الفصل السادس: استضافة حفل الزفاف",
               "sentenceId": "mt-v10-p00438",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-07",
               "title": "الفصل السابع: نهاية حفل الزفاف",
               "sentenceId": "mt-v10-p00531",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-08",
               "title": "الفصل الثامن: الحياة في منزل",
               "sentenceId": "mt-v10-p00618",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-09",
               "title": "الفصل التاسع: الرسالة",
               "sentenceId": "mt-v10-p00673",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-10",
               "title": "الفصل العاشر: الانهيار",
               "sentenceId": "mt-v10-p00735",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-11",
               "title": "الفصل الحادي عشر: ثلاثة رؤوس خير من رأس واحد",
               "sentenceId": "mt-v10-p00800",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-12",
               "title": "الفصل الثاني عشر: الحنين والإحباط",
               "sentenceId": "mt-v10-p00901",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-13",
               "title": "قصة جانبية: شحذ الأنياب",
               "sentenceId": "mt-v10-p00981",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v10-section-14",
               "title": "فصل إضافي: جليسة الأطفال المحترفة",
               "sentenceId": "mt-v10-p01039",
-              "position": 14
+              "position": 14,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -107678,97 +107807,113 @@
               "id": "mt-v11-section-01",
               "title": "الفصل الأول: التعامل مع الأخوات جريرات",
               "sentenceId": "mt-v11-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-02",
               "title": "الفصل الثاني: الخادمة المقيمة وطالبة المدرسة الداخلية",
               "sentenceId": "mt-v11-p00118",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-03",
               "title": "فاصل: علاقات السيد / الخادم",
               "sentenceId": "mt-v11-p00218",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-04",
               "title": "الفصل الثالث: الرئيس وأتباعه",
               "sentenceId": "mt-v11-p00278",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-05",
               "title": "الفصل الرابع: مشاعر الأخ",
               "sentenceId": "mt-v11-p00387",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-06",
               "title": "الفصل الخامس: نورن جريرات",
               "sentenceId": "mt-v11-p00479",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-07",
               "title": "الفصل السادس: الحياة مع الأخوات جريرات",
               "sentenceId": "mt-v11-p00565",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-08",
               "title": "الفصل السابع: نقطة التحول الثالثة",
               "sentenceId": "mt-v11-p00679",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-09",
               "title": "الفصل الثامن: الوداع",
               "sentenceId": "mt-v11-p00792",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-10",
               "title": "الفصل التاسع: إلى بيغاريت",
               "sentenceId": "mt-v11-p00950",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-11",
               "title": "الفصل العاشر: المفترس الطبيعي",
               "sentenceId": "mt-v11-p01038",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-12",
               "title": "الفصل الحادي عشر: النظام البيئي الصحراوي",
               "sentenceId": "mt-v11-p01113",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-13",
               "title": "الفصل الثاني عشر: اجتياز الرمال",
               "sentenceId": "mt-v11-p01206",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-14",
               "title": "الفصل الثالث عشر: البازار",
               "sentenceId": "mt-v11-p01282",
-              "position": 14
+              "position": 14,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-15",
               "title": "الفصل الرابع عشر: محاربو الصحراء",
               "sentenceId": "mt-v11-p01392",
-              "position": 15
+              "position": 15,
+              "isSample": false
             },
             {
               "id": "mt-v11-section-16",
               "title": "فصل إضافي: نورن وكنيسة ميليس",
               "sentenceId": "mt-v11-p01525",
-              "position": 16
+              "position": 16,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -107886,97 +108031,113 @@
               "id": "mt-v12-section-01",
               "title": "الفصل الأول: الوصول",
               "sentenceId": "mt-v12-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-02",
               "title": "الفصل الثاني: تقييم الوضع",
               "sentenceId": "mt-v12-p00134",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-03",
               "title": "الفصل الثالث: الدخول إلى المتاهة",
               "sentenceId": "mt-v12-p00201",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-04",
               "title": "الفصل الرابع: وجهة نظرها العاطفية",
               "sentenceId": "mt-v12-p00281",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-05",
               "title": "الفصل الخامس: الساحر الذي لا يقهر",
               "sentenceId": "mt-v12-p00349",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-06",
               "title": "الفصل السادس: في غاية السهولة",
               "sentenceId": "mt-v12-p00431",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-07",
               "title": "الفصل السابع: الدوائر السحرية في الطابق السادس",
               "sentenceId": "mt-v12-p00501",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-08",
               "title": "الفصل الثامن: حارس متاهة النقل الآني",
               "sentenceId": "mt-v12-p00595",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-09",
               "title": "الفصل التاسع: القتال المميت",
               "sentenceId": "mt-v12-p00695",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-10",
               "title": "الفصل العاشر: الوالدان",
               "sentenceId": "mt-v12-p00761",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-11",
               "title": "الفصل الحادي عشر: التطلع إلى الأمام",
               "sentenceId": "mt-v12-p00823",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-12",
               "title": "الفصل الثاني عشر: دعنا نذهب إلى المنزل",
               "sentenceId": "mt-v12-p00912",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-13",
               "title": "الفصل الثالث عشر: العودة",
               "sentenceId": "mt-v12-p01005",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-14",
               "title": "الفصل الرابع عشر: التقرير",
               "sentenceId": "mt-v12-p01081",
-              "position": 14
+              "position": 14,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-15",
               "title": "الفصل الخامس عشر: المذبحة",
               "sentenceId": "mt-v12-p01175",
-              "position": 15
+              "position": 15,
+              "isSample": false
             },
             {
               "id": "mt-v12-section-16",
               "title": "الفصل السادس عشر: قبل قبره",
               "sentenceId": "mt-v12-p01267",
-              "position": 16
+              "position": 16,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -108101,79 +108262,92 @@
               "id": "mt-v13-section-01",
               "title": "الفصل الأول: وظيفة روكسي الجديدة",
               "sentenceId": "mt-v13-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-02",
               "title": "الفصل الثاني: السنة الثالثة",
               "sentenceId": "mt-v13-p00183",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-03",
               "title": "الفصل الثالث: التدريب مع نورن",
               "sentenceId": "mt-v13-p00319",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-04",
               "title": "الفصل الرابع: هل يمكنني الاحتفاظ به؟",
               "sentenceId": "mt-v13-p00429",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-05",
               "title": "الفصل الخامس: الكرامة الأبوية",
               "sentenceId": "mt-v13-p00535",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-06",
               "title": "الفصل السادس: ولادة ملك الماء",
               "sentenceId": "mt-v13-p00659",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-07",
               "title": "الفصل السابع: حفل الزفاف",
               "sentenceId": "mt-v13-p00781",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-08",
               "title": "الفصل الثامن: الزهور في كلتا اليدين",
               "sentenceId": "mt-v13-p00881",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-09",
               "title": "الفصل التاسع: حفلة عيد الميلاد",
               "sentenceId": "mt-v13-p00984",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-10",
               "title": "الفصل العاشر: الدراما في مكان العمل",
               "sentenceId": "mt-v13-p01096",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-11",
               "title": "الفصل الحادي عشر: يوم التخرج",
               "sentenceId": "mt-v13-p01246",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-12",
               "title": "الفصل الثاني عشر: المرحلة الرابعة",
               "sentenceId": "mt-v13-p01365",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v13-section-13",
               "title": "فصل إضافي: شحذ سيف الكلب المجنون",
               "sentenceId": "mt-v13-p01458",
-              "position": 13
+              "position": 13,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -108291,73 +108465,85 @@
               "id": "mt-v14-section-01",
               "title": "الفصل الأول: القلعة العائمة",
               "sentenceId": "mt-v14-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-02",
               "title": "الفصل الثاني: لقاء مع بيروغيوس",
               "sentenceId": "mt-v14-p00119",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-03",
               "title": "الفصل الثالث: الماضي واللعنة والدعوة والغيرة",
               "sentenceId": "mt-v14-p00211",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-04",
               "title": "الفصل الرابع: الرثاء",
               "sentenceId": "mt-v14-p00378",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-05",
               "title": "الفصل الخامس: العودة إلى القارة الشيطانية",
               "sentenceId": "mt-v14-p00467",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-06",
               "title": "الفصل السادس: البحث عن كيشيريكا",
               "sentenceId": "mt-v14-p00544",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-07",
               "title": "الفصل السابع: لقاء مع ملك الشياطين الخالد",
               "sentenceId": "mt-v14-p00697",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-08",
               "title": "الفصل الثامن: المواجهة مع ملك الشياطين الخالد",
               "sentenceId": "mt-v14-p00823",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-09",
               "title": "الفصل التاسع: يوم في القلعة العائمة",
               "sentenceId": "mt-v14-p00952",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-10",
               "title": "الفصل العاشر: نقطة التحول (الجزء الرابع)",
               "sentenceId": "mt-v14-p01046",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-11",
               "title": "الفصل الحادي عشر: النهاية والبداية",
               "sentenceId": "mt-v14-p01129",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v14-section-12",
               "title": "فصل إضافي: ولادة ملك السيف الجديد",
               "sentenceId": "mt-v14-p01236",
-              "position": 12
+              "position": 12,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -108475,85 +108661,99 @@
               "id": "mt-v15-section-01",
               "title": "الفصل الأول: اليوميات (الجزء الأول)",
               "sentenceId": "mt-v15-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-02",
               "title": "الفصل الثاني: اليوميات (الجزء الثاني)",
               "sentenceId": "mt-v15-p00080",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-03",
               "title": "الفصل الثالث: العزم",
               "sentenceId": "mt-v15-p00185",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-04",
               "title": "الفصل الرابع: فرضية ناناهوشي",
               "sentenceId": "mt-v15-p00310",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-05",
               "title": "الفصل الخامس: رسالة من بعيد",
               "sentenceId": "mt-v15-p00417",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-06",
               "title": "الفصل السادس: الاستعدادات",
               "sentenceId": "mt-v15-p00487",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-07",
               "title": "الفصل السابع: الاستعداد للمعركة",
               "sentenceId": "mt-v15-p00598",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-08",
               "title": "الفصل الثامن: روديوس المستنقع ضد إله التنين",
               "sentenceId": "mt-v15-p00731",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-09",
               "title": "الفصل التاسع: ملكة السيف الهائجة ضد إله التنين",
               "sentenceId": "mt-v15-p00833",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-10",
               "title": "الفصل العاشر: إيريس جريرات (الجزء الأول)",
               "sentenceId": "mt-v15-p00942",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-11",
               "title": "الفصل الحادي عشر: إيريس جريرات (الجزء الثاني)",
               "sentenceId": "mt-v15-p01025",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-12",
               "title": "الفصل الثاني عشر: الاستدعاء",
               "sentenceId": "mt-v15-p01132",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-13",
               "title": "الفصل الثالث عشر: التفسيرات",
               "sentenceId": "mt-v15-p01208",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v15-section-14",
               "title": "فصل إضافي: النصل البري يجد غمده",
               "sentenceId": "mt-v15-p01302",
-              "position": 14
+              "position": 14,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -108707,61 +108907,71 @@
               "id": "mt-v16-section-01",
               "title": "الفصل الأول: المهمة الأولى",
               "sentenceId": "mt-v16-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-02",
               "title": "الفصل الثاني: الوحش الحارس",
               "sentenceId": "mt-v16-p00131",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-03",
               "title": "الفصل الثالث: التحرك الافتتاحي",
               "sentenceId": "mt-v16-p00202",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-04",
               "title": "الفصل الرابع: القرار محسوم",
               "sentenceId": "mt-v16-p00307",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-05",
               "title": "الفصل الخامس: العمل معًا",
               "sentenceId": "mt-v16-p00408",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-06",
               "title": "الفصل السادس: اقتراح أورستد",
               "sentenceId": "mt-v16-p00516",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-07",
               "title": "الفصل السابع: متاهة المكتبة",
               "sentenceId": "mt-v16-p00590",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-08",
               "title": "الفصل الثامن: ملك التنين المدرع والأميرة الثانية",
               "sentenceId": "mt-v16-p00815",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-09",
               "title": "الفصل التاسع: قبل السفر إلى مملكة أسورا",
               "sentenceId": "mt-v16-p00912",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v16-section-10",
               "title": "فصل إضافي: ملك سيف الذئب الأسود",
               "sentenceId": "mt-v16-p01258",
-              "position": 10
+              "position": 10,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -108873,91 +109083,106 @@
               "id": "mt-v17-section-01",
               "title": "الفصل الأول: الطريق إلى أسورا",
               "sentenceId": "mt-v17-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-02",
               "title": "الفصل الثاني: الفك العلوي للتنين الأحمر",
               "sentenceId": "mt-v17-p00088",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-03",
               "title": "الفصل الثالث: شبهات ونظريات",
               "sentenceId": "mt-v17-p00198",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-04",
               "title": "الفصل الرابع: اختيار آرييل",
               "sentenceId": "mt-v17-p00296",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-05",
               "title": "الفصل الخامس: تريستينا",
               "sentenceId": "mt-v17-p00397",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-06",
               "title": "الفصل السادس: على الطريق",
               "sentenceId": "mt-v17-p00476",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-07",
               "title": "الفصل السابع: آرس، العاصمة الملكية",
               "sentenceId": "mt-v17-p00607",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-08",
               "title": "الفصل الثامن: مبارزة عند الغسق",
               "sentenceId": "mt-v17-p00695",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-09",
               "title": "الفصل التاسع: ساحة معركة آرييل",
               "sentenceId": "mt-v17-p00788",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-10",
               "title": "الفصل العاشر: ساحة معركة روديوس",
               "sentenceId": "mt-v17-p00897",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-11",
               "title": "الفصل الحادي عشر: جنون لوك",
               "sentenceId": "mt-v17-p01038",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-12",
               "title": "الفصل الثاني عشر: عشرة أيام في العاصمة وحقيقة أورستد",
               "sentenceId": "mt-v17-p01132",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-13",
               "title": "الفصل الثالث عشر: الوداع والتغييرات",
               "sentenceId": "mt-v17-p01243",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-14",
               "title": "الفصل الرابع عشر: المنزل مرة أخرى",
               "sentenceId": "mt-v17-p01324",
-              "position": 14
+              "position": 14,
+              "isSample": false
             },
             {
               "id": "mt-v17-section-15",
               "title": "فصل إضافي: ؟؟؟",
               "sentenceId": "mt-v17-p01405",
-              "position": 15
+              "position": 15,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -109075,73 +109300,85 @@
               "id": "mt-v18-section-01",
               "title": "الفصل الأول: وظيفة واحدة من بين وظائف كثيرة",
               "sentenceId": "mt-v18-p00065",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-02",
               "title": "الفصل الثاني: القطة المستعارة",
               "sentenceId": "mt-v18-p00157",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-03",
               "title": "الفصل الثالث: حفل الدخول ورئيس مجلس الطلاب",
               "sentenceId": "mt-v18-p00278",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-04",
               "title": "الفصل الرابع: تقدم البحث",
               "sentenceId": "mt-v18-p00398",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-05",
               "title": "الفصل الخامس: علامات تفكك الأسرة",
               "sentenceId": "mt-v18-p00500",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-06",
               "title": "الفصل السادس: بدء الأعمال التجارية",
               "sentenceId": "mt-v18-p00599",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-07",
               "title": "الفصل السابع: مشروع الشركة",
               "sentenceId": "mt-v18-p00700",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-08",
               "title": "الفصل الثامن: إعادة زيارة قرية دولديا",
               "sentenceId": "mt-v18-p00820",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-09",
               "title": "الفصل التاسع: قضية سارق اللحم المجفف",
               "sentenceId": "mt-v18-p00948",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-10",
               "title": "الفصل العاشر: العبد الآخر (الجزء الأول)",
               "sentenceId": "mt-v18-p01034",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-11",
               "title": "الفصل الحادي عشر: العبد الآخر (الجزء الثاني)",
               "sentenceId": "mt-v18-p01134",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v18-section-12",
               "title": "الفصل الثاني عشر: المعركة القادمة",
               "sentenceId": "mt-v18-p01247",
-              "position": 12
+              "position": 12,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -109272,85 +109509,99 @@
               "id": "mt-v19-section-01",
               "title": "الفصل الأول: قرار زنوبة",
               "sentenceId": "mt-v19-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-02",
               "title": "الفصل الثاني: البشائر السيئة",
               "sentenceId": "mt-v19-p00104",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-03",
               "title": "الفصل الثالث: العودة إلى شيروني",
               "sentenceId": "mt-v19-p00239",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-04",
               "title": "الفصل الرابع: الملك باكس",
               "sentenceId": "mt-v19-p00360",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-05",
               "title": "الفصل الخامس: حصن كارون",
               "sentenceId": "mt-v19-p00469",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-06",
               "title": "الفصل السادس: الاستعدادات للحرب",
               "sentenceId": "mt-v19-p00589",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-07",
               "title": "الفصل السابع: المعركة",
               "sentenceId": "mt-v19-p00677",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-08",
               "title": "الفصل الثامن: رسالة عاجلة ومشاعر زنوبا الحقيقية",
               "sentenceId": "mt-v19-p00758",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-09",
               "title": "الفصل التاسع: إلى جانب باكس",
               "sentenceId": "mt-v19-p00875",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-10",
               "title": "الفصل العاشر: الجهد الضائع في كل مكان",
               "sentenceId": "mt-v19-p00960",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-11",
               "title": "الفصل الحادي عشر: العواقب",
               "sentenceId": "mt-v19-p01095",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-12",
               "title": "الفصل الثاني عشر: طريق زنوبة المختار",
               "sentenceId": "mt-v19-p01202",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-13",
               "title": "الفصل الثالث عشر: لا بأس أن تكون سعيدًا",
               "sentenceId": "mt-v19-p01295",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v19-section-14",
               "title": "فصل إضافي: إله الموت والأمير الشره",
               "sentenceId": "mt-v19-p01364",
-              "position": 14
+              "position": 14,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -109468,73 +109719,85 @@
               "id": "mt-v20-section-01",
               "title": "الفصل الأول: خطط المستقبل ومخاوف كليف",
               "sentenceId": "mt-v20-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-02",
               "title": "الفصل الثاني: متجر زنوبة",
               "sentenceId": "mt-v20-p00064",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-03",
               "title": "الفصل الثالث: مجلس طلاب كليف ومعهد السحر",
               "sentenceId": "mt-v20-p00183",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-04",
               "title": "الفصل الرابع: حفل تخرج كليف وزانوبا",
               "sentenceId": "mt-v20-p00378",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-05",
               "title": "فاصل: قروي يزور المدينة",
               "sentenceId": "mt-v20-p00457",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-06",
               "title": "فاصل: حفل بلوغ سن الرشد",
               "sentenceId": "mt-v20-p00547",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-07",
               "title": "الفصل الخامس: النمو والآفاق الجديدة",
               "sentenceId": "mt-v20-p00633",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-08",
               "title": "الفصل السادس: إلى ميليشيون...",
               "sentenceId": "mt-v20-p00735",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-09",
               "title": "الفصل السابع: عودة كليف للوطن",
               "sentenceId": "mt-v20-p00813",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-10",
               "title": "الفصل الثامن: بيت لاتريا",
               "sentenceId": "mt-v20-p00886",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-11",
               "title": "الفصل التاسع: مقر كنيسة ميليس",
               "sentenceId": "mt-v20-p00983",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v20-section-12",
               "title": "الفصل العاشر: البابا و...",
               "sentenceId": "mt-v20-p01119",
-              "position": 12
+              "position": 12,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -109660,67 +109923,78 @@
               "id": "mt-v21-section-01",
               "title": "الفصل الأول: التظاهر بالغباء",
               "sentenceId": "mt-v21-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-02",
               "title": "الفصل الثاني: مشكلة الشطرنج",
               "sentenceId": "mt-v21-p00102",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-03",
               "title": "الفصل الثالث: اقلب اللوحة وخذ الملك",
               "sentenceId": "mt-v21-p00214",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-04",
               "title": "الفصل الرابع: المفاوضات القاسية",
               "sentenceId": "mt-v21-p00317",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-05",
               "title": "الفصل الخامس: ما الذي يمنعك؟",
               "sentenceId": "mt-v21-p00424",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-06",
               "title": "الفصل السادس: من أجل خير ابنتي وعائلتي",
               "sentenceId": "mt-v21-p00551",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-07",
               "title": "الفصل السابع: ما هو المستحق",
               "sentenceId": "mt-v21-p00655",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-08",
               "title": "الفصل الثامن: إفلات الخائن",
               "sentenceId": "mt-v21-p00766",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-09",
               "title": "فصل إضافي: ملك السيف الهائج والطفل المبارك",
               "sentenceId": "mt-v21-p00849",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-10",
               "title": "فصل إضافي: تيريز تبحث عن زوج",
               "sentenceId": "mt-v21-p00924",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v21-section-11",
               "title": "فصل إضافي: القرد والذئب",
               "sentenceId": "mt-v21-p00996",
-              "position": 11
+              "position": 11,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -109832,85 +110106,99 @@
               "id": "mt-v22-section-01",
               "title": "الفصل الأول: العودة إلى المنزل وتقديم التقارير",
               "sentenceId": "mt-v22-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-02",
               "title": "الفصل الثاني: مشاكل راندولف",
               "sentenceId": "mt-v22-p00131",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-03",
               "title": "الفصل الثالث: سياسة مملكة الملك التنين",
               "sentenceId": "mt-v22-p00196",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-04",
               "title": "الفصل الرابع: الطفل الأكثر شقاوة",
               "sentenceId": "mt-v22-p00268",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-05",
               "title": "الفصل الخامس: ملك مملكة ملك التنانين",
               "sentenceId": "mt-v22-p00363",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-06",
               "title": "فاصل: الأزرق والأحمر",
               "sentenceId": "mt-v22-p00479",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-07",
               "title": "الفصل السادس: التسلل إلى فورت نيكروس",
               "sentenceId": "mt-v22-p00510",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-08",
               "title": "الفصل السابع: مبارزة الأعضاء الأربعة الأقوى لأتوفي",
               "sentenceId": "mt-v22-p00602",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-09",
               "title": "الفصل الثامن: مسجون في حصن نيكروس",
               "sentenceId": "mt-v22-p00690",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-10",
               "title": "الفصل التاسع: الأميرة روديوس تدخل المعركة",
               "sentenceId": "mt-v22-p00734",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-11",
               "title": "الفصل العاشر: اشتباك مع ملك الشياطين أتوفي",
               "sentenceId": "mt-v22-p00787",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-12",
               "title": "فاصل: لقد تزوجنا",
               "sentenceId": "mt-v22-p00861",
-              "position": 12
+              "position": 12,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-13",
               "title": "الفصل الحادي عشر: العدد أربعة",
               "sentenceId": "mt-v22-p00953",
-              "position": 13
+              "position": 13,
+              "isSample": false
             },
             {
               "id": "mt-v22-section-14",
               "title": "فصل إضافي: القرد والفتى الحالم",
               "sentenceId": "mt-v22-p01016",
-              "position": 14
+              "position": 14,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -110022,67 +110310,78 @@
               "id": "mt-v23-section-01",
               "title": "الفصل الأول: الطفل ذو الشعر الأخضر",
               "sentenceId": "mt-v23-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-02",
               "title": "الفصل الثاني: الطريق إلى القارة الإلهية",
               "sentenceId": "mt-v23-p00074",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-03",
               "title": "الفصل الثالث: آلوس، مدينة القارة الإلهية",
               "sentenceId": "mt-v23-p00169",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-04",
               "title": "الفصل الرابع: التعميد",
               "sentenceId": "mt-v23-p00232",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-05",
               "title": "الفصل الخامس: جهاز النقل الآني إلى عالم آخر",
               "sentenceId": "mt-v23-p00347",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-06",
               "title": "الفصل السادس: مصير ناناهوشي",
               "sentenceId": "mt-v23-p00437",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-07",
               "title": "الفصل السابع: الديار القديمة للكلب المجنون",
               "sentenceId": "mt-v23-p00543",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-08",
               "title": "الفصل الثامن: إله الشمال، مغامر، والمزيد...",
               "sentenceId": "mt-v23-p00646",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-09",
               "title": "الفصل التاسع: إله الشمال، مرتزق، والمزيد...",
               "sentenceId": "mt-v23-p00811",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-10",
               "title": "الفصل العاشر: العين الثانية",
               "sentenceId": "mt-v23-p00963",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v23-section-11",
               "title": "فصل إضافي: غيس وحليفه الأخير",
               "sentenceId": "mt-v23-p01063",
-              "position": 11
+              "position": 11,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -110200,73 +110499,85 @@
               "id": "mt-v24-section-01",
               "title": "الفصل الأول: اجتماع استراتيجي",
               "sentenceId": "mt-v24-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-02",
               "title": "الفصل الثاني: السلعة المطلوبة",
               "sentenceId": "mt-v24-p00097",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-03",
               "title": "الفصل الثالث: الشخص المطلوب",
               "sentenceId": "mt-v24-p00195",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-04",
               "title": "الفصل الرابع: قرية السوبرد",
               "sentenceId": "mt-v24-p00277",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-05",
               "title": "الفصل الخامس: ملك الأعماق فيتا",
               "sentenceId": "mt-v24-p00387",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-06",
               "title": "الفصل السادس: الطاعون",
               "sentenceId": "mt-v24-p00544",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-07",
               "title": "الفصل السابع: العبقرية",
               "sentenceId": "mt-v24-p00648",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-08",
               "title": "فاصل: من شخص إلى شخص",
               "sentenceId": "mt-v24-p00748",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-09",
               "title": "فاصل: فيتا وراكسوس",
               "sentenceId": "mt-v24-p00785",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-10",
               "title": "الفصل الثامن: العاصمة",
               "sentenceId": "mt-v24-p00815",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-11",
               "title": "الفصل التاسع: جولة تعليمية لأربعة أيام في قرية السوبرد",
               "sentenceId": "mt-v24-p00907",
-              "position": 11
+              "position": 11,
+              "isSample": false
             },
             {
               "id": "mt-v24-section-12",
               "title": "الفصل العاشر: الاختفاء",
               "sentenceId": "mt-v24-p00991",
-              "position": 12
+              "position": 12,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -110378,67 +110689,78 @@
               "id": "mt-v25-section-01",
               "title": "الفصل الأول: يلاحظ أحدهم خللًا",
               "sentenceId": "mt-v25-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-02",
               "title": "الفصل الثاني: في قاع وادي تنين الأرض",
               "sentenceId": "mt-v25-p00046",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-03",
               "title": "الفصل الثالث: فرصة للنصر",
               "sentenceId": "mt-v25-p00127",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-04",
               "title": "الفصل الرابع: ملك الكلب المجنون ضد إله السيف السابق",
               "sentenceId": "mt-v25-p00222",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-05",
               "title": "الفصل الخامس: كالمان الثالث ضد كالمان الثاني وشركاه",
               "sentenceId": "mt-v25-p00276",
-              "position": 5
+              "position": 5,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-06",
               "title": "الفصل السادس: كالمان الثالث ضد نهاية الطريق ورفاقه",
               "sentenceId": "mt-v25-p00376",
-              "position": 6
+              "position": 6,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-07",
               "title": "الفصل السابع: الكسندر ضد روديوس",
               "sentenceId": "mt-v25-p00472",
-              "position": 7
+              "position": 7,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-08",
               "title": "الفصل الثامن: الراحة",
               "sentenceId": "mt-v25-p00552",
-              "position": 8
+              "position": 8,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-09",
               "title": "الفصل التاسع: صنع السلام مع إله الغول",
               "sentenceId": "mt-v25-p00670",
-              "position": 9
+              "position": 9,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-10",
               "title": "فاصل: الدرع",
               "sentenceId": "mt-v25-p00763",
-              "position": 10
+              "position": 10,
+              "isSample": false
             },
             {
               "id": "mt-v25-section-11",
               "title": "فاصل: أريد أن أكون بطلًا",
               "sentenceId": "mt-v25-p00899",
-              "position": 11
+              "position": 11,
+              "isSample": false
             }
           ],
           "illustrations": [
@@ -110598,31 +110920,36 @@
               "id": "mt-v26-section-01",
               "title": "الفصل الأول: تهديد إله القتال",
               "sentenceId": "mt-v26-p00001",
-              "position": 1
+              "position": 1,
+              "isSample": false
             },
             {
               "id": "mt-v26-section-02",
               "title": "الفصل الثاني: الورقة الرابحة",
               "sentenceId": "mt-v26-p00131",
-              "position": 2
+              "position": 2,
+              "isSample": false
             },
             {
               "id": "mt-v26-section-03",
               "title": "الفصل الثالث: نقطة التحول الخامسة",
               "sentenceId": "mt-v26-p00219",
-              "position": 3
+              "position": 3,
+              "isSample": false
             },
             {
               "id": "mt-v26-section-04",
               "title": "الفصل الرابع: نهاية المعركة",
               "sentenceId": "mt-v26-p00360",
-              "position": 4
+              "position": 4,
+              "isSample": false
             },
             {
               "id": "mt-v26-section-05",
               "title": "الخاتمة: المقدمة صفر",
               "sentenceId": "mt-v26-p00714",
-              "position": 5
+              "position": 5,
+              "isSample": false
             }
           ],
           "illustrations": [
