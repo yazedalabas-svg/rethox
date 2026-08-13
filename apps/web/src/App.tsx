@@ -3348,15 +3348,17 @@ function ReaderPage() {
     cache.loading[index] = promise;
     return promise;
   };
-  // Walks every segment of the chapter once in the background so ordinary
-  // front-to-back reading always has the next segment ready. Idempotent per
-  // chapter — a jump that lands ahead of the walker fetches on demand via
-  // loadSegment and the walker simply resumes past it (already cached).
-  const warmChapterCache = (cache: ChapterNarrationCache, session: number) => {
+  // Walks the chapter's segments forward from `fromIndex` in the background so
+  // ordinary continued reading always has the next segment ready. Starts at
+  // wherever the reader actually is — not segment 0 — so warming effort goes
+  // toward what's about to be needed, not toward text already behind them.
+  // Runs once per chapter; a later jump backward is served on demand by
+  // loadSegment instead of restarting the walk.
+  const warmChapterCache = (cache: ChapterNarrationCache, session: number, fromIndex: number) => {
     if (cache.warmed) return;
     cache.warmed = true;
     const walk = (async () => {
-      for (let index = 0; index < cache.drafts.length; index += 1) {
+      for (let index = fromIndex; index < cache.drafts.length; index += 1) {
         if (session !== playbackSessionRef.current || chapterCacheRef.current !== cache) return;
         await loadSegment(cache, index).catch(() => {});
         if (index < cache.drafts.length - 1) await new Promise((resolve) => window.setTimeout(resolve, 120));
@@ -3376,7 +3378,7 @@ function ReaderPage() {
     if (!cache) throw new Error("chapter-not-ready");
     const segmentIndex = cache.sentenceSegmentIndex[sentenceIndex];
     if (segmentIndex < 0) throw new Error("narration-empty");
-    warmChapterCache(cache, session);
+    warmChapterCache(cache, session, segmentIndex);
     const segment = await loadSegment(cache, segmentIndex);
     if (session !== playbackSessionRef.current) return;
     const targetTokenId = sentenceTokens(chapter.sentences[sentenceIndex])[wordIndex]?.id;
