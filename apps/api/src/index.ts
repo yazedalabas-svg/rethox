@@ -135,14 +135,14 @@ const chapterImageUploadLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
-// Google Cloud is opt-in. Keeping Edge as the default prevents local trials
-// from changing the public narrator when the same code is deployed.
-const ttsProvider = process.env.TTS_PROVIDER === "google-cloud" ? "google-cloud" : "edge";
+// Narration is deliberately pinned to Hamed. A failed generation must surface
+// as an error instead of silently replacing the narrator with another voice.
+const hamedVoice = "ar-SA-HamedNeural";
 const googleCloudVoice = process.env.GOOGLE_TTS_VOICE?.trim() || "ar-XA-Chirp3-HD-Aoede";
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const ttsScript = resolve(rootDir, "tools/tts_edge.py");
 const pythonCommand = process.platform === "win32" ? "python" : "python3";
-if (ttsProvider === "edge" && spawnSync(pythonCommand, ["-c", "import edge_tts"], { stdio: "ignore" }).status !== 0) {
+if (spawnSync(pythonCommand, ["-c", "import edge_tts"], { stdio: "ignore" }).status !== 0) {
   spawnSync(
     pythonCommand,
     ["-m", "pip", "install", "--user", "--break-system-packages", "--disable-pip-version-check", "--no-cache-dir", "edge-tts==7.2.7"],
@@ -493,65 +493,56 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
     .trim();
   if (!narrationText || narrationText.includes("\uFFFD"))
     return res.status(400).json({ message: "ترميز النص غير صالح" });
-  const voice = ttsProvider === "google-cloud" ? googleCloudVoice : "ar-SA-HamedNeural";
+  const voice = hamedVoice;
   const rate = "+0%";
   const pitch = "+0Hz";
   const key = createHash("sha256")
-    .update(`utf8-v8-${ttsProvider}-word-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
+    .update(`utf8-v9-hamed-only-word-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
     .digest("hex")
     .slice(0, 32);
   const audioPath = resolve(ttsCache, `${key}.mp3`);
   const metaPath = resolve(ttsCache, `${key}.json`);
   try {
     if (!existsSync(audioPath) || !existsSync(metaPath)) {
-      if (ttsProvider === "google-cloud") {
-        await generateGoogleCloudNarration(narrationText, audioPath, metaPath);
-      } else {
-        let lastError: unknown;
-        for (let attempt = 0; attempt < 3; attempt += 1) {
-          try {
-            await new Promise<void>((done, reject) => {
-              const child = spawn(
-                pythonCommand,
-                [
-                  ttsScript,
-                  "--out",
-                  audioPath,
-                  "--voice",
-                  voice,
-                  "--rate",
-                  rate,
-                  "--pitch",
-                  pitch,
-                ],
-                { stdio: ["pipe", "ignore", "pipe"] },
-              );
-              let error = "";
-              child.stderr.on("data", (chunk) => (error += chunk.toString()));
-              child.on("error", reject);
-              child.on("close", (code) =>
-                code === 0
-                  ? done()
-                  : reject(new Error(error || `TTS exited ${code}`)),
-              );
-              child.stdin.end(narrationText, "utf8");
-            });
-            lastError = undefined;
-            break;
-          } catch (error) {
-            lastError = error;
-            await new Promise((resolveDelay) =>
-              setTimeout(resolveDelay, 700 * (attempt + 1)),
+      let lastError: unknown;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        try {
+          await new Promise<void>((done, reject) => {
+            const child = spawn(
+              pythonCommand,
+              [
+                ttsScript,
+                "--out",
+                audioPath,
+                "--voice",
+                voice,
+                "--rate",
+                rate,
+                "--pitch",
+                pitch,
+              ],
+              { stdio: ["pipe", "ignore", "pipe"] },
             );
-          }
-        }
-        if (lastError) {
-          // Microsoft sometimes blocks edge-tts requests from cloud hosts;
-          // fall back to the Google translate voice so narration keeps working.
-          logger.warn({ error: String(lastError) }, "edge tts failed; trying google fallback");
-          await generateGoogleNarration(narrationText, audioPath, metaPath);
+            let error = "";
+            child.stderr.on("data", (chunk) => (error += chunk.toString()));
+            child.on("error", reject);
+            child.on("close", (code) =>
+              code === 0
+                ? done()
+                : reject(new Error(error || `TTS exited ${code}`)),
+            );
+            child.stdin.end(narrationText, "utf8");
+          });
+          lastError = undefined;
+          break;
+        } catch (error) {
+          lastError = error;
+          await new Promise((resolveDelay) =>
+            setTimeout(resolveDelay, 700 * (attempt + 1)),
+          );
         }
       }
+      if (lastError) throw lastError;
     }
     const metadata = JSON.parse(readFileSync(metaPath, "utf8"));
     if (!Array.isArray(metadata.boundaries) || metadata.boundaries.length === 0) {
@@ -1098,7 +1089,7 @@ app.get("/api/books/:id/pdf", auth, (req: AuthRequest, res) => {
   if (!filePath.startsWith(booksDir + sep) || !existsSync(filePath))
     return res.status(404).json({ message: "ملف الكتاب غير موجود" });
   res.setHeader("Content-Type", "application/pdf");
-  res.setHeader("Content-Disposition", `inline; filename="${book.slug}.pdf"`);
+  res.setHeader("Content-Disposition", `attachment; filename="${book.slug}.pdf"`);
   res.sendFile(filePath);
 });
 app.get("/api/books/:slug", optionalAuth, (req: AuthRequest, res) => {
@@ -1114,6 +1105,7 @@ app.get("/api/books/:slug", optionalAuth, (req: AuthRequest, res) => {
     book: {
       ...meta,
       rating: bookRating(book.id),
+      hasPdf: owns && Boolean(documentFile),
       chapters: chapters.map(({ sentences, contentFile, ...chapter }) => ({
         ...chapter,
         locked: !chapter.isSample && !owns,

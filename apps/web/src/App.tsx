@@ -80,6 +80,7 @@ import {
   accessTokenExpiresAt,
   api,
   apiUrl,
+  downloadFile,
   refreshSession,
   setAuthSessionListener,
   setToken,
@@ -1071,6 +1072,8 @@ function BookPage() {
   const [progress, setProgress] = useState<Progress | null>(null);
   const [readingLater, setReadingLater] = useState(false);
   const [ownsBook, setOwnsBook] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const [pdfMessage, setPdfMessage] = useState("");
   const { user, ready } = useAuth();
   const { add, remove, ids } = useCart();
   useEffect(() => {
@@ -1125,6 +1128,18 @@ function BookPage() {
     if (readingLater) await api(`/reading-list/${book.id}`, { method: "DELETE" });
     else await api(`/reading-list/${book.id}`, { method: "POST" });
     setReadingLater((value) => !value);
+  };
+  const exportPdf = async () => {
+    if (!book || pdfBusy) return;
+    setPdfBusy(true);
+    setPdfMessage("");
+    try {
+      await downloadFile(`/books/${book.id}/pdf`, `${book.slug}.pdf`);
+    } catch (error) {
+      setPdfMessage((error as Error).message || "تعذر تصدير نسخة PDF الآن.");
+    } finally {
+      setPdfBusy(false);
+    }
   };
   const submitReview = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -1328,18 +1343,19 @@ function BookPage() {
               <Bookmark size={16} fill={readingLater ? "currentColor" : "none"} />
               {readingLater ? "محفوظة للقراءة لاحقًا" : "أضف للقراءة لاحقًا"}
             </button>
-            {book.pdfUrl && (
-              <a
+            {book.hasPdf && (
+              <button
                 className="btn secondary"
-                href={book.pdfUrl}
-                target="_blank"
-                rel="noreferrer"
+                type="button"
+                disabled={pdfBusy}
+                onClick={exportPdf}
               >
                 <FileText size={16} />
-                فتح نسخة PDF
-              </a>
+                {pdfBusy ? "جارٍ تصدير PDF..." : "تصدير PDF"}
+              </button>
             )}
           </div>
+          {pdfMessage && <p className="form-message" role="status">{pdfMessage}</p>}
           {!!book.chapters?.length && (
             <div className="chapter-directory">
               <div className="chapter-directory-head">
@@ -2753,7 +2769,6 @@ function ReaderPage() {
   // playPreparedSegment reads from cache instead of hitting the network —
   // no audible gap when one sentence's narration ends and the next begins.
   const preloadAudioRefs = useRef<HTMLAudioElement[]>([]);
-  const browserSpeechActiveRef = useRef(false);
   const playbackSessionRef = useRef(0);
   const activeWordRef = useRef("");
   const speedRef = useRef(speed);
@@ -2865,10 +2880,8 @@ function ReaderPage() {
     previewAudioRef.current = null;
     preloadAudioRefs.current.forEach(releaseAudio);
     preloadAudioRefs.current = [];
-    browserSpeechActiveRef.current = false;
     backgroundNarrationRef.current = null;
     lastTrackedBoundaryRef.current = -1;
-    window.speechSynthesis.cancel();
     setPlaying(false);
     return session;
   };
@@ -3111,7 +3124,6 @@ function ReaderPage() {
       previewAudioRef.current = null;
       preloadAudioRefs.current.forEach(releaseAudio);
       preloadAudioRefs.current = [];
-      window.speechSynthesis.cancel();
     },
     [],
   );
@@ -3225,95 +3237,6 @@ function ReaderPage() {
           endMs: 0,
           confidence: 1,
         }));
-  const playBrowserNarration = (
-    startSentenceIndex = 0,
-    startWordIndex = 0,
-    session = playbackSessionRef.current,
-  ) => {
-    if (!chapter || !("speechSynthesis" in window))
-      throw new Error("Browser speech is unavailable");
-    const synth = window.speechSynthesis;
-    const remainingWords = chapter.sentences
-      .slice(startSentenceIndex)
-      .reduce((total, sentence) => total + sentenceTokens(sentence).length, 0);
-    setNarrationDuration(Math.max(1, (remainingWords / (2.25 * speedRef.current)) * 1000));
-    browserSpeechActiveRef.current = true;
-    setPlayerError("");
-
-    const speakSentence = (sentenceIndex: number, wordIndex: number) => {
-      if (
-        session !== playbackSessionRef.current ||
-        !chapter ||
-        sentenceIndex >= chapter.sentences.length
-      ) {
-        browserSpeechActiveRef.current = false;
-        setPlaying(false);
-        setActiveWordId("");
-        if (chapter && sentenceIndex >= chapter.sentences.length) setAtChapterEnd(true);
-        return;
-      }
-      const tokens = sentenceTokens(chapter.sentences[sentenceIndex]).slice(wordIndex);
-      const text = tokens.map((token) => token.text).join(" ");
-      if (!text) {
-        speakSentence(sentenceIndex + 1, 0);
-        return;
-      }
-      const starts: number[] = [];
-      let cursor = 0;
-      tokens.forEach((token) => {
-        starts.push(cursor);
-        cursor += token.text.length + 1;
-      });
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = "ar-SA";
-      utterance.rate = speedRef.current;
-      utterance.pitch = 1;
-      const arabicVoices = synth
-        .getVoices()
-        .filter((voice) => voice.lang.toLowerCase().startsWith("ar"));
-      const arabicVoice = arabicVoices[0];
-      if (arabicVoice) utterance.voice = arabicVoice;
-      utterance.onstart = () => {
-        if (session === playbackSessionRef.current) setPlaying(true);
-      };
-      utterance.onboundary = (event) => {
-        if (session !== playbackSessionRef.current) return;
-        let localIndex = 0;
-        for (let index = 0; index < starts.length; index += 1) {
-          if (starts[index] <= event.charIndex) localIndex = index;
-          else break;
-        }
-        const token = tokens[localIndex];
-        if (!token) return;
-        setCurrentSentenceIndex(sentenceIndex);
-        rememberReadingSpot(sentenceIndex, token.id);
-        const elapsed = Math.max(0, event.elapsedTime * 1000);
-        currentMsRef.current = elapsed;
-        if (performance.now() - lastTimelinePaintRef.current > 200) {
-          lastTimelinePaintRef.current = performance.now();
-          setCurrentMs(elapsed);
-        }
-        if (activeWordRef.current !== token.id) {
-          activeWordRef.current = token.id;
-          setActiveWordId(token.id);
-          revealActiveWord(token.id);
-        }
-      };
-      utterance.onend = () => {
-        if (session === playbackSessionRef.current)
-          speakSentence(sentenceIndex + 1, 0);
-      };
-      utterance.onerror = () => {
-        if (session === playbackSessionRef.current) {
-          browserSpeechActiveRef.current = false;
-          setPlaying(false);
-          setPlayerError("تعذر تشغيل الصوت في هذا المتصفح.");
-        }
-      };
-      synth.speak(utterance);
-    };
-    speakSentence(startSentenceIndex, startWordIndex);
-  };
   const requestVoice = (text: string) =>
     api<VoiceResult>("/tts", {
       method: "POST",
@@ -3559,18 +3482,6 @@ function ReaderPage() {
     }
   };
   const toggleNarration = async () => {
-    if (browserSpeechActiveRef.current) {
-      if (window.speechSynthesis.paused) {
-        window.speechSynthesis.resume();
-        setPlaying(true);
-      } else {
-        window.speechSynthesis.pause();
-        setPlaying(false);
-        activeWordRef.current = "";
-        setActiveWordId("");
-      }
-      return;
-    }
     const audio = audioRef.current;
     if (audio) {
       if (audio.paused) await audio.play();
@@ -3596,11 +3507,7 @@ function ReaderPage() {
       await playPreparedSegment(prepared, 0, 0, session);
     } catch {
       if (session !== playbackSessionRef.current) return;
-      try {
-        playBrowserNarration(currentSentenceIndex, 0, session);
-      } catch {
-        setPlayerError("تعذر تشغيل الصوت الآن. حاول مرة أخرى.");
-      }
+      setPlayerError("تعذر تجهيز صوت حامد الآن. حاول مرة أخرى.");
     } finally {
       if (session === playbackSessionRef.current) setNarrationBusy(false);
     }
@@ -3627,14 +3534,8 @@ function ReaderPage() {
       await audio.play();
     } catch {
       if (session === playbackSessionRef.current) {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = "ar-SA";
-        utterance.rate = speedRef.current;
-        utterance.pitch = 1;
-        utterance.onstart = () => { setPlayerError(""); setPlaying(true); };
-        utterance.onend = () => setPlaying(false);
-        window.speechSynthesis.speak(utterance);
-        return;
+        setPlaying(false);
+        setPlayerError("تعذر تجهيز صوت حامد الآن. حاول مرة أخرى.");
       }
     }
   };
@@ -3662,13 +3563,8 @@ function ReaderPage() {
         return;
       }
       if (session === playbackSessionRef.current) {
-        try {
-          playBrowserNarration(sentenceIndex, wordIndex, session);
-          return;
-        } catch {
-          setPlayerError("تعذر تشغيل هذه الكلمة الآن.");
-          return;
-        }
+        setPlayerError("تعذر تجهيز صوت حامد لهذه الكلمة.");
+        return;
       }
       if (session === playbackSessionRef.current)
         setPlayerError("تعذر تحميل الفصل كاملًا. حاول مرة أخرى.");

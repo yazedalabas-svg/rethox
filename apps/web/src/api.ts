@@ -57,6 +57,17 @@ const request = async <T>(path: string, options: RequestInit = {}): Promise<T> =
   return response.status === 204 ? undefined as T : response.json();
 };
 
+const downloadRequest = async (path: string) => {
+  const headers = new Headers();
+  if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
+  const response = await fetch(apiUrl(path), { headers, credentials: "include" });
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({})) as Record<string, unknown>;
+    throw new ApiError(response.status, data);
+  }
+  return response.blob();
+};
+
 export const refreshSession = (): Promise<AuthSession> => {
   if (!refreshPromise) {
     refreshPromise = request<AuthSession>("/auth/refresh", { method: "POST" })
@@ -104,4 +115,23 @@ export const api = async <T>(path: string, options: RequestInit = {}, retry = tr
     }
     throw error;
   }
+};
+
+export const downloadFile = async (path: string, filename: string) => {
+  let blob: Blob;
+  try {
+    blob = await downloadRequest(path);
+  } catch (error) {
+    if (!(error instanceof ApiError) || error.status !== 401) throw error;
+    await refreshSession();
+    blob = await downloadRequest(path);
+  }
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 };
