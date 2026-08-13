@@ -267,6 +267,19 @@ type PreparedNarrationSegment = {
   result: VoiceResult;
   boundaryTokens: ({ id: string; sentenceIndex: number } | null)[];
 };
+// Narration audio for a whole chapter is fetched once, in ~1500-char segments
+// starting at sentence 0, and kept here for the chapter's lifetime. Jumping to
+// any word — forward or back — looks up its segment instead of re-fetching:
+// already-visited text plays instantly, and only genuinely new text hits the
+// TTS endpoint.
+type ChapterNarrationCache = {
+  chapterId: string;
+  drafts: { text: string; tokens: PreparedNarrationSegment["tokens"] }[];
+  sentenceSegmentIndex: number[];
+  segments: (PreparedNarrationSegment | null)[];
+  loading: (Promise<PreparedNarrationSegment> | null)[];
+  warmed: boolean;
+};
 type LastRead = {
   bookSlug: string;
   bookTitle: string;
@@ -2763,9 +2776,9 @@ function ReaderPage() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
   // Segments finish loading well before the reader reaches them (see
-  // prepareChapterNarration's background loop). Warming a hidden <audio> for
-  // each one as soon as its URL is known lets the browser fetch the mp3 into
-  // its cache ahead of time, so the segment-to-segment handoff in
+  // warmChapterCache's background walk). Warming a hidden <audio> for each
+  // one as soon as its URL is known lets the browser fetch the mp3 into its
+  // cache ahead of time, so the segment-to-segment handoff in
   // playPreparedSegment reads from cache instead of hitting the network —
   // no audible gap when one sentence's narration ends and the next begins.
   const preloadAudioRefs = useRef<HTMLAudioElement[]>([]);
@@ -2773,10 +2786,7 @@ function ReaderPage() {
   const activeWordRef = useRef("");
   const speedRef = useRef(speed);
   const backgroundNarrationRef = useRef<Promise<void> | null>(null);
-  const preparationRef = useRef<{
-    key: string;
-    promise: Promise<PreparedNarrationSegment[]>;
-  } | null>(null);
+  const chapterCacheRef = useRef<ChapterNarrationCache | null>(null);
   const animationRef = useRef(0);
   const trackingFramePendingRef = useRef(false);
   const lastTrackedBoundaryRef = useRef(-1);
@@ -2888,7 +2898,7 @@ function ReaderPage() {
   useEffect(() => {
     if (!chapterId || !ready) return;
     stopAllPlayback();
-    preparationRef.current = null;
+    chapterCacheRef.current = null;
     backgroundNarrationRef.current = null;
     currentSegmentRef.current = 0;
     setTtsBoundaries([]);
@@ -3026,7 +3036,7 @@ function ReaderPage() {
         if (cancelled) return;
         while (
           !cancelled &&
-          (playingRef.current || preparationRef.current || backgroundNarrationRef.current)
+          (playingRef.current || backgroundNarrationRef.current)
         ) {
           await wait(4000);
         }
@@ -3255,15 +3265,16 @@ function ReaderPage() {
     }
     throw lastError;
   };
-  const buildNarrationDrafts = (startSentenceIndex = 0, startWordIndex = 0) => {
+  // Chunks the WHOLE chapter into ~1500-char segments, always starting at
+  // sentence 0 word 0. This never depends on where playback starts, so the
+  // same segment (and the same server-side TTS cache entry) is reused no
+  // matter which word within it the reader jumps to.
+  const buildChapterDrafts = () => {
     if (!chapter) return [];
     const segments: { textParts: string[]; tokens: PreparedNarrationSegment["tokens"] }[] = [];
     let current = { textParts: [] as string[], tokens: [] as PreparedNarrationSegment["tokens"] };
-    chapter.sentences.slice(Math.max(0, startSentenceIndex)).forEach((sentence, offset) => {
-      const sentenceIndex = Math.max(0, startSentenceIndex) + offset;
-      const tokens = sentenceTokens(sentence).slice(
-        sentenceIndex === startSentenceIndex ? Math.max(0, startWordIndex) : 0,
-      );
+    chapter.sentences.forEach((sentence, sentenceIndex) => {
+      const tokens = sentenceTokens(sentence);
       if (!tokens.length) return;
       const text = tokens.map((token) => token.text).join(" ");
       const nextLength = current.textParts.join(" ").length + text.length + 1;
@@ -3286,64 +3297,108 @@ function ReaderPage() {
       tokens: segment.tokens,
     }));
   };
-  const prepareChapterNarration = (
-    startSentenceIndex = 0,
-    startWordIndex = 0,
-    session = playbackSessionRef.current,
-  ) => {
-    if (!chapter) return Promise.reject(new Error("chapter-not-ready"));
-    const key = `${chapter.id}:${startSentenceIndex}:${startWordIndex}`;
-    if (preparationRef.current?.key === key)
-      return preparationRef.current.promise;
-    const drafts = buildNarrationDrafts(startSentenceIndex, startWordIndex);
-    const prepared: PreparedNarrationSegment[] = [];
-    const loadBatch = async (batch: ReturnType<typeof buildNarrationDrafts>) => {
-      const results = await Promise.all(batch.map((item) => requestVoiceReliable(item.text)));
-      const loaded = batch.map((item, index) => ({
-        ...item,
-        result: results[index],
-        boundaryTokens: alignBoundaries(results[index].boundaries, item.tokens),
-      }));
-      // Start fetching each segment's mp3 into the browser cache the moment its
-      // URL is known, well ahead of when playback actually reaches it.
-      loaded.forEach((segment) => {
-        const preload = new Audio(segment.result.audioUrl);
-        preload.preload = "auto";
-        preloadAudioRefs.current.push(preload);
+  const getChapterCache = (): ChapterNarrationCache | null => {
+    if (!chapter) return null;
+    if (chapterCacheRef.current?.chapterId === chapter.id) return chapterCacheRef.current;
+    const drafts = buildChapterDrafts();
+    const sentenceSegmentIndex = new Array(chapter.sentences.length).fill(-1);
+    drafts.forEach((draft, index) => {
+      draft.tokens.forEach((token) => {
+        if (sentenceSegmentIndex[token.sentenceIndex] === -1) sentenceSegmentIndex[token.sentenceIndex] = index;
       });
-      return loaded;
-    };
-    const promise = (async () => {
-      const firstBatch = drafts.slice(0, 1);
-      if (!firstBatch.length) throw new Error("narration-empty");
-      prepared.push(...(await loadBatch(firstBatch)));
-      const background = (async () => {
-        for (let offset = 1; offset < drafts.length; offset += 1) {
-          if (session !== playbackSessionRef.current) return;
-          await new Promise((resolve) => window.setTimeout(resolve, 120));
-          if (session !== playbackSessionRef.current) return;
-          prepared.push(...(await loadBatch(drafts.slice(offset, offset + 1))));
-        }
-      })();
-      const trackedBackground = background.finally(() => {
-        if (backgroundNarrationRef.current === trackedBackground) backgroundNarrationRef.current = null;
-      });
-      backgroundNarrationRef.current = trackedBackground;
-      return prepared;
-    })();
-    preparationRef.current = { key, promise };
-    promise.catch(() => {
-      if (preparationRef.current?.promise === promise) preparationRef.current = null;
     });
+    const cache: ChapterNarrationCache = {
+      chapterId: chapter.id,
+      drafts,
+      sentenceSegmentIndex,
+      segments: new Array(drafts.length).fill(null),
+      loading: new Array(drafts.length).fill(null),
+      warmed: false,
+    };
+    chapterCacheRef.current = cache;
+    return cache;
+  };
+  // Fetches one segment's audio, memoized on the cache so a repeated request
+  // (from a re-click, or from the background warmer catching up to a segment
+  // the reader already jumped to) reuses the same in-flight or settled promise.
+  const loadSegment = (cache: ChapterNarrationCache, index: number): Promise<PreparedNarrationSegment> => {
+    const cached = cache.segments[index];
+    if (cached) return Promise.resolve(cached);
+    const inFlight = cache.loading[index];
+    if (inFlight) return inFlight;
+    const draft = cache.drafts[index];
+    const promise = requestVoiceReliable(draft.text).then((result) => {
+      const segment: PreparedNarrationSegment = {
+        ...draft,
+        result,
+        boundaryTokens: alignBoundaries(result.boundaries, draft.tokens),
+      };
+      cache.segments[index] = segment;
+      cache.loading[index] = null;
+      // Start fetching the mp3 into the browser cache the moment its URL is
+      // known, well ahead of when playback actually reaches it.
+      const preload = new Audio(result.audioUrl);
+      preload.preload = "auto";
+      preloadAudioRefs.current.push(preload);
+      return segment;
+    }).catch((error) => {
+      cache.loading[index] = null;
+      throw error;
+    });
+    cache.loading[index] = promise;
     return promise;
   };
+  // Walks every segment of the chapter once in the background so ordinary
+  // front-to-back reading always has the next segment ready. Idempotent per
+  // chapter — a jump that lands ahead of the walker fetches on demand via
+  // loadSegment and the walker simply resumes past it (already cached).
+  const warmChapterCache = (cache: ChapterNarrationCache, session: number) => {
+    if (cache.warmed) return;
+    cache.warmed = true;
+    const walk = (async () => {
+      for (let index = 0; index < cache.drafts.length; index += 1) {
+        if (session !== playbackSessionRef.current || chapterCacheRef.current !== cache) return;
+        await loadSegment(cache, index).catch(() => {});
+        if (index < cache.drafts.length - 1) await new Promise((resolve) => window.setTimeout(resolve, 120));
+      }
+    })();
+    backgroundNarrationRef.current = walk.finally(() => {
+      if (backgroundNarrationRef.current === walk) backgroundNarrationRef.current = null;
+    });
+  };
+  // Single entry point for both "press play from where I left off" and
+  // "clicked this word": resolves the segment covering the target word
+  // (instantly if already fetched — forward OR backward, it doesn't matter),
+  // fetching just that one segment on demand otherwise, then seeks into it.
+  const playFromSentenceWord = async (sentenceIndex: number, wordIndex: number, session: number) => {
+    if (!chapter) throw new Error("chapter-not-ready");
+    const cache = getChapterCache();
+    if (!cache) throw new Error("chapter-not-ready");
+    const segmentIndex = cache.sentenceSegmentIndex[sentenceIndex];
+    if (segmentIndex < 0) throw new Error("narration-empty");
+    warmChapterCache(cache, session);
+    const segment = await loadSegment(cache, segmentIndex);
+    if (session !== playbackSessionRef.current) return;
+    const targetTokenId = sentenceTokens(chapter.sentences[sentenceIndex])[wordIndex]?.id;
+    let boundaryIndex = segment.boundaryTokens.findIndex((token) => token?.id === targetTokenId);
+    if (boundaryIndex < 0) {
+      // The exact word had no matching TTS boundary (punctuation-only token, or
+      // the aligner skipped it) — start from the last boundary at or before its
+      // sentence instead of snapping back to the top of the segment.
+      boundaryIndex = 0;
+      segment.boundaryTokens.forEach((token, index) => {
+        if (token && token.sentenceIndex <= sentenceIndex) boundaryIndex = index;
+      });
+    }
+    await playPreparedSegment(cache, segmentIndex, boundaryIndex, session);
+  };
   const playPreparedSegment = async (
-    prepared: PreparedNarrationSegment[],
+    cache: ChapterNarrationCache,
     segmentIndex: number,
     boundaryIndex = 0,
     session = playbackSessionRef.current,
   ) => {
-    const segment = prepared[segmentIndex];
+    const segment = cache.segments[segmentIndex];
     if (!chapter || !segment || session !== playbackSessionRef.current) {
       setPlaying(false);
       return;
@@ -3441,20 +3496,19 @@ function ReaderPage() {
         if (session !== playbackSessionRef.current) return;
         cancelAnimationFrame(animationRef.current);
         trackingFramePendingRef.current = false;
-        if (segmentIndex + 1 < prepared.length) {
-          void playPreparedSegment(prepared, segmentIndex + 1, 0, session);
-        } else if (backgroundNarrationRef.current) {
+        if (segmentIndex + 1 < cache.drafts.length) {
           setNarrationBusy(true);
-          await backgroundNarrationRef.current.catch(() => {});
-          setNarrationBusy(false);
-          if (session !== playbackSessionRef.current) return;
-          if (segmentIndex + 1 < prepared.length)
-            void playPreparedSegment(prepared, segmentIndex + 1, 0, session);
-          else {
-            audioRef.current = null;
-            setPlaying(false);
-            setActiveWordId("");
-            setAtChapterEnd(true);
+          try {
+            await loadSegment(cache, segmentIndex + 1);
+            if (session !== playbackSessionRef.current) return;
+            void playPreparedSegment(cache, segmentIndex + 1, 0, session);
+          } catch {
+            if (session === playbackSessionRef.current) {
+              setPlaying(false);
+              setPlayerError("تعذر تجهيز الصوت الآن. حاول مرة أخرى.");
+            }
+          } finally {
+            if (session === playbackSessionRef.current) setNarrationBusy(false);
           }
         } else {
           audioRef.current = null;
@@ -3502,9 +3556,7 @@ function ReaderPage() {
           (token) => token.id === activeWordRef.current,
         ))
         : 0;
-      const prepared = await prepareChapterNarration(startSentenceIndex, startWordIndex, session);
-      if (session !== playbackSessionRef.current) return;
-      await playPreparedSegment(prepared, 0, 0, session);
+      await playFromSentenceWord(startSentenceIndex, startWordIndex, session);
     } catch {
       if (session !== playbackSessionRef.current) return;
       setPlayerError("تعذر تجهيز صوت حامد الآن. حاول مرة أخرى.");
@@ -3554,9 +3606,7 @@ function ReaderPage() {
       setActiveWordId(tokenId);
       setCurrentSentenceIndex(sentenceIndex);
       rememberReadingSpot(sentenceIndex, tokenId);
-      const prepared = await prepareChapterNarration(sentenceIndex, wordIndex, session);
-      if (session !== playbackSessionRef.current || !chapter) return;
-      await playPreparedSegment(prepared, 0, 0, session);
+      await playFromSentenceWord(sentenceIndex, wordIndex, session);
     } catch {
       if (session !== playbackSessionRef.current) {
         setPlayerError("تعذر تجهيز صوت حامد لهذه الكلمة.");
