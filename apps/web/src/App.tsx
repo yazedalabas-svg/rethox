@@ -4645,6 +4645,10 @@ function AdminPage() {
   const [chapterDetails, setChapterDetails] = useState<AdminChapterDetails | null>(null);
   const [auditLogs, setAuditLogs] = useState<AdminAuditLog[]>([]);
   const [contentBusy, setContentBusy] = useState(false);
+  const [uploadPlacementId, setUploadPlacementId] = useState("");
+  const [illustrationPlacementIds, setIllustrationPlacementIds] = useState<Record<string, string>>({});
+  const [placementPicker, setPlacementPicker] = useState<{ kind: "upload" | "illustration"; illustrationId?: string } | null>(null);
+  const [placementQuery, setPlacementQuery] = useState("");
   const [backupBusy, setBackupBusy] = useState(false);
   const [message, setMessage] = useState("");
   useEffect(() => {
@@ -4681,6 +4685,20 @@ function AdminPage() {
       .catch((error) => setMessage((error as Error).message));
   }, [selectedChapterId]);
   useEffect(() => {
+    setUploadPlacementId("");
+    setIllustrationPlacementIds({});
+    setPlacementPicker(null);
+    setPlacementQuery("");
+  }, [chapterDetails?.id]);
+  useEffect(() => {
+    if (!placementPicker) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setPlacementPicker(null);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [placementPicker]);
+  useEffect(() => {
     if (hasRestoredScrollRef.current || !chapterDetails || typeof restoreScrollY !== "number") return;
     hasRestoredScrollRef.current = true;
     window.requestAnimationFrame(() => window.scrollTo({ top: restoreScrollY, behavior: "auto" }));
@@ -4690,6 +4708,18 @@ function AdminPage() {
   if (user.role !== "ADMIN") return <Navigate to="/account" />;
   const selectedBook = catalog.find((book) => book.id === selectedBookId) || null;
   const selectedContentUnitLabel = selectedBook?.contentUnitLabel || "فصل";
+  const activePickerIllustration = placementPicker?.illustrationId
+    ? chapterDetails?.illustrations.find((item) => item.id === placementPicker.illustrationId)
+    : undefined;
+  const activePlacementId = placementPicker?.kind === "upload"
+    ? uploadPlacementId
+    : activePickerIllustration
+      ? illustrationPlacementIds[activePickerIllustration.id || ""] ?? activePickerIllustration.afterSentenceId ?? ""
+      : "";
+  const visiblePlacementSentences = (chapterDetails?.sentences || []).filter((sentence) => {
+    const query = placementQuery.trim().toLocaleLowerCase();
+    return !query || `${sentence.position} ${sentence.text}`.toLocaleLowerCase().includes(query);
+  });
   const adminPathFor = (bookId: string, chapterId: string) =>
     `/admin?book=${encodeURIComponent(bookId)}&chapter=${encodeURIComponent(chapterId)}`;
   const reloadChapter = async () => {
@@ -4752,6 +4782,7 @@ function AdminPage() {
         body: file,
       });
       form.reset();
+      setUploadPlacementId("");
       await Promise.all([reloadChapter(), reloadAudit()]);
       setMessage("تم رفع الصورة وحفظ موضعها في قاعدة البيانات");
     } catch (error) {
@@ -4870,10 +4901,13 @@ function AdminPage() {
             <form className="admin-image-upload" onSubmit={uploadIllustration}>
               <div>
                 <h3>إضافة صورة جديدة</h3>
-                <p>اختر الصورة ثم حدد هل تظهر في بداية {selectedContentUnitLabel} أو بعد جملة معينة.</p>
+                <p>اختر الصورة ثم حدد هل تظهر في بداية {selectedContentUnitLabel} أو بعد فقرة محددة من النص.</p>
               </div>
               <label>ملف الصورة<input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required /></label>
-              <label>موضع الصورة<select name="afterSentenceId"><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
+              <div className="admin-placement-field">
+                <label>موضع الصورة<select name="afterSentenceId" value={uploadPlacementId} onChange={(event) => setUploadPlacementId(event.target.value)}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
+                <button type="button" className="btn secondary admin-placement-trigger" onClick={() => { setPlacementQuery(""); setPlacementPicker({ kind: "upload" }); }}><Search size={15} /> اختر من نص {selectedContentUnitLabel}</button>
+              </div>
               <button className="btn primary" disabled={contentBusy}><ImagePlus size={17} /> {contentBusy ? "جارٍ الحفظ..." : "رفع وإضافة"}</button>
             </form>
             <div className="admin-image-list">
@@ -4901,7 +4935,10 @@ function AdminPage() {
                   {illustration.id ? (
                     <div className="admin-image-controls">
                       <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
-                        <label>الموضع<select name="afterSentenceId" defaultValue={illustration.afterSentenceId || ""}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
+                        <div className="admin-placement-field">
+                          <label>الموضع<select name="afterSentenceId" value={illustrationPlacementIds[illustration.id] ?? illustration.afterSentenceId ?? ""} onChange={(event) => setIllustrationPlacementIds((current) => ({ ...current, [illustration.id!]: event.target.value }))}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
+                          <button type="button" className="btn secondary admin-placement-trigger" onClick={() => { setPlacementQuery(""); setPlacementPicker({ kind: "illustration", illustrationId: illustration.id }); }}><Search size={15} /> اختر من النص</button>
+                        </div>
                         <button className="btn secondary" disabled={contentBusy}>حفظ الموضع</button>
                       </form>
                       <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
@@ -4935,6 +4972,57 @@ function AdminPage() {
           </>
         )}
       </section>
+      {placementPicker && chapterDetails && createPortal(
+        <div className="admin-placement-overlay" role="dialog" aria-modal="true" aria-labelledby="admin-placement-title" onClick={() => setPlacementPicker(null)}>
+          <section className="admin-placement-picker" onClick={(event) => event.stopPropagation()}>
+            <header>
+              <div>
+                <span className="kicker">اختيار الموضع</span>
+                <h2 id="admin-placement-title">اختر الفقرة من نص {selectedContentUnitLabel}</h2>
+                <p>اضغط الفقرة التي يجب أن تظهر الصورة بعدها.</p>
+              </div>
+              <button type="button" className="admin-placement-close" onClick={() => setPlacementPicker(null)} aria-label="إغلاق اختيار الفقرة"><X size={18} /></button>
+            </header>
+            <label className="admin-placement-search">
+              <Search size={17} />
+              <input autoFocus type="search" value={placementQuery} onChange={(event) => setPlacementQuery(event.target.value)} placeholder="ابحث برقم الفقرة أو كلمة منها" aria-label="البحث داخل فقرات الفصل" />
+            </label>
+            <div className="admin-placement-options">
+              <button
+                type="button"
+                className={activePlacementId ? "" : "selected"}
+                aria-pressed={!activePlacementId}
+                onClick={() => {
+                  if (placementPicker.kind === "upload") setUploadPlacementId("");
+                  else if (placementPicker.illustrationId) setIllustrationPlacementIds((current) => ({ ...current, [placementPicker.illustrationId!]: "" }));
+                  setPlacementPicker(null);
+                }}
+              >
+                <b>بداية {selectedContentUnitLabel}</b>
+                <span>تظهر الصورة قبل أول فقرة.</span>
+              </button>
+              {visiblePlacementSentences.map((sentence) => (
+                <button
+                  type="button"
+                  key={sentence.id}
+                  className={activePlacementId === sentence.id ? "selected" : ""}
+                  aria-pressed={activePlacementId === sentence.id}
+                  onClick={() => {
+                    if (placementPicker.kind === "upload") setUploadPlacementId(sentence.id);
+                    else if (placementPicker.illustrationId) setIllustrationPlacementIds((current) => ({ ...current, [placementPicker.illustrationId!]: sentence.id }));
+                    setPlacementPicker(null);
+                  }}
+                >
+                  <b>بعد الفقرة {sentence.position}</b>
+                  <span>{sentence.text}</span>
+                </button>
+              ))}
+              {!visiblePlacementSentences.length && <p className="panel-empty">لا توجد فقرة مطابقة للبحث.</p>}
+            </div>
+          </section>
+        </div>,
+        document.body,
+      )}
       <div className="admin-grid">
         <form onSubmit={create} className="admin-form">
           <h2>كتاب جديد</h2>
