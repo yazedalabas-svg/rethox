@@ -2661,6 +2661,7 @@ function ReaderPage() {
   const { chapterId } = useParams();
   const nav = useNavigate();
   const location = useLocation();
+  const adminReturn = (location.state as { adminReturn?: { to: string; scrollY: number } } | null)?.adminReturn;
   const sectionSentenceId = new URLSearchParams(location.search).get("section") || "";
   const illustrationTarget = new URLSearchParams(location.search).get("image") || "";
   const { user, ready } = useAuth();
@@ -4005,6 +4006,10 @@ function ReaderPage() {
     </figure>
     );
   };
+  const returnToAdmin = () => {
+    if (!adminReturn) return;
+    nav(adminReturn.to, { state: { adminRestoreScrollY: adminReturn.scrollY } });
+  };
   return (
     <div className={`reader ${focusMode ? "focus-mode" : ""}`}>
       {transitionTitle && (
@@ -4015,8 +4020,12 @@ function ReaderPage() {
         </div>
       )}
       <header className="reader-head">
-        <button onClick={() => nav(`/book/${book.slug}`)}>
-          <X />
+        <button
+          onClick={() => adminReturn ? returnToAdmin() : nav(`/book/${book.slug}`)}
+          aria-label={adminReturn ? "العودة إلى موضعك في لوحة الإدارة" : "العودة إلى الكتاب"}
+          title={adminReturn ? "العودة إلى لوحة الإدارة" : "العودة إلى الكتاب"}
+        >
+          {adminReturn ? <ArrowRight /> : <X />}
         </button>
         <div>
           <b>{book.title}</b>
@@ -4671,6 +4680,13 @@ type AdminAuditLog = {
 
 function AdminPage() {
   const { user, ready } = useAuth();
+  const nav = useNavigate();
+  const location = useLocation();
+  const adminParams = new URLSearchParams(location.search);
+  const requestedBookId = adminParams.get("book") || "";
+  const requestedChapterId = adminParams.get("chapter") || "";
+  const restoreScrollY = (location.state as { adminRestoreScrollY?: number } | null)?.adminRestoreScrollY;
+  const hasRestoredScrollRef = useRef(false);
   const [overview, setOverview] = useState<any>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [reports, setReports] = useState<ContentReport[]>([]);
@@ -4699,9 +4715,12 @@ function AdminPage() {
         setBackups(backupData.backups);
         setCatalog(catalogData.books);
         setAuditLogs(auditData.logs);
-        const firstBook = catalogData.books[0];
-        setSelectedBookId((current) => current || firstBook?.id || "");
-        setSelectedChapterId((current) => current || firstBook?.chapters[0]?.id || "");
+        const requestedBook = catalogData.books.find((book) => book.id === requestedBookId);
+        const initialBook = requestedBook || catalogData.books[0];
+        const initialChapter = initialBook?.chapters.find((chapter) => chapter.id === requestedChapterId)
+          || initialBook?.chapters[0];
+        setSelectedBookId((current) => current || initialBook?.id || "");
+        setSelectedChapterId((current) => current || initialChapter?.id || "");
       }).catch((error) => setMessage((error as Error).message));
   }, [user]);
   useEffect(() => {
@@ -4713,11 +4732,18 @@ function AdminPage() {
       .then((result) => setChapterDetails(result.chapter))
       .catch((error) => setMessage((error as Error).message));
   }, [selectedChapterId]);
+  useEffect(() => {
+    if (hasRestoredScrollRef.current || !chapterDetails || typeof restoreScrollY !== "number") return;
+    hasRestoredScrollRef.current = true;
+    window.requestAnimationFrame(() => window.scrollTo({ top: restoreScrollY, behavior: "auto" }));
+  }, [chapterDetails?.id, restoreScrollY]);
   if (!ready) return <Loading />;
   if (!user) return <Navigate to="/login" />;
   if (user.role !== "ADMIN") return <Navigate to="/account" />;
   const selectedBook = catalog.find((book) => book.id === selectedBookId) || null;
   const selectedContentUnitLabel = selectedBook?.contentUnitLabel || "فصل";
+  const adminPathFor = (bookId: string, chapterId: string) =>
+    `/admin?book=${encodeURIComponent(bookId)}&chapter=${encodeURIComponent(chapterId)}`;
   const reloadChapter = async () => {
     if (!selectedChapterId) return;
     const result = await api<{ chapter: AdminChapterDetails }>(`/admin/chapters/${selectedChapterId}`);
@@ -4871,15 +4897,20 @@ function AdminPage() {
             الكتاب
             <select value={selectedBookId} onChange={(event) => {
               const nextBook = catalog.find((book) => book.id === event.target.value);
+              const nextChapterId = nextBook?.chapters[0]?.id || "";
               setSelectedBookId(event.target.value);
-              setSelectedChapterId(nextBook?.chapters[0]?.id || "");
+              setSelectedChapterId(nextChapterId);
+              nav(adminPathFor(event.target.value, nextChapterId), { replace: true });
             }}>
               {catalog.map((book) => <option key={book.id} value={book.id}>{book.title}</option>)}
             </select>
           </label>
           <label>
             {selectedContentUnitLabel}
-            <select value={selectedChapterId} onChange={(event) => setSelectedChapterId(event.target.value)}>
+            <select value={selectedChapterId} onChange={(event) => {
+              setSelectedChapterId(event.target.value);
+              nav(adminPathFor(selectedBookId, event.target.value), { replace: true });
+            }}>
               {(selectedBook?.chapters || []).map((chapter) => (
                 <option key={chapter.id} value={chapter.id}>{chapter.position}. {chapter.title} ({chapter.illustrationCount} صورة)</option>
               ))}
@@ -4904,6 +4935,17 @@ function AdminPage() {
                     className="admin-image-preview"
                     to={`/reader/${chapterDetails.id}?image=${encodeURIComponent(illustration.id || illustration.src)}`}
                     aria-label={`فتح موضع الصورة في ${selectedContentUnitLabel}`}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      nav(`/reader/${chapterDetails.id}?image=${encodeURIComponent(illustration.id || illustration.src)}`, {
+                        state: {
+                          adminReturn: {
+                            to: adminPathFor(selectedBookId, chapterDetails.id),
+                            scrollY: window.scrollY,
+                          },
+                        },
+                      });
+                    }}
                   >
                     <img src={illustration.src} alt={illustration.alt} />
                     <span>فتح موضعها في القارئ</span>
