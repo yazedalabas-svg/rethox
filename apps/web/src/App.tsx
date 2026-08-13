@@ -2662,6 +2662,7 @@ function ReaderPage() {
   const nav = useNavigate();
   const location = useLocation();
   const sectionSentenceId = new URLSearchParams(location.search).get("section") || "";
+  const illustrationTarget = new URLSearchParams(location.search).get("image") || "";
   const { user, ready } = useAuth();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [book, setBook] = useState<any>(null);
@@ -3075,25 +3076,30 @@ function ReaderPage() {
   }, [volume]);
   useEffect(() => {
     if (!chapter) return;
-    const savedWord = sectionSentenceId ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
-    const savedIndex = sectionSentenceId
+    const savedWord = sectionSentenceId || illustrationTarget ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
+    const savedIndex = sectionSentenceId || illustrationTarget
       ? 0
       : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
     const sectionStartSentenceId = sectionSentenceId
       ? chapter.sections?.find((section) => section.id === sectionSentenceId || section.sentenceId === sectionSentenceId)?.sentenceId
       : "";
     window.requestAnimationFrame(() => {
-      const target =
+      const illustrationElement = illustrationTarget
+        ? Array.from(document.querySelectorAll<HTMLElement>("[data-illustration-key]"))
+          .find((element) => element.dataset.illustrationKey === illustrationTarget)
+        : undefined;
+      const target = illustrationElement ||
         (sectionStartSentenceId && document.querySelector(`[data-sentence-id="${sectionStartSentenceId}"]`)) ||
         (savedWord && document.querySelector(`[data-word-id="${savedWord}"]`)) ||
         document.querySelector(`[data-sentence-index="${savedIndex}"]`);
-      target?.scrollIntoView({ block: "center", behavior: sectionSentenceId ? "auto" : "smooth" });
+      target?.scrollIntoView({ block: "center", behavior: sectionSentenceId || illustrationTarget ? "auto" : "smooth" });
+      illustrationElement?.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true });
       if (savedWord) {
         activeWordRef.current = savedWord;
         setActiveWordId(savedWord);
       }
     });
-  }, [chapter?.id, chapterId, sectionSentenceId]);
+  }, [chapter?.id, chapterId, illustrationTarget, sectionSentenceId]);
   useEffect(
     () => () => {
       playbackSessionRef.current += 1;
@@ -3975,10 +3981,13 @@ function ReaderPage() {
   const chapterIllustration = (
     illustration: NonNullable<Chapter["illustrations"]>[number],
     inline: boolean,
-  ) => (
+  ) => {
+    const illustrationKey = illustration.id || illustration.src;
+    return (
     <figure
-      className={`chapter-opening-illustration${inline ? " chapter-inline-illustration" : ""}`}
-      key={illustration.src}
+      className={`chapter-opening-illustration${inline ? " chapter-inline-illustration" : ""}${illustrationTarget === illustrationKey ? " illustration-target" : ""}`}
+      data-illustration-key={illustrationKey}
+      key={illustrationKey}
     >
       <button
         type="button"
@@ -3994,7 +4003,8 @@ function ReaderPage() {
         <span>اضغط للتكبير</span>
       </button>
     </figure>
-  );
+    );
+  };
   return (
     <div className={`reader ${focusMode ? "focus-mode" : ""}`}>
       {transitionTitle && (
@@ -4759,7 +4769,7 @@ function AdminPage() {
     setContentBusy(true);
     setMessage("");
     try {
-      const query = new URLSearchParams({ alt: String(fields.get("alt") || "") });
+      const query = new URLSearchParams();
       const afterSentenceId = String(fields.get("afterSentenceId") || "");
       if (afterSentenceId) query.set("afterSentenceId", afterSentenceId);
       await api(`/admin/chapters/${chapterDetails.id}/illustrations?${query}`, {
@@ -4783,13 +4793,10 @@ function AdminPage() {
     try {
       await api(`/admin/chapters/${selectedChapterId}/illustrations/${illustrationId}`, {
         method: "PATCH",
-        body: JSON.stringify({
-          alt: String(fields.get("alt") || ""),
-          afterSentenceId: String(fields.get("afterSentenceId") || "") || null,
-        }),
+        body: JSON.stringify({ afterSentenceId: String(fields.get("afterSentenceId") || "") || null }),
       });
       await Promise.all([reloadChapter(), reloadAudit()]);
-      setMessage("تم حفظ وصف الصورة وموضعها");
+      setMessage("تم حفظ موضع الصورة وتحديث وصفها التلقائي");
     } catch (error) {
       setMessage((error as Error).message);
     } finally {
@@ -4887,20 +4894,25 @@ function AdminPage() {
                 <p>اختر الصورة ثم حدد هل تظهر في بداية {selectedContentUnitLabel} أو بعد جملة معينة.</p>
               </div>
               <label>ملف الصورة<input name="image" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required /></label>
-              <label>وصف بديل<input name="alt" minLength={2} maxLength={180} required placeholder="وصف واضح للصورة" /></label>
-              <label>موضع الصورة<select name="afterSentenceId"><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
+              <label>موضع الصورة<select name="afterSentenceId"><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
               <button className="btn primary" disabled={contentBusy}><ImagePlus size={17} /> {contentBusy ? "جارٍ الحفظ..." : "رفع وإضافة"}</button>
             </form>
             <div className="admin-image-list">
               {chapterDetails.illustrations.map((illustration) => (
                 <article key={illustration.id || illustration.src}>
-                  <img src={illustration.src} alt={illustration.alt} />
+                  <Link
+                    className="admin-image-preview"
+                    to={`/reader/${chapterDetails.id}?image=${encodeURIComponent(illustration.id || illustration.src)}`}
+                    aria-label={`فتح موضع الصورة في ${selectedContentUnitLabel}`}
+                  >
+                    <img src={illustration.src} alt={illustration.alt} />
+                    <span>فتح موضعها في القارئ</span>
+                  </Link>
                   {illustration.id ? (
                     <div className="admin-image-controls">
                       <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
-                        <label>الوصف<input name="alt" defaultValue={illustration.alt} required /></label>
-                        <label>الموضع<select name="afterSentenceId" defaultValue={illustration.afterSentenceId || ""}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد جملة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
-                        <button className="btn secondary" disabled={contentBusy}>حفظ الموضع والوصف</button>
+                        <label>الموضع<select name="afterSentenceId" defaultValue={illustration.afterSentenceId || ""}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
+                        <button className="btn secondary" disabled={contentBusy}>حفظ الموضع</button>
                       </form>
                       <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
                         <input name="replacement" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />

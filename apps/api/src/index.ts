@@ -1241,7 +1241,7 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       priceMinor: book.priceMinor,
     },
     chapter: {
-      ...visibleChapter,
+      ...withAutomaticIllustrationAlt(visibleChapter),
       contentFile: undefined,
       sections: visibleChapter.sections?.map((section) => ({
         ...section,
@@ -1889,6 +1889,21 @@ const adminChapter = (chapterId: string) => {
 };
 const validImagePlacement = (chapter: Chapter, afterSentenceId?: string) =>
   !afterSentenceId || chapter.sentences.some((sentence) => sentence.id === afterSentenceId);
+const automaticIllustrationAlt = (chapter: Chapter, afterSentenceId?: string) => {
+  const sentencePosition = afterSentenceId
+    ? chapter.sentences.find((sentence) => sentence.id === afterSentenceId)?.position
+    : undefined;
+  return sentencePosition
+    ? `صورة بعد الفقرة ${sentencePosition} من الفصل`
+    : "صورة في بداية الفصل";
+};
+const withAutomaticIllustrationAlt = (chapter: Chapter): Chapter => ({
+  ...chapter,
+  illustrations: chapter.illustrations?.map((illustration) => ({
+    ...illustration,
+    alt: automaticIllustrationAlt(chapter, illustration.afterSentenceId),
+  })),
+});
 const publicChapterAssetUrl = (bucket: string, objectPath: string) =>
   bucket === "site-public"
     ? objectPath
@@ -1960,7 +1975,10 @@ app.get("/api/admin/chapters/:id", auth, requireRole("ADMIN"), (req, res) => {
         id: context.chapter.id,
         title: context.chapter.title,
         position: context.chapter.position,
-        illustrations: context.chapterMeta.illustrations || [],
+        illustrations: (context.chapterMeta.illustrations || []).map((illustration) => ({
+          ...illustration,
+          alt: automaticIllustrationAlt(context.chapter, illustration.afterSentenceId),
+        })),
         sentences: context.chapter.sentences.map((sentence) => ({
           id: sentence.id,
           position: sentence.position,
@@ -1985,14 +2003,13 @@ app.post(
     const context = adminChapter(String(req.params.id));
     if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
     const metadata = z.object({
-      alt: z.string().trim().min(2).max(180),
       afterSentenceId: z.string().max(200).optional(),
     }).safeParse({
-      alt: String(req.query.alt || ""),
       afterSentenceId: String(req.query.afterSentenceId || "") || undefined,
     });
     if (!metadata.success || !validImagePlacement(context.chapter, metadata.data.afterSentenceId))
-      return res.status(400).json({ message: "وصف الصورة أو موضعها غير صحيح" });
+      return res.status(400).json({ message: "موضع الصورة غير صحيح" });
+    const alt = automaticIllustrationAlt(context.chapter, metadata.data.afterSentenceId);
     const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
     const actualMime = detectedImageMime(body);
@@ -2026,7 +2043,7 @@ app.post(
         byte_size: body.length,
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
         version,
-        alt_text: metadata.data.alt,
+        alt_text: alt,
         after_sentence_id: metadata.data.afterSentenceId || null,
         position,
         created_by: req.user!.id,
@@ -2051,7 +2068,7 @@ app.post(
     const illustration: ChapterIllustration = {
       id: asset.id,
       src: publicChapterAssetUrl(asset.bucket, asset.object_path),
-      alt: asset.alt_text,
+      alt,
       afterSentenceId: asset.after_sentence_id || undefined,
       position: asset.position,
       storagePath: asset.object_path,
@@ -2074,15 +2091,16 @@ app.patch(
     const context = adminChapter(String(req.params.id));
     if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
     const parsed = z.object({
-      alt: z.string().trim().min(2).max(180).optional(),
-      afterSentenceId: z.string().max(200).nullable().optional(),
-    }).refine((value) => value.alt !== undefined || value.afterSentenceId !== undefined).safeParse(req.body);
+      afterSentenceId: z.string().max(200).nullable(),
+    }).safeParse(req.body);
     if (!parsed.success || !validImagePlacement(context.chapter, parsed.data.afterSentenceId || undefined))
-      return res.status(400).json({ message: "بيانات الصورة أو موضعها غير صحيح" });
-    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-    if (parsed.data.alt !== undefined) updates.alt_text = parsed.data.alt;
-    if (parsed.data.afterSentenceId !== undefined)
-      updates.after_sentence_id = parsed.data.afterSentenceId || null;
+      return res.status(400).json({ message: "موضع الصورة غير صحيح" });
+    const alt = automaticIllustrationAlt(context.chapter, parsed.data.afterSentenceId || undefined);
+    const updates: Record<string, unknown> = {
+      alt_text: alt,
+      after_sentence_id: parsed.data.afterSentenceId || null,
+      updated_at: new Date().toISOString(),
+    };
     const { data: asset, error } = await supabaseAdmin
       .from("chapter_assets")
       .update(updates)
@@ -2096,7 +2114,7 @@ app.patch(
     const illustration: ChapterIllustration = {
       id: asset.id,
       src: publicChapterAssetUrl(asset.bucket, asset.object_path),
-      alt: asset.alt_text,
+      alt,
       afterSentenceId: asset.after_sentence_id || undefined,
       position: asset.position,
       storagePath: asset.bucket === "chapter-images" ? asset.object_path : undefined,
@@ -2145,6 +2163,7 @@ app.put(
         content_type: declaredMime,
         byte_size: body.length,
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
+        alt_text: automaticIllustrationAlt(context.chapter, current.after_sentence_id || undefined),
         updated_at: new Date().toISOString(),
       })
       .eq("id", current.id)
@@ -2159,7 +2178,7 @@ app.put(
     const illustration: ChapterIllustration = {
       id: asset.id,
       src: publicChapterAssetUrl(asset.bucket, asset.object_path),
-      alt: asset.alt_text,
+      alt: automaticIllustrationAlt(context.chapter, asset.after_sentence_id || undefined),
       afterSentenceId: asset.after_sentence_id || undefined,
       position: asset.position,
       storagePath: asset.object_path,
