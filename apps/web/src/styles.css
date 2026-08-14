@@ -1994,6 +1994,7 @@ button {
   border-radius:0;
   background:radial-gradient(ellipse at center,color-mix(in srgb,var(--purple) 12%,transparent),transparent 68%);
   box-shadow:none;
+  text-shadow:0 10px 28px color-mix(in srgb,var(--purple) 9%,transparent);
 }
 .reader-body article > p.rezero-iconic-line::before {
   content:"";
@@ -2032,14 +2033,9 @@ button {
   left:0;
   margin:0;
 }
-html[data-theme="light"] .reader-body article > p.rezero-iconic-line {
-  color:#292630;
-  text-shadow:0 10px 28px rgba(72,54,103,.08);
-}
 html[data-theme="dark"] .reader-body article > p.rezero-iconic-line {
-  color:#f3eff9;
   background:radial-gradient(ellipse at center,color-mix(in srgb,var(--purple) 17%,transparent),transparent 70%);
-  text-shadow:0 8px 30px rgba(0,0,0,.42);
+  text-shadow:0 8px 30px color-mix(in srgb,var(--bg) 65%,transparent);
 }
 .reader-body p:hover .sentence-actions,
 .reader-body p:focus-within .sentence-actions { opacity:1; }
