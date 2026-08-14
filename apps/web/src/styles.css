@@ -54,18 +54,18 @@ body {
 
 /* rethox studio identity — the single production design */
 html[data-identity="studio"] {
-  --bg: #f8f8fb;
-  --surface: #ffffff;
-  --ink: #202127;
-  --muted: #747580;
-  --line: #e9e7ef;
-  --purple: #6d3dff;
-  --purple-dark: #5123d6;
-  --gold: #e6a84c;
-  --sage: #91aa8c;
-  --lavender: #eee9ff;
-  --lavender-strong: #d7ccff;
-  --shadow: 0 20px 55px rgba(64, 45, 105, 0.10);
+  --bg: #f4f0e8;
+  --surface: #fffdf8;
+  --ink: #2d2b32;
+  --muted: #706b75;
+  --line: #e2dcd1;
+  --purple: #6847c7;
+  --purple-dark: #5135aa;
+  --gold: #d69b3e;
+  --sage: #70857a;
+  --lavender: #eee8f7;
+  --lavender-strong: #d9cfee;
+  --shadow: 0 20px 55px rgba(55, 45, 70, 0.09);
 }
 html[data-identity="studio"][data-theme="dark"] {
   --bg: #111118;
@@ -320,27 +320,27 @@ html[data-identity="studio"] .reader > .player {
   overflow: visible;
 }
 html[data-identity="studio"][data-theme="light"] .reader > .player {
-  background: color-mix(in srgb, var(--surface) 97%, var(--lavender));
-  border-top-color: #ded8ea;
-  box-shadow: 0 -10px 30px rgba(43, 35, 62, .08);
+  background: color-mix(in srgb, var(--surface) 95%, var(--lavender));
+  border-top-color: #ddd5c9;
+  box-shadow: 0 -8px 26px rgba(55, 45, 70, .07);
 }
 html[data-identity="studio"][data-theme="light"] .reader > .player .skip,
 html[data-identity="studio"][data-theme="light"] .reader > .player .volume-control > button {
-  border-color: #ded8ea;
-  background: #f3f0fb;
-  color: #5d5668;
+  border-color: #ded6ca;
+  background: #f5f1e9;
+  color: #625c68;
 }
 html[data-identity="studio"][data-theme="light"] .reader > .player .timeline input {
-  border-color: #c7b8f5;
-  background-color: #ebe7f1;
+  border-color: #cdbfe9;
+  background-color: #e9e2ee;
 }
 html[data-identity="studio"][data-theme="light"] .reader > .player .main-play {
-  background: linear-gradient(145deg, #7750e8, #6137d7);
-  box-shadow: 0 8px 22px rgba(97,55,215,.28);
+  background: linear-gradient(145deg, #7557ce, #5e3db7);
+  box-shadow: 0 8px 22px rgba(94, 61, 183, .22);
 }
 html[data-identity="studio"][data-theme="light"] .reader > .player .speech-controls select {
-  border-color: #ded8ea;
-  background: #f7f5fb;
+  border-color: #ded6ca;
+  background: #faf7f0;
 }
 
 .order-success {
@@ -3169,6 +3169,73 @@ a.google-auth { text-decoration:none; }
 .reader-tools button { position:relative; }
 .saved-empty { padding:14px;color:var(--muted);font-size:12.5px;line-height:1.7; }
 .saved-panel nav button span { white-space:normal;line-height:1.6; }
+
+/* Warm, low-glare light palette for long reading sessions. */
+html[data-identity="studio"][data-theme="light"] .reader {
+  background: #f4f0e8;
+}
+html[data-identity="studio"][data-theme="light"] .reader-head {
+  border-bottom-color: #ded7cb;
+  background: color-mix(in srgb, var(--surface) 92%, var(--bg));
+  box-shadow: 0 5px 20px rgba(55, 45, 70, .035);
+}
+html[data-identity="studio"][data-theme="light"] .reader-progress {
+  background: #e4ddd3;
+}
+html[data-identity="studio"][data-theme="light"] .reader-progress span {
+  background: linear-gradient(90deg, #6948c8, #d69b3e);
+}
+html[data-identity="studio"][data-theme="light"] .reader-body {
+  background:
+    radial-gradient(circle at 50% 0, rgba(104, 71, 199, .035), transparent 32rem),
+    linear-gradient(180deg, #f8f5ee 0%, #f4f0e8 100%);
+}
+html[data-identity="studio"][data-theme="light"] .reader-body article {
+  color: #312e35;
+  text-rendering: optimizeLegibility;
+}
+html[data-identity="studio"][data-theme="light"] .reader-body article > p > button:hover {
+  background: rgba(104, 71, 199, .10);
+  color: #5636ad;
+}
+html[data-identity="studio"][data-theme="light"] .reader-body .active-word {
+  animation: none !important;
+  background: #e7ddf7 !important;
+  color: #5133a7;
+  box-shadow: 0 0 0 1px #cdbce8, 0 3px 10px rgba(81, 51, 167, .10);
+}
+html[data-identity="studio"][data-theme="light"] .reader-tools,
+html[data-identity="studio"][data-theme="light"] .reader-index,
+html[data-identity="studio"][data-theme="light"] .chapter-search {
+  border-color: #ded7cb;
+  background: color-mix(in srgb, var(--surface) 94%, var(--bg));
+  box-shadow: 0 12px 32px rgba(55, 45, 70, .09);
+}
+html[data-identity="studio"][data-theme="light"] .reader-tools button:hover,
+html[data-identity="studio"][data-theme="light"] .reader-tools button:focus-visible {
+  background: #eee8f7;
+  color: #5636ad;
+}
+html[data-identity="studio"][data-theme="light"] .reader-index nav button.current,
+html[data-identity="studio"][data-theme="light"] .reader-tools button.saved {
+  background: #e9e0f7;
+  color: #5133a7;
+}
+html[data-identity="studio"][data-theme="light"] .scroll-top {
+  border-color: #ded7cb;
+  background: #fffdf8;
+  box-shadow: 0 8px 24px rgba(55, 45, 70, .09);
+}
+html[data-identity="studio"][data-theme="light"] .scroll-rail::before {
+  background: rgba(45, 43, 50, .12);
+}
+html[data-identity="studio"][data-theme="light"] .scroll-rail i {
+  background: linear-gradient(180deg, #7654d1, #5838ad);
+  box-shadow: 0 3px 10px rgba(81, 51, 167, .22);
+}
+html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:hover {
+  box-shadow: 0 10px 26px rgba(94, 61, 183, .28);
+}
 
 @media (max-width: 760px) {
   .scroll-rail { display:none; }
