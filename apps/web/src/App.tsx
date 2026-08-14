@@ -4692,6 +4692,8 @@ function AdminPage() {
   const [placementPicker, setPlacementPicker] = useState<{ kind: "upload" | "illustration"; illustrationId?: string } | null>(null);
   const [placementQuery, setPlacementQuery] = useState("");
   const [backupBusy, setBackupBusy] = useState(false);
+  const [bookSaveBusy, setBookSaveBusy] = useState(false);
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState("");
   const [message, setMessage] = useState("");
   useEffect(() => {
     if (user?.role === "ADMIN")
@@ -4732,6 +4734,12 @@ function AdminPage() {
     setPlacementPicker(null);
     setPlacementQuery("");
   }, [chapterDetails?.id]);
+  useEffect(() => {
+    setCoverPreviewUrl("");
+  }, [selectedBookId]);
+  useEffect(() => () => {
+    if (coverPreviewUrl) URL.revokeObjectURL(coverPreviewUrl);
+  }, [coverPreviewUrl]);
   useEffect(() => {
     if (!placementPicker) return;
     const closeOnEscape = (event: KeyboardEvent) => {
@@ -5140,7 +5148,9 @@ function AdminPage() {
           <form key={selectedBook.id} onSubmit={async (event) => {
             event.preventDefault();
             const fields = new FormData(event.currentTarget);
+            const cover = fields.get("cover");
             try {
+              setBookSaveBusy(true);
               const result = await api<{ book: AdminCatalogBook }>(`/admin/books/${selectedBook.id}`, {
                 method: "PATCH",
                 body: JSON.stringify({
@@ -5151,11 +5161,24 @@ function AdminPage() {
                   status: fields.get("status"),
                 }),
               });
-              setCatalog((books) => books.map((book) => book.id === selectedBook.id ? { ...book, ...result.book } : book));
+              let updatedBook = result.book;
+              if (cover instanceof File && cover.size) {
+                const coverResult = await api<{ book: AdminCatalogBook }>(`/admin/books/${selectedBook.id}/cover`, {
+                  method: "PUT",
+                  headers: { "content-type": cover.type },
+                  body: cover,
+                });
+                updatedBook = coverResult.book;
+                setCoverPreviewUrl("");
+                event.currentTarget.querySelector<HTMLInputElement>('input[name="cover"]')!.value = "";
+              }
+              setCatalog((books) => books.map((book) => book.id === selectedBook.id ? { ...book, ...updatedBook } : book));
               await reloadAudit();
-              setMessage("تم حفظ بيانات الكتاب في الموقع وقاعدة البيانات");
+              setMessage(cover instanceof File && cover.size ? "تم حفظ بيانات الكتاب وتحديث الغلاف" : "تم حفظ بيانات الكتاب في الموقع وقاعدة البيانات");
             } catch (error) {
               setMessage((error as Error).message);
+            } finally {
+              setBookSaveBusy(false);
             }
           }}>
             <label>العنوان<input name="title" defaultValue={selectedBook.title} required /></label>
@@ -5163,7 +5186,18 @@ function AdminPage() {
             <label>السعر بالريال<input name="price" type="number" min="0" step="0.01" defaultValue={selectedBook.priceMinor / 100} required /></label>
             <label>الحالة<select name="status" defaultValue={selectedBook.status}><option value="PUBLISHED">منشور</option><option value="DRAFT">مسودة</option></select></label>
             <label className="admin-book-synopsis">النبذة<textarea name="synopsis" minLength={20} defaultValue={selectedBook.synopsis} required /></label>
-            <button className="btn primary">حفظ بيانات الكتاب</button>
+            <div className="admin-book-cover">
+              <div className="admin-book-cover-preview">
+                {coverPreviewUrl || selectedBook.coverUrl
+                  ? <img src={coverPreviewUrl || selectedBook.coverUrl} alt="معاينة غلاف الرواية" />
+                  : <span>لا يوجد غلاف مرفوع</span>}
+              </div>
+              <label>غلاف الرواية<input name="cover" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => {
+                const file = event.currentTarget.files?.[0];
+                setCoverPreviewUrl(file ? URL.createObjectURL(file) : "");
+              }} /><small>JPG أو PNG أو WebP أو GIF — حتى 12MB</small></label>
+            </div>
+            <button className="btn primary" disabled={bookSaveBusy}>{bookSaveBusy ? "جارٍ الحفظ..." : "حفظ بيانات الكتاب"}</button>
           </form>
         </section>
       )}

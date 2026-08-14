@@ -2279,6 +2279,46 @@ app.patch(
     res.json({ book });
   },
 );
+app.put(
+  "/api/admin/books/:id/cover",
+  chapterImageUploadLimit,
+  auth,
+  requireRole("ADMIN"),
+  chapterImageBody,
+  async (req: AuthRequest, res) => {
+    if (!supabaseAdmin) return res.status(503).json({ message: "التخزين غير متصل" });
+    const book = db().books.find((item) => item.id === req.params.id);
+    if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });
+    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
+    if (!body.length || !imageExtension[declaredMime] || detectedImageMime(body) !== declaredMime)
+      return res.status(400).json({ message: "الملف ليس صورة صالحة أو نوعه غير مطابق" });
+
+    const objectPath = `covers/${book.id}/${randomUUID()}.${imageExtension[declaredMime]}`;
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from("chapter-images")
+      .upload(objectPath, body, { contentType: declaredMime, cacheControl: "31536000", upsert: false });
+    if (uploadError) {
+      logger.error({ error: uploadError.message, bookId: book.id }, "book cover upload failed");
+      return res.status(503).json({ message: "تعذر رفع غلاف الرواية" });
+    }
+
+    const previousCoverUrl = book.coverUrl;
+    book.coverUrl = publicChapterAssetUrl("chapter-images", objectPath);
+    try {
+      await save();
+    } catch (error) {
+      book.coverUrl = previousCoverUrl;
+      await save().catch(() => undefined);
+      await supabaseAdmin.storage.from("chapter-images").remove([objectPath]);
+      logger.error({ error: String(error), bookId: book.id }, "book cover persistence failed");
+      return res.status(503).json({ message: "تعذر حفظ غلاف الرواية" });
+    }
+    await recordAdminAudit(req.user!.id, "BOOK_COVER_UPDATED", "book", book.id, { objectPath })
+      .catch((error) => logger.warn({ error: String(error), bookId: book.id }, "book cover audit failed"));
+    res.json({ book });
+  },
+);
 app.delete("/api/admin/books/:id", auth, requireRole("ADMIN"), async (req: AuthRequest, res) => {
   const book = db().books.find((b) => b.id === req.params.id);
   if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });

@@ -52,6 +52,9 @@ const applyShippedCatalog = (books: Store["books"]): Store["books"] => {
     const currentChaptersById = new Map(current.chapters.map((chapter) => [chapter.id, chapter]));
     return {
       ...seededBook,
+      // A cover chosen from the admin panel is stored in managed storage. It
+      // must take precedence over the repository's initial cover on restart.
+      coverUrl: current.coverUrl || seededBook.coverUrl,
       chapters: seededBook.chapters.map((chapter) => {
         const currentChapter = currentChaptersById.get(chapter.id);
         return currentChapter ? { ...chapter, illustrations: currentChapter.illustrations } : chapter;
