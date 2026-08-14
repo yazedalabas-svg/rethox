@@ -2788,7 +2788,9 @@ function ReaderPage() {
   const backgroundNarrationRef = useRef<Promise<void> | null>(null);
   const chapterCacheRef = useRef<ChapterNarrationCache | null>(null);
   const animationRef = useRef(0);
+  const trackingHeartbeatRef = useRef(0);
   const trackingFramePendingRef = useRef(false);
+  const syncTrackingRef = useRef<(() => void) | null>(null);
   const lastTrackedBoundaryRef = useRef(-1);
   const currentSegmentRef = useRef(0);
   const readerBodyRef = useRef<HTMLElement | null>(null);
@@ -2883,7 +2885,9 @@ function ReaderPage() {
   const stopAllPlayback = () => {
     const session = ++playbackSessionRef.current;
     cancelAnimationFrame(animationRef.current);
+    window.clearInterval(trackingHeartbeatRef.current);
     trackingFramePendingRef.current = false;
+    syncTrackingRef.current = null;
     releaseAudio(audioRef.current);
     releaseAudio(previewAudioRef.current);
     audioRef.current = null;
@@ -3412,7 +3416,11 @@ function ReaderPage() {
       audio.onpause = null;
       audio.onended = null;
       audio.ontimeupdate = null;
+      audio.onseeking = null;
+      audio.onseeked = null;
+      audio.onplaying = null;
       audio.onerror = null;
+      window.clearInterval(trackingHeartbeatRef.current);
       audio.pause();
       audio.loop = false;
       audio.muted = false;
@@ -3441,8 +3449,8 @@ function ReaderPage() {
       }
       const start = segment.result.boundaries[boundaryIndex]?.startMs || 0;
       audio.currentTime = start / 1000;
-      const updateTracking = () => {
-        if (session !== playbackSessionRef.current) return;
+      const syncTracking = () => {
+        if (session !== playbackSessionRef.current || audio !== audioRef.current) return;
         const time = audio.currentTime * 1000;
         currentMsRef.current = time;
         const now = performance.now();
@@ -3451,43 +3459,65 @@ function ReaderPage() {
           setCurrentMs(time);
         }
         const activeBoundary = findActiveBoundary(segment.result.boundaries, time);
-        if (activeBoundary >= 0 && activeBoundary > lastTrackedBoundaryRef.current) {
-          let latestToken: { id: string; sentenceIndex: number } | null = null;
-          for (
-            let boundary = Math.max(0, lastTrackedBoundaryRef.current + 1);
-            boundary <= activeBoundary;
-            boundary += 1
-          ) {
-            const token = segment.boundaryTokens[boundary];
-            if (!token) continue;
-            latestToken = token;
-            rememberReadingSpot(token.sentenceIndex, token.id);
-          }
+        // Always compare the boundary against the actual audio clock, rather
+        // than only accepting forward movement. Browsers can coalesce audio
+        // events, resume from a buffered position, or briefly report an older
+        // clock after a seek; any of those used to leave the highlight stuck.
+        if (activeBoundary >= 0 && activeBoundary !== lastTrackedBoundaryRef.current) {
           lastTrackedBoundaryRef.current = activeBoundary;
-          if (latestToken) {
-            activeWordRef.current = latestToken.id;
-            currentSentenceIndexRef.current = latestToken.sentenceIndex;
-            setActiveWordId(latestToken.id);
-            setCurrentSentenceIndex(latestToken.sentenceIndex);
-            revealActiveWord(latestToken.id);
+          let token = segment.boundaryTokens[activeBoundary];
+          for (let boundary = activeBoundary - 1; !token && boundary >= 0; boundary -= 1) {
+            token = segment.boundaryTokens[boundary];
           }
-        }
-        if (!audio.paused && !audio.ended && !trackingFramePendingRef.current) {
-          trackingFramePendingRef.current = true;
-          animationRef.current = requestAnimationFrame(() => {
-            trackingFramePendingRef.current = false;
-            updateTracking();
-          });
+          if (token) {
+            activeWordRef.current = token.id;
+            currentSentenceIndexRef.current = token.sentenceIndex;
+            rememberReadingSpot(token.sentenceIndex, token.id);
+            setActiveWordId(token.id);
+            setCurrentSentenceIndex(token.sentenceIndex);
+            revealActiveWord(token.id);
+          }
         }
       };
-      audio.ontimeupdate = updateTracking;
+      const scheduleTrackingFrame = () => {
+        if (
+          session !== playbackSessionRef.current ||
+          audio !== audioRef.current ||
+          audio.paused ||
+          audio.ended ||
+          trackingFramePendingRef.current
+        ) return;
+        trackingFramePendingRef.current = true;
+        animationRef.current = requestAnimationFrame(() => {
+          trackingFramePendingRef.current = false;
+          syncTracking();
+          scheduleTrackingFrame();
+        });
+      };
+      const resumeTracking = () => {
+        syncTracking();
+        scheduleTrackingFrame();
+      };
+      syncTrackingRef.current = resumeTracking;
+      audio.ontimeupdate = resumeTracking;
+      audio.onseeking = resumeTracking;
+      audio.onseeked = resumeTracking;
       audio.onplay = () => {
         setPlayerError("");
         setPlaying(true);
-        updateTracking();
+        resumeTracking();
+      };
+      audio.onplaying = () => {
+        resumeTracking();
+        window.clearInterval(trackingHeartbeatRef.current);
+        // Some browsers throttle requestAnimationFrame or timeupdate after
+        // long playback. This inexpensive clock check keeps the spoken word
+        // synchronized without relying on one event source.
+        trackingHeartbeatRef.current = window.setInterval(resumeTracking, 250);
       };
       audio.onpause = () => {
         cancelAnimationFrame(animationRef.current);
+        window.clearInterval(trackingHeartbeatRef.current);
         trackingFramePendingRef.current = false;
         setPlaying(false);
         // No glow while paused; it re-lights when the next word is spoken.
@@ -3497,6 +3527,7 @@ function ReaderPage() {
       audio.onended = async () => {
         if (session !== playbackSessionRef.current) return;
         cancelAnimationFrame(animationRef.current);
+        window.clearInterval(trackingHeartbeatRef.current);
         trackingFramePendingRef.current = false;
         if (segmentIndex + 1 < cache.drafts.length) {
           setNarrationBusy(true);
@@ -3633,8 +3664,18 @@ function ReaderPage() {
     chapterComments.filter((comment) => comment.parentId === parentId);
   const seek = (value: number) => {
     const next = Math.max(0, Math.min(durationMs, value));
+    const audio = audioRef.current;
+    // Seeking changes audio.currentTime without moving the word-boundary cursor.
+    // Reset it and immediately replay the tracking handler so backward jumps do
+    // not get stuck behind the last highlighted word.
+    lastTrackedBoundaryRef.current = -1;
+    cancelAnimationFrame(animationRef.current);
+    trackingFramePendingRef.current = false;
+    currentMsRef.current = next;
     setCurrentMs(next);
-    if (audioRef.current) audioRef.current.currentTime = next / 1000;
+    if (!audio) return;
+    audio.currentTime = next / 1000;
+    if (!audio.paused) syncTrackingRef.current?.();
   };
   const goToChapter = (target: { id: string; title: string; locked?: boolean } | null) => {
     if (!target) return;
