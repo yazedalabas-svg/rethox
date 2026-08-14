@@ -4234,6 +4234,7 @@ function ReaderPage() {
               className={[
                 savedSentenceIds.includes(s.id) ? "saved-paragraph" : "",
                 sectionTargetId === s.id ? "section-target" : "",
+                s.id === "rz6-c54-p0109" ? "rezero-iconic-line" : "",
               ].filter(Boolean).join(" ")}
               onMouseEnter={() => setActiveSentence(s)}
             >
