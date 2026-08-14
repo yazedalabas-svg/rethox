@@ -1948,7 +1948,13 @@ button {
 .reader-body article > p {
   position: relative;
   margin: 0 0 26px;
-  text-align: right;
+  text-align: start;
+}
+.reader-bidi-run {
+  unicode-bidi: isolate;
+}
+.reader-bidi-ltr {
+  direction: ltr;
 }
 .reader-body article > p.saved-paragraph {
   border-right: 3px solid var(--purple);

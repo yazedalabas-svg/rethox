@@ -87,6 +87,7 @@ import {
   type AuthSession,
 } from "./api";
 import type { Book, Chapter, ChapterComment, ChapterMeta, ChapterSection, ContentReport, Progress, Review, Sentence, User } from "./types";
+import { groupBidiRuns, paragraphDirection } from "./bidi";
 import { alignBoundaries, formatTime } from "./utils";
 
 const fetchReviews = (bookId: string) =>
@@ -4229,6 +4230,7 @@ function ReaderPage() {
           {chapter.sentences.map((s, sentenceIndex) => (
             <Fragment key={s.id}>
               <p
+              dir={paragraphDirection(s.text)}
               data-sentence-index={sentenceIndex}
               data-sentence-id={s.id}
               className={[
@@ -4238,22 +4240,26 @@ function ReaderPage() {
               ].filter(Boolean).join(" ")}
               onMouseEnter={() => setActiveSentence(s)}
             >
-              {sentenceTokens(s).map((token, wordIndex) => (
-                <button
-                  key={token.id}
-                  data-word-id={token.id}
-                  onClick={() => playToken(sentenceIndex, wordIndex)}
-                  className={[
-                    activeWordId === token.id ? "active-word" : "",
-                    searchHitTokens.get(token.id) === "current"
-                      ? "search-hit current-hit"
-                      : searchHitTokens.has(token.id)
-                        ? "search-hit"
-                        : "",
-                  ].filter(Boolean).join(" ")}
-                >
-                  {token.text}{" "}
-                </button>
+              {groupBidiRuns(sentenceTokens(s).map((token, wordIndex) => ({ ...token, wordIndex }))).map((run) => (
+                <bdi className={`reader-bidi-run reader-bidi-${run.direction}`} dir={run.direction} key={`${run.direction}-${run.tokens[0].id}`}>
+                  {run.tokens.map((token) => (
+                      <button
+                        key={token.id}
+                        data-word-id={token.id}
+                        onClick={() => playToken(sentenceIndex, token.wordIndex)}
+                        className={[
+                          activeWordId === token.id ? "active-word" : "",
+                          searchHitTokens.get(token.id) === "current"
+                            ? "search-hit current-hit"
+                            : searchHitTokens.has(token.id)
+                              ? "search-hit"
+                              : "",
+                        ].filter(Boolean).join(" ")}
+                      >
+                        {token.text}{" "}
+                      </button>
+                  ))}
+                </bdi>
               ))}
               <span className="sentence-actions">
                 <button onClick={() => speak(s.text)} aria-label="اقرأ الجملة">
