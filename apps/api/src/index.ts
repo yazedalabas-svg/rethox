@@ -1854,7 +1854,10 @@ app.delete("/api/chapters/:id/comments/:commentId", communityWriteLimit, auth, a
 
 const chapterImageBody = express.raw({
   type: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-  limit: "12mb",
+  // High-resolution PNG artwork is often much larger than compressed web
+  // formats. Keep one generous ceiling for covers and chapter art, while
+  // still protecting the API process from an unbounded request body.
+  limit: process.env.ADMIN_IMAGE_UPLOAD_LIMIT || "100mb",
 });
 const imageExtension: Record<string, string> = {
   "image/jpeg": "jpg",

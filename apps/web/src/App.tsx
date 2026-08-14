@@ -5195,7 +5195,7 @@ function AdminPage() {
               <label>غلاف الرواية<input name="cover" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onChange={(event) => {
                 const file = event.currentTarget.files?.[0];
                 setCoverPreviewUrl(file ? URL.createObjectURL(file) : "");
-              }} /><small>JPG أو PNG أو WebP أو GIF — حتى 12MB</small></label>
+              }} /><small>JPG أو PNG أو WebP أو GIF — يقبل ملفات PNG الكبيرة حتى 100MB</small></label>
             </div>
             <button className="btn primary" disabled={bookSaveBusy}>{bookSaveBusy ? "جارٍ الحفظ..." : "حفظ بيانات الكتاب"}</button>
           </form>
