@@ -2973,9 +2973,32 @@ html:has(.reader-index.open) .theme-fab {
 .chapter-transition i { width:180px;height:2px;margin:12px auto;background:var(--purple);transform-origin:right;animation:transition-line .18s ease-out both; }
 .scroll-top { position:fixed;z-index:7;left:24px;bottom:105px;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:var(--surface);color:var(--ink);box-shadow:var(--shadow);animation:page-in .25s ease; }
 .scroll-top svg { width:16px; }
-.reader.focus-mode .reader-head,.reader.focus-mode .reader-tools,.reader.focus-mode .player { opacity:.08;transition:opacity .25s; }
-.reader.focus-mode .reader-head:hover,.reader.focus-mode .reader-tools:hover,.reader.focus-mode .player:hover { opacity:1; }
-html:has(.reader.focus-mode) .theme-fab { opacity:0;pointer-events:none;transform:scale(.9); }
+.reader.focus-mode .reader-head,
+.reader.focus-mode .reader-tools,
+.reader.focus-mode .player,
+.reader.focus-mode .scroll-rail,
+.reader.focus-mode .scroll-top {
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease,transform .18s ease;
+}
+.reader.focus-mode .reader-head { transform:translateY(-8px); }
+.reader.focus-mode .reader-tools { transform:translateX(8px); }
+.reader.focus-mode .player { transform:translateY(8px); }
+.reader.focus-mode.focus-controls-visible .reader-head,
+.reader.focus-mode.focus-controls-visible .reader-tools,
+.reader.focus-mode.focus-controls-visible .player,
+.reader.focus-mode.focus-controls-visible .scroll-rail,
+.reader.focus-mode.focus-controls-visible .scroll-top {
+  opacity:1;
+  pointer-events:auto;
+  transform:none;
+}
+html:has(.reader.focus-mode:not(.focus-controls-visible)) .theme-fab {
+  opacity:0;
+  pointer-events:none;
+  transform:scale(.9);
+}
 @media(max-width:900px){.book-extras{grid-template-columns:1fr}.continue-section{align-items:stretch;flex-direction:column}}
 @media(max-width:900px){.settings-layout{grid-template-columns:1fr}}
 @media(max-width:600px){

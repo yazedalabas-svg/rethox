@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   accessTokenExpiresAt,
   api,
+  downloadFile,
   refreshSession,
   setAuthSessionListener,
   setToken,
@@ -16,6 +17,7 @@ const jwt = (expiresAtSeconds: number) => {
 };
 
 afterEach(() => {
+  vi.useRealTimers();
   vi.unstubAllGlobals();
   setAuthSessionListener(null);
   setToken(null);
@@ -79,5 +81,31 @@ describe("auth session transport", () => {
       cache: "no-store",
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/auth/refresh", expect.objectContaining({ credentials: "include" }));
+  });
+
+  it("does not revoke a PDF blob URL before the browser can start the download", async () => {
+    vi.useFakeTimers();
+    const click = vi.fn();
+    const append = vi.fn();
+    const remove = vi.fn();
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal("document", {
+      cookie: "",
+      body: { append },
+      createElement: vi.fn(() => ({ click, remove, href: "", download: "" })),
+    });
+    vi.stubGlobal("URL", {
+      createObjectURL: vi.fn(() => "blob:book"),
+      revokeObjectURL,
+    });
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(new Blob(["pdf"]), { status: 200 })));
+
+    await downloadFile("/books/book-1/pdf", "book.pdf");
+
+    expect(append).toHaveBeenCalledTimes(1);
+    expect(click).toHaveBeenCalledTimes(1);
+    expect(revokeObjectURL).not.toHaveBeenCalled();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(revokeObjectURL).toHaveBeenCalledWith("blob:book");
   });
 });

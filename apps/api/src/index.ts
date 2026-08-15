@@ -9,7 +9,7 @@ import getMp3Duration from "get-mp3-duration";
 import pino from "pino";
 import { createHash, randomUUID } from "node:crypto";
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, utimes, writeFileSync } from "node:fs";
 import { dirname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
@@ -203,7 +203,13 @@ app.use(
   express.static(ttsCache, {
     immutable: true,
     maxAge: "30d",
-    setHeaders: (res) => res.setHeader("Accept-Ranges", "bytes"),
+    setHeaders: (res, filePath) => {
+      res.setHeader("Accept-Ranges", "bytes");
+      // Cache eviction is LRU-based. Updating the timestamp when a media
+      // range is served prevents a long, actively narrated MP3 from being
+      // trimmed while the browser is still reading it.
+      utimes(filePath, new Date(), new Date(), () => {});
+    },
   }),
 );
 

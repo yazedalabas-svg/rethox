@@ -2747,6 +2747,7 @@ function ReaderPage() {
   const [lockedChapter, setLockedChapter] = useState<{ id: string; title: string } | null>(null);
   const [showChapterList, setShowChapterList] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const [focusControlsVisible, setFocusControlsVisible] = useState(true);
   const [atChapterEnd, setAtChapterEnd] = useState(false);
   const [transitionTitle, setTransitionTitle] = useState("");
   const [sectionTargetId, setSectionTargetId] = useState("");
@@ -2811,12 +2812,9 @@ function ReaderPage() {
   const manualProgressFrameRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const previewAudioRef = useRef<HTMLAudioElement | null>(null);
-  // Segments finish loading well before the reader reaches them (see
-  // warmChapterCache's background walk). Warming a hidden <audio> for each
-  // one as soon as its URL is known lets the browser fetch the mp3 into its
-  // cache ahead of time, so the segment-to-segment handoff in
-  // playPreparedSegment reads from cache instead of hitting the network —
-  // no audible gap when one sentence's narration ends and the next begins.
+  // Keep only the immediately upcoming segment in the browser media cache.
+  // Retaining a hidden <audio> for every part of a long novel grows without
+  // bound and eventually makes Chromium evict media that is still needed.
   const preloadAudioRefs = useRef<HTMLAudioElement[]>([]);
   const playbackSessionRef = useRef(0);
   const activeWordRef = useRef("");
@@ -2839,6 +2837,7 @@ function ReaderPage() {
   const lastSpotSaveRef = useRef({ sentenceIndex: -1, wordId: "", at: 0 });
   const lastAutoScrollRef = useRef(0);
   const sectionHighlightTimerRef = useRef(0);
+  const focusControlsTimerRef = useRef(0);
   const rememberReadingSpot = (sentenceIndex: number, wordId = activeWordRef.current) => {
     const now = Date.now();
     if (
@@ -2912,11 +2911,39 @@ function ReaderPage() {
     prefixed.webkitPreservesPitch = true;
     prefixed.mozPreservesPitch = true;
   };
+  const wakeFocusControls = useCallback(() => {
+    if (!focusMode) return;
+    setFocusControlsVisible(true);
+    window.clearTimeout(focusControlsTimerRef.current);
+    focusControlsTimerRef.current = window.setTimeout(() => {
+      setFocusControlsVisible(false);
+    }, 3000);
+  }, [focusMode]);
+  const toggleFocusMode = () => {
+    const next = !focusMode;
+    window.clearTimeout(focusControlsTimerRef.current);
+    setFocusControlsVisible(true);
+    setFocusMode(next);
+    if (next) {
+      focusControlsTimerRef.current = window.setTimeout(() => {
+        setFocusControlsVisible(false);
+      }, 3000);
+    }
+  };
   const releaseAudio = (audio: HTMLAudioElement | null) => {
     if (!audio) return;
     audio.pause();
     audio.removeAttribute("src");
     audio.load();
+  };
+  const primeUpcomingAudio = (url: string) => {
+    const absoluteUrl = new URL(url, window.location.origin).href;
+    if (preloadAudioRefs.current.some((audio) => audio.src === absoluteUrl)) return;
+    preloadAudioRefs.current.forEach(releaseAudio);
+    const preload = new Audio(url);
+    preload.preload = "auto";
+    keepNarrationPitch(preload);
+    preloadAudioRefs.current = [preload];
   };
   const primeAudioPlayback = () => {
     const audio = new Audio(
@@ -3179,6 +3206,7 @@ function ReaderPage() {
   }, [chapter?.id, chapterId, illustrationTarget, sectionSentenceId]);
   useEffect(
     () => () => {
+      window.clearTimeout(focusControlsTimerRef.current);
       playbackSessionRef.current += 1;
       cancelAnimationFrame(animationRef.current);
       releaseAudio(audioRef.current);
@@ -3392,12 +3420,6 @@ function ReaderPage() {
       };
       cache.segments[index] = segment;
       cache.loading[index] = null;
-      // Start fetching the mp3 into the browser cache the moment its URL is
-      // known, well ahead of when playback actually reaches it.
-      const preload = new Audio(result.audioUrl);
-      preload.preload = "auto";
-      keepNarrationPitch(preload);
-      preloadAudioRefs.current.push(preload);
       return segment;
     }).catch((error) => {
       cache.loading[index] = null;
@@ -3448,6 +3470,23 @@ function ReaderPage() {
     cache.warmPromise = settled;
     backgroundNarrationRef.current = settled;
   };
+  const loadSegmentForPlayback = async (
+    cache: ChapterNarrationCache,
+    index: number,
+    session: number,
+  ) => {
+    let lastError: unknown;
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      if (session !== playbackSessionRef.current) throw new Error("playback-cancelled");
+      try {
+        return await loadSegment(cache, index);
+      } catch (error) {
+        lastError = error;
+        await new Promise((resolve) => window.setTimeout(resolve, 600 * (attempt + 1)));
+      }
+    }
+    throw lastError || new Error("next-segment-unavailable");
+  };
   // Single entry point for both "press play from where I left off" and
   // "clicked this word": resolves the segment covering the target word
   // (instantly if already fetched — forward OR backward, it doesn't matter),
@@ -3459,7 +3498,7 @@ function ReaderPage() {
     const segmentIndex = cache.sentenceSegmentIndex[sentenceIndex];
     if (segmentIndex < 0) throw new Error("narration-empty");
     warmChapterCache(cache, session, segmentIndex);
-    const segment = await loadSegment(cache, segmentIndex);
+    const segment = await loadSegmentForPlayback(cache, segmentIndex, session);
     if (session !== playbackSessionRef.current) return;
     const targetTokenId = sentenceTokens(chapter.sentences[sentenceIndex])[wordIndex]?.id;
     let boundaryIndex = segment.boundaryTokens.findIndex((token) => token?.id === targetTokenId);
@@ -3622,7 +3661,7 @@ function ReaderPage() {
         if (segmentIndex + 1 < cache.drafts.length) {
           setNarrationBusy(true);
           try {
-            await loadSegment(cache, segmentIndex + 1);
+            await loadSegmentForPlayback(cache, segmentIndex + 1, session);
             if (session !== playbackSessionRef.current) return;
             void playPreparedSegment(cache, segmentIndex + 1, 0, session);
           } catch {
@@ -3641,6 +3680,17 @@ function ReaderPage() {
         }
       };
       currentSegmentRef.current = segmentIndex;
+      if (segmentIndex + 1 < cache.drafts.length) {
+        // The current segment stays in the real player; only the next one is
+        // preloaded. This maintains a smooth handoff without retaining every
+        // chapter mp3 in browser memory.
+        void loadSegmentForPlayback(cache, segmentIndex + 1, session)
+          .then((next) => {
+            if (session === playbackSessionRef.current && currentSegmentRef.current === segmentIndex)
+              primeUpcomingAudio(next.result.audioUrl);
+          })
+          .catch(() => {});
+      }
       lastTrackedBoundaryRef.current = Math.max(-1, boundaryIndex - 1);
       const firstToken = segment.boundaryTokens[boundaryIndex];
       if (firstToken) {
@@ -3827,7 +3877,7 @@ function ReaderPage() {
         event.preventDefault();
         void toggleNarration();
       }
-      if (event.key.toLowerCase() === "f") setFocusMode((value) => !value);
+      if (event.key.toLowerCase() === "f") toggleFocusMode();
       if (event.key === "ArrowRight") {
         event.preventDefault();
         seek(currentMsRef.current + 5000);
@@ -4091,7 +4141,14 @@ function ReaderPage() {
     nav(adminReturn.to, { state: { adminRestoreScrollY: adminReturn.scrollY } });
   };
   return (
-    <div className={`reader ${focusMode ? "focus-mode" : ""}`}>
+    <div
+      className={`reader ${focusMode ? "focus-mode" : ""} ${focusControlsVisible ? "focus-controls-visible" : ""}`}
+      onPointerMove={(event) => {
+        if (event.pointerType !== "touch") wakeFocusControls();
+      }}
+      onPointerDownCapture={wakeFocusControls}
+      onFocusCapture={wakeFocusControls}
+    >
       {transitionTitle && (
         <div className="chapter-transition" aria-live="polite">
           <span>نفتح الصفحة التالية</span>
@@ -4131,7 +4188,7 @@ function ReaderPage() {
           <button onClick={() => setShowChapterList((value) => !value)} title={`فهرس ${book.contentUnitLabelPlural || "الفصول"}`}>
             <List />
           </button>
-          <button onClick={() => setFocusMode((value) => !value)} title="وضع التركيز">
+          <button onClick={toggleFocusMode} title="وضع التركيز" aria-label={focusMode ? "إيقاف وضع التركيز" : "تشغيل وضع التركيز"}>
             {focusMode ? <Minimize2 /> : <Maximize2 />}
           </button>
           <button onClick={() => setFontSize((v) => Math.min(46, v + 2))}>

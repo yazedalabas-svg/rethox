@@ -90,14 +90,27 @@ const request = async <T>(path: string, options: RequestInit = {}): Promise<T> =
 };
 
 const downloadRequest = async (path: string) => {
+  // A stalled PDF response used to leave the export button disabled forever.
+  // Give large books ample time while still returning control to the reader if
+  // the connection has genuinely stopped.
+  const controller = new AbortController();
+  const timeout = globalThis.setTimeout(() => controller.abort(), 8 * 60_000);
   const headers = new Headers();
   if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
-  const response = await fetch(apiUrl(path), { headers, credentials: "include" });
-  if (!response.ok) {
-    const data = await response.json().catch(() => ({})) as Record<string, unknown>;
-    throw new ApiError(response.status, data);
+  try {
+    const response = await fetch(apiUrl(path), {
+      headers,
+      credentials: "include",
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({})) as Record<string, unknown>;
+      throw new ApiError(response.status, data);
+    }
+    return await response.blob();
+  } finally {
+    globalThis.clearTimeout(timeout);
   }
-  return response.blob();
 };
 
 export const refreshSession = (): Promise<AuthSession> => {
@@ -165,5 +178,8 @@ export const downloadFile = async (path: string, filename: string) => {
   document.body.append(link);
   link.click();
   link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+  // The browser consumes a blob URL asynchronously after click(). Revoking it
+  // in the same turn intermittently aborts large exports, particularly on
+  // Chromium. Keep it alive long enough for the download manager to own it.
+  globalThis.setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
 };
