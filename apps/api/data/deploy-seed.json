@@ -119275,6 +119275,4139 @@
           "contentFile": "books/reader-view/derived/volume-05.json"
         }
       ]
+    },
+    {
+      "id": "book-rezero-arc-7",
+      "slug": "rezero-arc-7-arabic",
+      "title": "ري:زيرو — الآرك السابع: أرض الذئاب",
+      "author": "تَابي ناغاتسوكي",
+      "synopsis": "يجد ناتسوكي سوبارو نفسه في إمبراطورية فولّاكيا البعيدة، منفصلًا عن رفاقه، فيخوض صراعًا قاسيًا للعودة وحماية من معه وسط حرب تهز أرض الذئاب.",
+      "priceMinor": 0,
+      "currency": "SAR",
+      "genre": "فانتازيا",
+      "tags": [
+        "ري:زيرو",
+        "الآرك 7",
+        "فانتازيا",
+        "رواية مترجمة"
+      ],
+      "coverTheme": "ember",
+      "coverUrl": "/covers/rezero-arc-7.webp",
+      "status": "PUBLISHED",
+      "rating": 4.9,
+      "pageCount": 2953,
+      "contentUnitLabel": "فصل",
+      "contentUnitLabelPlural": "فصول",
+      "chapters": [
+        {
+          "id": "ch-rezero-7-001",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 1 — الاستهلال",
+          "position": 1,
+          "durationMs": 3412910,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz7-c001-i01",
+              "src": "/illustrations/rezero-arc-7/page-0039-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 1 — الاستهلال",
+              "position": 1,
+              "afterSentenceId": "rz7-c001-p0383"
+            },
+            {
+              "id": "rz7-c001-i02",
+              "src": "/illustrations/rezero-arc-7/page-0045-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 1 — الاستهلال",
+              "position": 2,
+              "afterSentenceId": "rz7-c001-p0456"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 472,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-002",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 2 — تتبع الحيوانات",
+          "position": 2,
+          "durationMs": 2848320,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz7-c002-i01",
+              "src": "/illustrations/rezero-arc-7/page-0063-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 2 — تتبع الحيوانات",
+              "position": 1,
+              "afterSentenceId": "rz7-c002-p0204"
+            },
+            {
+              "id": "rz7-c002-i02",
+              "src": "/illustrations/rezero-arc-7/page-0076-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 2 — تتبع الحيوانات",
+              "position": 2,
+              "afterSentenceId": "rz7-c002-p0357"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 357,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-003",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 3 — مواجهة ريم",
+          "position": 3,
+          "durationMs": 2094100,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 3,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 274,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-004",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 4 — اختيار شجاع",
+          "position": 4,
+          "durationMs": 2114740,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 4,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 274,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-005",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 5 — كونك رجلًا أمر صعب",
+          "position": 5,
+          "durationMs": 2468200,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 5,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 327,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-006",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 6 — أرض بعيدة في الجنوب",
+          "position": 6,
+          "durationMs": 2720180,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz7-c006-i01",
+              "src": "/illustrations/rezero-arc-7/page-0158-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 6 — أرض بعيدة في الجنوب",
+              "position": 1,
+              "afterSentenceId": "rz7-c006-p0181"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 350,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-007",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 7 — كونك رجلًا كان صعبًا",
+          "position": 7,
+          "durationMs": 2469920,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 7,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 336,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-008",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 8 — الاسم",
+          "position": 8,
+          "durationMs": 4136600,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz7-c008-i01",
+              "src": "/illustrations/rezero-arc-7/page-0214-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 8 — الاسم",
+              "position": 1,
+              "afterSentenceId": "rz7-c008-p0246"
+            },
+            {
+              "id": "rz7-c008-i02",
+              "src": "/illustrations/rezero-arc-7/page-0229-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 8 — الاسم",
+              "position": 2,
+              "afterSentenceId": "rz7-c008-p0450"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 559,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-009",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 9 — طريق الإمبراطورية",
+          "position": 9,
+          "durationMs": 3181140,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz7-c009-i01",
+              "src": "/illustrations/rezero-arc-7/page-0267-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 9 — طريق الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz7-c009-p0404"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 444,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-010",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 10 — شعب شودراك",
+          "position": 10,
+          "durationMs": 2395530,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz7-c010-i01",
+              "src": "/illustrations/rezero-arc-7/page-0279-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 10 — شعب شودراك",
+              "position": 1,
+              "afterSentenceId": "rz7-c010-p0103"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 340,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-011",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 11 — طقوس دم الحياة",
+          "position": 11,
+          "durationMs": 3010430,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz7-c011-i01",
+              "src": "/illustrations/rezero-arc-7/page-0311-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 11 — طقوس دم الحياة",
+              "position": 1,
+              "afterSentenceId": "rz7-c011-p0196"
+            },
+            {
+              "id": "rz7-c011-i02",
+              "src": "/illustrations/rezero-arc-7/page-0327-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 11 — طقوس دم الحياة",
+              "position": 2,
+              "afterSentenceId": "rz7-c011-p0412"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 440,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-012",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 12 — إمبراطورية فولّاكيا",
+          "position": 12,
+          "durationMs": 2484110,
+          "isSample": true,
+          "volumeNumber": 26,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz7-c012-i01",
+              "src": "/illustrations/rezero-arc-7/page-0353-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 12 — إمبراطورية فولّاكيا",
+              "position": 1,
+              "afterSentenceId": "rz7-c012-p0342"
+            },
+            {
+              "id": "rz7-c012-i02",
+              "src": "/illustrations/rezero-arc-7/page-0357-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 12 — إمبراطورية فولّاكيا",
+              "position": 2,
+              "afterSentenceId": "rz7-c012-p0382"
+            },
+            {
+              "id": "rz7-c012-i03",
+              "src": "/illustrations/rezero-arc-7/page-0359-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 12 — إمبراطورية فولّاكيا",
+              "position": 3,
+              "afterSentenceId": "rz7-c012-p0382"
+            },
+            {
+              "id": "rz7-c012-i04",
+              "src": "/illustrations/rezero-arc-7/page-0361-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 12 — إمبراطورية فولّاكيا",
+              "position": 4,
+              "afterSentenceId": "rz7-c012-p0382"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 382,
+          "contentFile": "books/ReZero Arc 7/derived/volume-26.json"
+        },
+        {
+          "id": "ch-rezero-7-013",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 13 — كإنسان",
+          "position": 13,
+          "durationMs": 2269970,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 350,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-014",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 14 — قيم لا يمكن تجاوزها",
+          "position": 14,
+          "durationMs": 2067010,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 304,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-015",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 15 — أولئك الذين أريد حمايتهم",
+          "position": 15,
+          "durationMs": 1950050,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 3,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 309,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-016",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 16 — الوضع في الإمبراطورية",
+          "position": 16,
+          "durationMs": 3034940,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz7-c016-i01",
+              "src": "/illustrations/rezero-arc-7/page-0458-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 16 — الوضع في الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz7-c016-p0408"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 408,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-017",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 17 — شر يلوح في الأفق",
+          "position": 17,
+          "durationMs": 3615010,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz7-c017-i01",
+              "src": "/illustrations/rezero-arc-7/page-0482-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 17 — شر يلوح في الأفق",
+              "position": 1,
+              "afterSentenceId": "rz7-c017-p0330"
+            },
+            {
+              "id": "rz7-c017-i02",
+              "src": "/illustrations/rezero-arc-7/page-0497-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 17 — شر يلوح في الأفق",
+              "position": 2,
+              "afterSentenceId": "rz7-c017-p0524"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 524,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-018",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 18 — معركة في مدينة الحصن غوارال",
+          "position": 18,
+          "durationMs": 3412910,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz7-c018-i01",
+              "src": "/illustrations/rezero-arc-7/page-0511-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 18 — معركة في مدينة الحصن غوارال",
+              "position": 1,
+              "afterSentenceId": "rz7-c018-p0183"
+            },
+            {
+              "id": "rz7-c018-i02",
+              "src": "/illustrations/rezero-arc-7/page-0527-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 18 — معركة في مدينة الحصن غوارال",
+              "position": 2,
+              "afterSentenceId": "rz7-c018-p0407"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 526,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-019",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 19 — لقاء مثير للحنق",
+          "position": 19,
+          "durationMs": 1677000,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 7,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 240,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-020",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 20 — الإمبراطور / التاجر / ناتسوكي سوبارو",
+          "position": 20,
+          "durationMs": 3582330,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz7-c020-i01",
+              "src": "/illustrations/rezero-arc-7/page-0585-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 20 — الإمبراطور / التاجر / ناتسوكي سوبارو",
+              "position": 1,
+              "afterSentenceId": "rz7-c020-p0464"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 523,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-021",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 21 — ذكر عثمان",
+          "position": 21,
+          "durationMs": 1770310,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz7-c021-i01",
+              "src": "/illustrations/rezero-arc-7/page-0608-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 21 — ذكر عثمان",
+              "position": 1,
+              "afterSentenceId": "rz7-c021-p0223"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 223,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-022",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 22 — خطة الحصار بلا دماء",
+          "position": 22,
+          "durationMs": 2193000,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 10,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 309,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-023",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 23 — الموسيقار ناتسومي شوارز",
+          "position": 23,
+          "durationMs": 4557140,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz7-c023-i01",
+              "src": "/illustrations/rezero-arc-7/page-0655-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 23 — الموسيقار ناتسومي شوارز",
+              "position": 1,
+              "afterSentenceId": "rz7-c023-p0354"
+            },
+            {
+              "id": "rz7-c023-i02",
+              "src": "/illustrations/rezero-arc-7/page-0663-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 23 — الموسيقار ناتسومي شوارز",
+              "position": 2,
+              "afterSentenceId": "rz7-c023-p0456"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 695,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-024",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 24 — غرور",
+          "position": 24,
+          "durationMs": 3778840,
+          "isSample": true,
+          "volumeNumber": 27,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz7-c024-i01",
+              "src": "/illustrations/rezero-arc-7/page-0699-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 24 — غرور",
+              "position": 1,
+              "afterSentenceId": "rz7-c024-p0275"
+            },
+            {
+              "id": "rz7-c024-i02",
+              "src": "/illustrations/rezero-arc-7/page-0713-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 24 — غرور",
+              "position": 2,
+              "afterSentenceId": "rz7-c024-p0465"
+            },
+            {
+              "id": "rz7-c024-i03",
+              "src": "/illustrations/rezero-arc-7/page-0722-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 24 — غرور",
+              "position": 3,
+              "afterSentenceId": "rz7-c024-p0582"
+            },
+            {
+              "id": "rz7-c024-i04",
+              "src": "/illustrations/rezero-arc-7/page-0724-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 24 — غرور",
+              "position": 4,
+              "afterSentenceId": "rz7-c024-p0582"
+            },
+            {
+              "id": "rz7-c024-i05",
+              "src": "/illustrations/rezero-arc-7/page-0725-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 24 — غرور",
+              "position": 5,
+              "afterSentenceId": "rz7-c024-p0582"
+            },
+            {
+              "id": "rz7-c024-i06",
+              "src": "/illustrations/rezero-arc-7/page-0727-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 24 — غرور",
+              "position": 6,
+              "afterSentenceId": "rz7-c024-p0582"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 582,
+          "contentFile": "books/ReZero Arc 7/derived/volume-27.json"
+        },
+        {
+          "id": "ch-rezero-7-025",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 25 — لقاء كدمٍ متّقد",
+          "position": 25,
+          "durationMs": 1849000,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz7-c025-i01",
+              "src": "/illustrations/rezero-arc-7/page-0736-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 25 — لقاء كدمٍ متّقد",
+              "position": 1,
+              "afterSentenceId": "rz7-c025-p0113"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 285,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-026",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 26 — مؤتمر المائدة المستديرة الراقص",
+          "position": 26,
+          "durationMs": 2203320,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 312,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-027",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 27 — الأغنياء والفقراء",
+          "position": 27,
+          "durationMs": 2238150,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz7-c027-i01",
+              "src": "/illustrations/rezero-arc-7/page-0794-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 27 — الأغنياء والفقراء",
+              "position": 1,
+              "afterSentenceId": "rz7-c027-p0316"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 316,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-028",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 28 — شروط النصر",
+          "position": 28,
+          "durationMs": 2098400,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz7-c028-i01",
+              "src": "/illustrations/rezero-arc-7/page-0815-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 28 — شروط النصر",
+              "position": 1,
+              "afterSentenceId": "rz7-c028-p0269"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 269,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-029",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 29 — لكلٍ موقفه",
+          "position": 29,
+          "durationMs": 1694200,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 5,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 215,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-030",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 30 — ناتسوكي سوبارو، البطل الذي نصّب نفسه",
+          "position": 30,
+          "durationMs": 1582400,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz7-c030-i01",
+              "src": "/illustrations/rezero-arc-7/page-0837-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 30 — ناتسوكي سوبارو، البطل الذي نصّب نفسه",
+              "position": 1,
+              "afterSentenceId": "rz7-c030-p0056"
+            },
+            {
+              "id": "rz7-c030-i02",
+              "src": "/illustrations/rezero-arc-7/page-0851-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 30 — ناتسوكي سوبارو، البطل الذي نصّب نفسه",
+              "position": 2,
+              "afterSentenceId": "rz7-c030-p0257"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 259,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-031",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 31 — حديث بين أبناء الوطن",
+          "position": 31,
+          "durationMs": 1633140,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz7-c031-i01",
+              "src": "/illustrations/rezero-arc-7/page-0863-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 31 — حديث بين أبناء الوطن",
+              "position": 1,
+              "afterSentenceId": "rz7-c031-p0151"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 263,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-032",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 32 — الطريق إلى الأمام",
+          "position": 32,
+          "durationMs": 1989180,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 8,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 311,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-033",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 33 — والآن، إلى الرحلة صوب مدينة الشياطين",
+          "position": 33,
+          "durationMs": 2282440,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz7-c033-i01",
+              "src": "/illustrations/rezero-arc-7/page-0915-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 33 — والآن، إلى الرحلة صوب مدينة الشياطين",
+              "position": 1,
+              "afterSentenceId": "rz7-c033-p0337"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 374,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-034",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 34 — شجار في العربة",
+          "position": 34,
+          "durationMs": 3377220,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz7-c034-i01",
+              "src": "/illustrations/rezero-arc-7/page-0942-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 34 — شجار في العربة",
+              "position": 1,
+              "afterSentenceId": "rz7-c034-p0328"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 473,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-035",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 35 — ليلة للحديث",
+          "position": 35,
+          "durationMs": 1916510,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 11,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 299,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-036",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 36 — مدينة الشياطين الفوضوية",
+          "position": 36,
+          "durationMs": 2273410,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 12,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 292,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-037",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 37 — سيد قلعة اللازورد القرمزي",
+          "position": 37,
+          "durationMs": 1296450,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz7-c037-i01",
+              "src": "/illustrations/rezero-arc-7/page-1001-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 37 — سيد قلعة اللازورد القرمزي",
+              "position": 1,
+              "afterSentenceId": "rz7-c037-p0081"
+            },
+            {
+              "id": "rz7-c037-i02",
+              "src": "/illustrations/rezero-arc-7/page-1006-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 37 — سيد قلعة اللازورد القرمزي",
+              "position": 2,
+              "afterSentenceId": "rz7-c037-p0131"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 182,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-038",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 38 — مكافأة انتُظرت ثمانية أعوام",
+          "position": 38,
+          "durationMs": 2306520,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz7-c038-i01",
+              "src": "/illustrations/rezero-arc-7/page-1020-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 38 — مكافأة انتُظرت ثمانية أعوام",
+              "position": 1,
+              "afterSentenceId": "rz7-c038-p0133"
+            },
+            {
+              "id": "rz7-c038-i02",
+              "src": "/illustrations/rezero-arc-7/page-1035-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 38 — مكافأة انتُظرت ثمانية أعوام",
+              "position": 2,
+              "afterSentenceId": "rz7-c038-p0340"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 354,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-039",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 39 — شرس",
+          "position": 39,
+          "durationMs": 2950230,
+          "isSample": true,
+          "volumeNumber": 28,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz7-c039-i01",
+              "src": "/illustrations/rezero-arc-7/page-1067-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 39 — شرس",
+              "position": 1,
+              "afterSentenceId": "rz7-c039-p0422"
+            },
+            {
+              "id": "rz7-c039-i02",
+              "src": "/illustrations/rezero-arc-7/page-1069-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 39 — شرس",
+              "position": 2,
+              "afterSentenceId": "rz7-c039-p0422"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 422,
+          "contentFile": "books/ReZero Arc 7/derived/volume-28.json"
+        },
+        {
+          "id": "ch-rezero-7-040",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 40 — ناتشوكي سوبارو",
+          "position": 40,
+          "durationMs": 1826210,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 269,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-041",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 41 — حديث على فنجان شاي",
+          "position": 41,
+          "durationMs": 2416600,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz7-c041-i01",
+              "src": "/illustrations/rezero-arc-7/page-1093-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 41 — حديث على فنجان شاي",
+              "position": 1,
+              "afterSentenceId": "rz7-c041-p0052"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 339,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-042",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 42 — وحش الطموح",
+          "position": 42,
+          "durationMs": 1968540,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 3,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 274,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-043",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 43 — مخفي خلف جفونك",
+          "position": 43,
+          "durationMs": 2678900,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz7-c043-i01",
+              "src": "/illustrations/rezero-arc-7/page-1153-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 43 — مخفي خلف جفونك",
+              "position": 1,
+              "afterSentenceId": "rz7-c043-p0267"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 392,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-044",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 44 — رؤية تتقلص",
+          "position": 44,
+          "durationMs": 1896300,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz7-c044-i01",
+              "src": "/illustrations/rezero-arc-7/page-1172-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 44 — رؤية تتقلص",
+              "position": 1,
+              "afterSentenceId": "rz7-c044-p0144"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 282,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-045",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 45 — كونكون",
+          "position": 45,
+          "durationMs": 2088940,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz7-c045-i01",
+              "src": "/illustrations/rezero-arc-7/page-1201-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 45 — كونكون",
+              "position": 1,
+              "afterSentenceId": "rz7-c045-p0287"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 327,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-046",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 46 — تهور طفولي",
+          "position": 46,
+          "durationMs": 1655500,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 7,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 239,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-047",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 47 — غير الفاني ■■",
+          "position": 47,
+          "durationMs": 1744940,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz7-c047-i01",
+              "src": "/illustrations/rezero-arc-7/page-1237-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 47 — غير الفاني ■■",
+              "position": 1,
+              "afterSentenceId": "rz7-c047-p0233"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 309,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-048",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 48 — أغراض تتشابك في مدينة الشياطين",
+          "position": 48,
+          "durationMs": 2115600,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz7-c048-i01",
+              "src": "/illustrations/rezero-arc-7/page-1263-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 48 — أغراض تتشابك في مدينة الشياطين",
+              "position": 1,
+              "afterSentenceId": "rz7-c048-p0286"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 327,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-049",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 49 — توافق النجوم",
+          "position": 49,
+          "durationMs": 2244170,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz7-c049-i01",
+              "src": "/illustrations/rezero-arc-7/page-1290-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 49 — توافق النجوم",
+              "position": 1,
+              "afterSentenceId": "rz7-c049-p0344"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 344,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-050",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 50 — ثقب ذو منظر رائع",
+          "position": 50,
+          "durationMs": 2367580,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz7-c050-i01",
+              "src": "/illustrations/rezero-arc-7/page-1316-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 50 — ثقب ذو منظر رائع",
+              "position": 1,
+              "afterSentenceId": "rz7-c050-p0356"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 356,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-051",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 51 — سيدة مدينة الشياطين",
+          "position": 51,
+          "durationMs": 1795250,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz7-c051-i01",
+              "src": "/illustrations/rezero-arc-7/page-1335-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 51 — سيدة مدينة الشياطين",
+              "position": 1,
+              "afterSentenceId": "rz7-c051-p0252"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 252,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-052",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 52 — لا يمكن توريث الحب",
+          "position": 52,
+          "durationMs": 1800410,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz7-c052-i01",
+              "src": "/illustrations/rezero-arc-7/page-1352-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 52 — لا يمكن توريث الحب",
+              "position": 1,
+              "afterSentenceId": "rz7-c052-p0238"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 290,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-053",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 53 — ما وراء الثانية الحادية عشرة",
+          "position": 53,
+          "durationMs": 2884010,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz7-c053-i01",
+              "src": "/illustrations/rezero-arc-7/page-1390-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 53 — ما وراء الثانية الحادية عشرة",
+              "position": 1,
+              "afterSentenceId": "rz7-c053-p0497"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 497,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-054",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 54 — يوتوبيا كايوس فليم",
+          "position": 54,
+          "durationMs": 3605980,
+          "isSample": true,
+          "volumeNumber": 29,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz7-c054-i01",
+              "src": "/illustrations/rezero-arc-7/page-1415-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 54 — يوتوبيا كايوس فليم",
+              "position": 1,
+              "afterSentenceId": "rz7-c054-p0346"
+            },
+            {
+              "id": "rz7-c054-i02",
+              "src": "/illustrations/rezero-arc-7/page-1430-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 54 — يوتوبيا كايوس فليم",
+              "position": 2,
+              "afterSentenceId": "rz7-c054-p0534"
+            },
+            {
+              "id": "rz7-c054-i03",
+              "src": "/illustrations/rezero-arc-7/page-1431-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 54 — يوتوبيا كايوس فليم",
+              "position": 3,
+              "afterSentenceId": "rz7-c054-p0534"
+            },
+            {
+              "id": "rz7-c054-i04",
+              "src": "/illustrations/rezero-arc-7/page-1432-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 54 — يوتوبيا كايوس فليم",
+              "position": 4,
+              "afterSentenceId": "rz7-c054-p0534"
+            },
+            {
+              "id": "rz7-c054-i05",
+              "src": "/illustrations/rezero-arc-7/page-1434-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 54 — يوتوبيا كايوس فليم",
+              "position": 5,
+              "afterSentenceId": "rz7-c054-p0534"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 534,
+          "contentFile": "books/ReZero Arc 7/derived/volume-29.json"
+        },
+        {
+          "id": "ch-rezero-7-055",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 55 — ضجيج مدينة الشياطين",
+          "position": 55,
+          "durationMs": 2567960,
+          "isSample": true,
+          "volumeNumber": 30,
+          "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz7-c055-i01",
+              "src": "/illustrations/rezero-arc-7/page-1437-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 55 — ضجيج مدينة الشياطين",
+              "position": 1,
+              "afterSentenceId": "rz7-c055-p0024"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 395,
+          "contentFile": "books/ReZero Arc 7/derived/volume-30.json"
+        },
+        {
+          "id": "ch-rezero-7-056",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 56 — الكارثة الكبرى",
+          "position": 56,
+          "durationMs": 1451680,
+          "isSample": true,
+          "volumeNumber": 30,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 223,
+          "contentFile": "books/ReZero Arc 7/derived/volume-30.json"
+        },
+        {
+          "id": "ch-rezero-7-057",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 57 — لا أستطيع أن أعيش بحكمة",
+          "position": 57,
+          "durationMs": 1833950,
+          "isSample": true,
+          "volumeNumber": 30,
+          "volumePosition": 3,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 292,
+          "contentFile": "books/ReZero Arc 7/derived/volume-30.json"
+        },
+        {
+          "id": "ch-rezero-7-058",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 58 — أولئك الذين لا مكان لهم يلجؤون إليه",
+          "position": 58,
+          "durationMs": 2572690,
+          "isSample": true,
+          "volumeNumber": 30,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz7-c058-i01",
+              "src": "/illustrations/rezero-arc-7/page-1512-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 58 — أولئك الذين لا مكان لهم يلجؤون إليه",
+              "position": 1,
+              "afterSentenceId": "rz7-c058-p0184"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 363,
+          "contentFile": "books/ReZero Arc 7/derived/volume-30.json"
+        },
+        {
+          "id": "ch-rezero-7-059",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 59 — تاريتا شودراك",
+          "position": 59,
+          "durationMs": 2961840,
+          "isSample": true,
+          "volumeNumber": 30,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz7-c059-i01",
+              "src": "/illustrations/rezero-arc-7/page-1558-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 59 — تاريتا شودراك",
+              "position": 1,
+              "afterSentenceId": "rz7-c059-p0471"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 471,
+          "contentFile": "books/ReZero Arc 7/derived/volume-30.json"
+        },
+        {
+          "id": "ch-rezero-7-060",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 60 — غرس شتلة الفوضى",
+          "position": 60,
+          "durationMs": 18222540,
+          "isSample": true,
+          "volumeNumber": 30,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz7-c060-i01",
+              "src": "/illustrations/rezero-arc-7/page-1632-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 1,
+              "afterSentenceId": "rz7-c060-p1011"
+            },
+            {
+              "id": "rz7-c060-i02",
+              "src": "/illustrations/rezero-arc-7/page-1652-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 2,
+              "afterSentenceId": "rz7-c060-p1291"
+            },
+            {
+              "id": "rz7-c060-i03",
+              "src": "/illustrations/rezero-arc-7/page-1668-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 3,
+              "afterSentenceId": "rz7-c060-p1500"
+            },
+            {
+              "id": "rz7-c060-i04",
+              "src": "/illustrations/rezero-arc-7/page-1688-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 4,
+              "afterSentenceId": "rz7-c060-p1759"
+            },
+            {
+              "id": "rz7-c060-i05",
+              "src": "/illustrations/rezero-arc-7/page-1694-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 5,
+              "afterSentenceId": "rz7-c060-p1824"
+            },
+            {
+              "id": "rz7-c060-i06",
+              "src": "/illustrations/rezero-arc-7/page-1730-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 6,
+              "afterSentenceId": "rz7-c060-p2311"
+            },
+            {
+              "id": "rz7-c060-i07",
+              "src": "/illustrations/rezero-arc-7/page-1737-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 7,
+              "afterSentenceId": "rz7-c060-p2396"
+            },
+            {
+              "id": "rz7-c060-i08",
+              "src": "/illustrations/rezero-arc-7/page-1743-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 8,
+              "afterSentenceId": "rz7-c060-p2468"
+            },
+            {
+              "id": "rz7-c060-i09",
+              "src": "/illustrations/rezero-arc-7/page-1753-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 9,
+              "afterSentenceId": "rz7-c060-p2595"
+            },
+            {
+              "id": "rz7-c060-i10",
+              "src": "/illustrations/rezero-arc-7/page-1755-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 10,
+              "afterSentenceId": "rz7-c060-p2595"
+            },
+            {
+              "id": "rz7-c060-i11",
+              "src": "/illustrations/rezero-arc-7/page-1756-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 11,
+              "afterSentenceId": "rz7-c060-p2595"
+            },
+            {
+              "id": "rz7-c060-i12",
+              "src": "/illustrations/rezero-arc-7/page-1757-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 12,
+              "afterSentenceId": "rz7-c060-p2595"
+            },
+            {
+              "id": "rz7-c060-i13",
+              "src": "/illustrations/rezero-arc-7/page-1759-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 60 — غرس شتلة الفوضى",
+              "position": 13,
+              "afterSentenceId": "rz7-c060-p2595"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 2595,
+          "contentFile": "books/ReZero Arc 7/derived/volume-30.json"
+        },
+        {
+          "id": "ch-rezero-7-061",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 61 — مرحبًا بكم في جزيرة المصارعين!",
+          "position": 61,
+          "durationMs": 2725340,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz7-c061-i01",
+              "src": "/illustrations/rezero-arc-7/page-1765-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 61 — مرحبًا بكم في جزيرة المصارعين!",
+              "position": 1,
+              "afterSentenceId": "rz7-c061-p0061"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 364,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-062",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 62 — نظام الجزيرة",
+          "position": 62,
+          "durationMs": 1615940,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz7-c062-i01",
+              "src": "/illustrations/rezero-arc-7/page-1792-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 62 — نظام الجزيرة",
+              "position": 1,
+              "afterSentenceId": "rz7-c062-p0048"
+            },
+            {
+              "id": "rz7-c062-i02",
+              "src": "/illustrations/rezero-arc-7/page-1804-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 62 — نظام الجزيرة",
+              "position": 2,
+              "afterSentenceId": "rz7-c062-p0203"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 203,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-063",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 63 — سباركا",
+          "position": 63,
+          "durationMs": 2860360,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 3,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 421,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-064",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 64 — كلمات سحرية",
+          "position": 64,
+          "durationMs": 2512060,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz7-c064-i01",
+              "src": "/illustrations/rezero-arc-7/page-1858-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 64 — كلمات سحرية",
+              "position": 1,
+              "afterSentenceId": "rz7-c064-p0345"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 381,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-065",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 65 — مقاتل طعام المدرسة",
+          "position": 65,
+          "durationMs": 2462610,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 5,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 309,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-066",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 66 — هايّن ياتز",
+          "position": 66,
+          "durationMs": 2978180,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 6,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 374,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-067",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 67 — مخفي خلف الضرس",
+          "position": 67,
+          "durationMs": 1489950,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz7-c067-i01",
+              "src": "/illustrations/rezero-arc-7/page-1914-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 67 — مخفي خلف الضرس",
+              "position": 1,
+              "afterSentenceId": "rz7-c067-p0008"
+            },
+            {
+              "id": "rz7-c067-i02",
+              "src": "/illustrations/rezero-arc-7/page-1930-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 67 — مخفي خلف الضرس",
+              "position": 2,
+              "afterSentenceId": "rz7-c067-p0225"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 225,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-068",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 68 — إرشاد ذئب السيف",
+          "position": 68,
+          "durationMs": 2448420,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 8,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 355,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-069",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 69 — الوصول من العاصمة الإمبراطورية",
+          "position": 69,
+          "durationMs": 2766620,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz7-c069-i01",
+              "src": "/illustrations/rezero-arc-7/page-1969-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 69 — الوصول من العاصمة الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz7-c069-p0188"
+            },
+            {
+              "id": "rz7-c069-i02",
+              "src": "/illustrations/rezero-arc-7/page-1979-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 69 — الوصول من العاصمة الإمبراطورية",
+              "position": 2,
+              "afterSentenceId": "rz7-c069-p0332"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 434,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-070",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 70 — شيء واحد",
+          "position": 70,
+          "durationMs": 2276850,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 10,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 340,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-071",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 71 — ماء",
+          "position": 71,
+          "durationMs": 2266100,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz7-c071-i01",
+              "src": "/illustrations/rezero-arc-7/page-2029-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 71 — ماء",
+              "position": 1,
+              "afterSentenceId": "rz7-c071-p0247"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 325,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-072",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 72 — شائعات سخيفة",
+          "position": 72,
+          "durationMs": 2980330,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 12,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 434,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-073",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 73 — ويتز روغن",
+          "position": 73,
+          "durationMs": 1902750,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz7-c073-i01",
+              "src": "/illustrations/rezero-arc-7/page-2074-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 73 — ويتز روغن",
+              "position": 1,
+              "afterSentenceId": "rz7-c073-p0105"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 301,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-074",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 74 — إدرا ميسانغا",
+          "position": 74,
+          "durationMs": 2102700,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz7-c074-i01",
+              "src": "/illustrations/rezero-arc-7/page-2109-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 74 — إدرا ميسانغا",
+              "position": 1,
+              "afterSentenceId": "rz7-c074-p0313"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 330,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-075",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 75 — أنا أعرف",
+          "position": 75,
+          "durationMs": 4632820,
+          "isSample": true,
+          "volumeNumber": 31,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz7-c075-i01",
+              "src": "/illustrations/rezero-arc-7/page-2138-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 75 — أنا أعرف",
+              "position": 1,
+              "afterSentenceId": "rz7-c075-p0375"
+            },
+            {
+              "id": "rz7-c075-i02",
+              "src": "/illustrations/rezero-arc-7/page-2162-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 75 — أنا أعرف",
+              "position": 2,
+              "afterSentenceId": "rz7-c075-p0702"
+            },
+            {
+              "id": "rz7-c075-i03",
+              "src": "/illustrations/rezero-arc-7/page-2164-image-01.png",
+              "alt": "رسم من الآرك 7، الفصل 75 — أنا أعرف",
+              "position": 3,
+              "afterSentenceId": "rz7-c075-p0702"
+            },
+            {
+              "id": "rz7-c075-i04",
+              "src": "/illustrations/rezero-arc-7/page-2166-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 75 — أنا أعرف",
+              "position": 4,
+              "afterSentenceId": "rz7-c075-p0702"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 702,
+          "contentFile": "books/ReZero Arc 7/derived/volume-31.json"
+        },
+        {
+          "id": "ch-rezero-7-076",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 76 — لقاءات مصيرية في العاصمة الإمبراطورية",
+          "position": 76,
+          "durationMs": 2110870,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 275,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-077",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 77 — التواء القدر",
+          "position": 77,
+          "durationMs": 2514210,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 331,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-078",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 78 — لم الشمل المتقلب",
+          "position": 78,
+          "durationMs": 3112770,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz7-c078-i01",
+              "src": "/illustrations/rezero-arc-7/page-2241-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 78 — لم الشمل المتقلب",
+              "position": 1,
+              "afterSentenceId": "rz7-c078-p0432"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 432,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-079",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 79 — قهقهة قرمزية مدوّية",
+          "position": 79,
+          "durationMs": 1727310,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 4,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 246,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-080",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 80 — إيريس وملك الأشواك",
+          "position": 80,
+          "durationMs": 1836100,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 5,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 255,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-081",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 81 — السيدة الشرسة والمهرج",
+          "position": 81,
+          "durationMs": 1964670,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz7-c081-i01",
+              "src": "/illustrations/rezero-arc-7/page-2280-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 81 — السيدة الشرسة والمهرج",
+              "position": 1,
+              "afterSentenceId": "rz7-c081-p0021"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 223,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-082",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 82 — مقصد المتمردين",
+          "position": 82,
+          "durationMs": 1580250,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 7,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 194,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-083",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 83 — الحرب ومناطق القتال",
+          "position": 83,
+          "durationMs": 1525640,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 8,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 217,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-084",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 84 — غرفة الشاي",
+          "position": 84,
+          "durationMs": 1846420,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz7-c084-i01",
+              "src": "/illustrations/rezero-arc-7/page-2346-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 84 — غرفة الشاي",
+              "position": 1,
+              "afterSentenceId": "rz7-c084-p0247"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 247,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-085",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 85 — فهرند",
+          "position": 85,
+          "durationMs": 2336190,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz7-c085-i01",
+              "src": "/illustrations/rezero-arc-7/page-2355-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 85 — فهرند",
+              "position": 1,
+              "afterSentenceId": "rz7-c085-p0109"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 326,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-086",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 86 — الحصون الخمسة",
+          "position": 86,
+          "durationMs": 1814170,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz7-c086-i01",
+              "src": "/illustrations/rezero-arc-7/page-2389-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 86 — الحصون الخمسة",
+              "position": 1,
+              "afterSentenceId": "rz7-c086-p0217"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 217,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-087",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 87 — معركة حاسمة في القلعة",
+          "position": 87,
+          "durationMs": 2199880,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 12,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 287,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-088",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 88 — ريح جديدة",
+          "position": 88,
+          "durationMs": 2518080,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 13,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 335,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-089",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 89 — كافما إيرولوكس",
+          "position": 89,
+          "durationMs": 2031320,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz7-c089-i01",
+              "src": "/illustrations/rezero-arc-7/page-2456-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 89 — كافما إيرولوكس",
+              "position": 1,
+              "afterSentenceId": "rz7-c089-p0259"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 259,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-090",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 90 — مهد الجحيم",
+          "position": 90,
+          "durationMs": 1692910,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 15,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 219,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-091",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 91 — السباق عبر ساحة المعركة",
+          "position": 91,
+          "durationMs": 1087900,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 16,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 144,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-092",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 92 — إعادة إحياء الروابط القديمة",
+          "position": 92,
+          "durationMs": 2132800,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 17,
+          "illustrations": [
+            {
+              "id": "rz7-c092-i01",
+              "src": "/illustrations/rezero-arc-7/page-2489-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 92 — إعادة إحياء الروابط القديمة",
+              "position": 1,
+              "afterSentenceId": "rz7-c092-p0054"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 296,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-093",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 93 — جيش الحجر",
+          "position": 93,
+          "durationMs": 1634430,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 18,
+          "illustrations": [
+            {
+              "id": "rz7-c093-i01",
+              "src": "/illustrations/rezero-arc-7/page-2524-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 93 — جيش الحجر",
+              "position": 1,
+              "afterSentenceId": "rz7-c093-p0207"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 207,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-094",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 94 — عزيمة من أجل مَن؟",
+          "position": 94,
+          "durationMs": 2396390,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 19,
+          "illustrations": [
+            {
+              "id": "rz7-c094-i01",
+              "src": "/illustrations/rezero-arc-7/page-2550-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 94 — عزيمة من أجل مَن؟",
+              "position": 1,
+              "afterSentenceId": "rz7-c094-p0337"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 337,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-095",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 95 — أعداء عند كل الحصون",
+          "position": 95,
+          "durationMs": 3359160,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 20,
+          "illustrations": [
+            {
+              "id": "rz7-c095-i01",
+              "src": "/illustrations/rezero-arc-7/page-2563-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 95 — أعداء عند كل الحصون",
+              "position": 1,
+              "afterSentenceId": "rz7-c095-p0167"
+            },
+            {
+              "id": "rz7-c095-i02",
+              "src": "/illustrations/rezero-arc-7/page-2586-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 95 — أعداء عند كل الحصون",
+              "position": 2,
+              "afterSentenceId": "rz7-c095-p0468"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 468,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-096",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 96 — لوحة حب عميق",
+          "position": 96,
+          "durationMs": 2032180,
+          "isSample": true,
+          "volumeNumber": 32,
+          "volumePosition": 21,
+          "illustrations": [
+            {
+              "id": "rz7-c096-i01",
+              "src": "/illustrations/rezero-arc-7/page-2605-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 96 — لوحة حب عميق",
+              "position": 1,
+              "afterSentenceId": "rz7-c096-p0234"
+            },
+            {
+              "id": "rz7-c096-i02",
+              "src": "/illustrations/rezero-arc-7/page-2610-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 96 — لوحة حب عميق",
+              "position": 2,
+              "afterSentenceId": "rz7-c096-p0281"
+            },
+            {
+              "id": "rz7-c096-i03",
+              "src": "/illustrations/rezero-arc-7/page-2612-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 96 — لوحة حب عميق",
+              "position": 3,
+              "afterSentenceId": "rz7-c096-p0281"
+            },
+            {
+              "id": "rz7-c096-i04",
+              "src": "/illustrations/rezero-arc-7/page-2614-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 96 — لوحة حب عميق",
+              "position": 4,
+              "afterSentenceId": "rz7-c096-p0281"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 281,
+          "contentFile": "books/ReZero Arc 7/derived/volume-32.json"
+        },
+        {
+          "id": "ch-rezero-7-097",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 97 — القادمون من وراء الغرب",
+          "position": 97,
+          "durationMs": 1911350,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 253,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-098",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 98 — كتيبة الثريا",
+          "position": 98,
+          "durationMs": 1999500,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz7-c098-i01",
+              "src": "/illustrations/rezero-arc-7/page-2646-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 98 — كتيبة الثريا",
+              "position": 1,
+              "afterSentenceId": "rz7-c098-p0145"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 225,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-099",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 99 — الذين يحكمون السماء",
+          "position": 99,
+          "durationMs": 1629700,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 3,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 184,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-100",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 100 — تحولات لا تُحصى في الحصون",
+          "position": 100,
+          "durationMs": 2542590,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz7-c100-i01",
+              "src": "/illustrations/rezero-arc-7/page-2685-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 100 — تحولات لا تُحصى في الحصون",
+              "position": 1,
+              "afterSentenceId": "rz7-c100-p0208"
+            },
+            {
+              "id": "rz7-c100-i02",
+              "src": "/illustrations/rezero-arc-7/page-2697-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 100 — تحولات لا تُحصى في الحصون",
+              "position": 2,
+              "afterSentenceId": "rz7-c100-p0351"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 351,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-101",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 101 — الحب لهب",
+          "position": 101,
+          "durationMs": 1209160,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz7-c101-i01",
+              "src": "/illustrations/rezero-arc-7/page-2710-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 101 — الحب لهب",
+              "position": 1,
+              "afterSentenceId": "rz7-c101-p0154"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 154,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-102",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 102 — جدار العزم",
+          "position": 102,
+          "durationMs": 1836530,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 6,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 249,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-103",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 103 — العد التنازلي للنجوم",
+          "position": 103,
+          "durationMs": 1432330,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz7-c103-i01",
+              "src": "/illustrations/rezero-arc-7/page-2736-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 103 — العد التنازلي للنجوم",
+              "position": 1,
+              "afterSentenceId": "rz7-c103-p0089"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 176,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-104",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 104 — حصون في الفوضى (الجزء الأول)",
+          "position": 104,
+          "durationMs": 1414270,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 8,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 197,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-105",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 105 — حصون في الفوضى (الجزء الثاني)",
+          "position": 105,
+          "durationMs": 1947040,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 9,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 288,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-106",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 106 — حصون في الفوضى (الجزء الثالث)",
+          "position": 106,
+          "durationMs": 2271690,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz7-c106-i01",
+              "src": "/illustrations/rezero-arc-7/page-2801-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 106 — حصون في الفوضى (الجزء الثالث)",
+              "position": 1,
+              "afterSentenceId": "rz7-c106-p0305"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 305,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-107",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 107 — شيشا غولد",
+          "position": 107,
+          "durationMs": 5039600,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz7-c107-i01",
+              "src": "/illustrations/rezero-arc-7/page-2804-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 107 — شيشا غولد",
+              "position": 1,
+              "afterSentenceId": "rz7-c107-p0023"
+            },
+            {
+              "id": "rz7-c107-i02",
+              "src": "/illustrations/rezero-arc-7/page-2842-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 107 — شيشا غولد",
+              "position": 2,
+              "afterSentenceId": "rz7-c107-p0524"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 647,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-108",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 108 — الكارثة الكبرى الوشيكة",
+          "position": 108,
+          "durationMs": 1897160,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz7-c108-i01",
+              "src": "/illustrations/rezero-arc-7/page-2860-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 108 — الكارثة الكبرى الوشيكة",
+              "position": 1,
+              "afterSentenceId": "rz7-c108-p0102"
+            },
+            {
+              "id": "rz7-c108-i02",
+              "src": "/illustrations/rezero-arc-7/page-2872-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 108 — الكارثة الكبرى الوشيكة",
+              "position": 2,
+              "afterSentenceId": "rz7-c108-p0247"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 247,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-109",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 109 — ذئب سيف الإمبراطورية",
+          "position": 109,
+          "durationMs": 2968720,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz7-c109-i01",
+              "src": "/illustrations/rezero-arc-7/page-2902-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 109 — ذئب سيف الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz7-c109-p0397"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 397,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        },
+        {
+          "id": "ch-rezero-7-110",
+          "bookId": "book-rezero-arc-7",
+          "title": "الفصل 110 — كلمات تهنئة",
+          "position": 110,
+          "durationMs": 4515860,
+          "isSample": true,
+          "volumeNumber": 33,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz7-c110-i01",
+              "src": "/illustrations/rezero-arc-7/page-2917-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 110 — كلمات تهنئة",
+              "position": 1,
+              "afterSentenceId": "rz7-c110-p0190"
+            },
+            {
+              "id": "rz7-c110-i02",
+              "src": "/illustrations/rezero-arc-7/page-2945-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 110 — كلمات تهنئة",
+              "position": 2,
+              "afterSentenceId": "rz7-c110-p0571"
+            },
+            {
+              "id": "rz7-c110-i03",
+              "src": "/illustrations/rezero-arc-7/page-2951-image-01.jpg",
+              "alt": "رسم من الآرك 7، الفصل 110 — كلمات تهنئة",
+              "position": 3,
+              "afterSentenceId": "rz7-c110-p0625"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 625,
+          "contentFile": "books/ReZero Arc 7/derived/volume-33.json"
+        }
+      ]
+    },
+    {
+      "id": "book-rezero-arc-8",
+      "slug": "rezero-arc-8-arabic",
+      "title": "ري:زيرو — الآرك الثامن: فنسنت فولّاكيا",
+      "author": "تَابي ناغاتسوكي",
+      "synopsis": "تدخل الإمبراطورية طور الكارثة الكبرى، ويقف سوبارو وفنسنت وحلفاؤهما في وجه جيش لا يعرف الموت، في معركة تحسم مصير فولّاكيا ومن بقي فيها.",
+      "priceMinor": 0,
+      "currency": "SAR",
+      "genre": "فانتازيا",
+      "tags": [
+        "ري:زيرو",
+        "الآرك 8",
+        "فانتازيا",
+        "رواية مترجمة"
+      ],
+      "coverTheme": "indigo",
+      "coverUrl": "/covers/rezero-arc-8.webp",
+      "status": "PUBLISHED",
+      "rating": 4.9,
+      "pageCount": 1667,
+      "contentUnitLabel": "فصل",
+      "contentUnitLabelPlural": "فصول",
+      "chapters": [
+        {
+          "id": "ch-rezero-8-001",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 1 — تغيير شروط النصر",
+          "position": 1,
+          "durationMs": 1578530,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 214,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-002",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 2 — الضغائن",
+          "position": 2,
+          "durationMs": 1852870,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 258,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-003",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 3 — ثلاثة أسباب",
+          "position": 3,
+          "durationMs": 1924250,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz8-c003-i01",
+              "src": "/illustrations/rezero-arc-8/page-0052-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 3 — ثلاثة أسباب",
+              "position": 1,
+              "afterSentenceId": "rz8-c003-p0116"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 271,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-004",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 4 — غريزة المحارب",
+          "position": 4,
+          "durationMs": 1466730,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 4,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 209,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-005",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 5 — مغفرة",
+          "position": 5,
+          "durationMs": 2576560,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 5,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 402,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-006",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 6 — لن يطلب المغفرة",
+          "position": 6,
+          "durationMs": 1977140,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz8-c006-i01",
+              "src": "/illustrations/rezero-arc-8/page-0122-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 6 — لن يطلب المغفرة",
+              "position": 1,
+              "afterSentenceId": "rz8-c006-p0195"
+            },
+            {
+              "id": "rz8-c006-i02",
+              "src": "/illustrations/rezero-arc-8/page-0128-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 6 — لن يطلب المغفرة",
+              "position": 2,
+              "afterSentenceId": "rz8-c006-p0272"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 290,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-007",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 7 — تود فانغ",
+          "position": 7,
+          "durationMs": 65360,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz8-c007-i01",
+              "src": "/illustrations/rezero-arc-8/page-0132-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 7 — تود فانغ",
+              "position": 1,
+              "afterSentenceId": "rz8-c007-p0006"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 7,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-008",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 8 — الآفاق المستقبلية",
+          "position": 8,
+          "durationMs": 1578960,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz8-c008-i01",
+              "src": "/illustrations/rezero-arc-8/page-0149-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 8 — الآفاق المستقبلية",
+              "position": 1,
+              "afterSentenceId": "rz8-c008-p0214"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 226,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-009",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 9 — اتخاذ قرار بالحب",
+          "position": 9,
+          "durationMs": 2176230,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz8-c009-i01",
+              "src": "/illustrations/rezero-arc-8/page-0172-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 9 — اتخاذ قرار بالحب",
+              "position": 1,
+              "afterSentenceId": "rz8-c009-p0293"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 293,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-010",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 10 — لا يمكن لأحد أن يكون وحيدا",
+          "position": 10,
+          "durationMs": 2540870,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz8-c010-i01",
+              "src": "/illustrations/rezero-arc-8/page-0180-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 10 — لا يمكن لأحد أن يكون وحيدا",
+              "position": 1,
+              "afterSentenceId": "rz8-c010-p0102"
+            },
+            {
+              "id": "rz8-c010-i02",
+              "src": "/illustrations/rezero-arc-8/page-0197-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 10 — لا يمكن لأحد أن يكون وحيدا",
+              "position": 2,
+              "afterSentenceId": "rz8-c010-p0348"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 396,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-011",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 11 — اخرس بحق الجحيم",
+          "position": 11,
+          "durationMs": 2300500,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 11,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 294,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-012",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 12 — ناتسوكي سوبارو وفنسنت أبيلوكس",
+          "position": 12,
+          "durationMs": 2344790,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz8-c012-i01",
+              "src": "/illustrations/rezero-arc-8/page-0236-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 12 — ناتسوكي سوبارو وفنسنت أبيلوكس",
+              "position": 1,
+              "afterSentenceId": "rz8-c012-p0164"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 323,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-013",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 13 — لكلٍّ جراحه",
+          "position": 13,
+          "durationMs": 2770060,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 13,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 398,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-014",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 14 — المملكة والإمبراطورية",
+          "position": 14,
+          "durationMs": 2785110,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz8-c014-i01",
+              "src": "/illustrations/rezero-arc-8/page-0298-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 14 — المملكة والإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz8-c014-p0330"
+            },
+            {
+              "id": "rz8-c014-i02",
+              "src": "/illustrations/rezero-arc-8/page-0304-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 14 — المملكة والإمبراطورية",
+              "position": 2,
+              "afterSentenceId": "rz8-c014-p0388"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 388,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-015",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 15 — الإعجاب",
+          "position": 15,
+          "durationMs": 1519620,
+          "isSample": true,
+          "volumeNumber": 34,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz8-c015-i01",
+              "src": "/illustrations/rezero-arc-8/page-0320-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 15 — الإعجاب",
+              "position": 1,
+              "afterSentenceId": "rz8-c015-p0189"
+            },
+            {
+              "id": "rz8-c015-i02",
+              "src": "/illustrations/rezero-arc-8/page-0322-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 15 — الإعجاب",
+              "position": 2,
+              "afterSentenceId": "rz8-c015-p0189"
+            },
+            {
+              "id": "rz8-c015-i03",
+              "src": "/illustrations/rezero-arc-8/page-0323-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 15 — الإعجاب",
+              "position": 3,
+              "afterSentenceId": "rz8-c015-p0189"
+            },
+            {
+              "id": "rz8-c015-i04",
+              "src": "/illustrations/rezero-arc-8/page-0324-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 15 — الإعجاب",
+              "position": 4,
+              "afterSentenceId": "rz8-c015-p0189"
+            },
+            {
+              "id": "rz8-c015-i05",
+              "src": "/illustrations/rezero-arc-8/page-0326-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 15 — الإعجاب",
+              "position": 5,
+              "afterSentenceId": "rz8-c015-p0189"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 189,
+          "contentFile": "books/ReZero Arc 8/derived/volume-34.json"
+        },
+        {
+          "id": "ch-rezero-8-016",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 16 — كارثة الموتى الأحياء",
+          "position": 16,
+          "durationMs": 2453150,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz8-c016-i01",
+              "src": "/illustrations/rezero-arc-8/page-0351-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 16 — كارثة الموتى الأحياء",
+              "position": 1,
+              "afterSentenceId": "rz8-c016-p0311"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 311,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-017",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 17 — تايشوهو سحرية",
+          "position": 17,
+          "durationMs": 1890280,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz8-c017-i01",
+              "src": "/illustrations/rezero-arc-8/page-0370-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 17 — تايشوهو سحرية",
+              "position": 1,
+              "afterSentenceId": "rz8-c017-p0252"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 252,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-018",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 18 — لم الشمل ليس سوى لحظة",
+          "position": 18,
+          "durationMs": 2102270,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz8-c018-i01",
+              "src": "/illustrations/rezero-arc-8/page-0392-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 18 — لم الشمل ليس سوى لحظة",
+              "position": 1,
+              "afterSentenceId": "rz8-c018-p0297"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 297,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-019",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 19 — حيلة فالجا كرومويل",
+          "position": 19,
+          "durationMs": 2325870,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz8-c019-i01",
+              "src": "/illustrations/rezero-arc-8/page-0417-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 19 — حيلة فالجا كرومويل",
+              "position": 1,
+              "afterSentenceId": "rz8-c019-p0334"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 334,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-020",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 20 — النوران",
+          "position": 20,
+          "durationMs": 2550760,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 5,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 315,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-021",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 21 — مصير لا مفر منه",
+          "position": 21,
+          "durationMs": 1735050,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz8-c021-i01",
+              "src": "/illustrations/rezero-arc-8/page-0446-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 21 — مصير لا مفر منه",
+              "position": 1,
+              "afterSentenceId": "rz8-c021-p0047"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 213,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-022",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 22 — أريد أن أصدق، لكنني لن أسامح",
+          "position": 22,
+          "durationMs": 2890030,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz8-c022-i01",
+              "src": "/illustrations/rezero-arc-8/page-0478-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 22 — أريد أن أصدق، لكنني لن أسامح",
+              "position": 1,
+              "afterSentenceId": "rz8-c022-p0250"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 415,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-023",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 23 — لوي",
+          "position": 23,
+          "durationMs": 2158600,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz8-c023-i01",
+              "src": "/illustrations/rezero-arc-8/page-0499-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 23 — لوي",
+              "position": 1,
+              "afterSentenceId": "rz8-c023-p0130"
+            },
+            {
+              "id": "rz8-c023-i02",
+              "src": "/illustrations/rezero-arc-8/page-0514-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 23 — لوي",
+              "position": 2,
+              "afterSentenceId": "rz8-c023-p0340"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 340,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-024",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 24 — للسير في النور",
+          "position": 24,
+          "durationMs": 2530980,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 9,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 383,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-025",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 25 — أمنيات من يقتربون من الموت",
+          "position": 25,
+          "durationMs": 2303080,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz8-c025-i01",
+              "src": "/illustrations/rezero-arc-8/page-0547-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 25 — أمنيات من يقتربون من الموت",
+              "position": 1,
+              "afterSentenceId": "rz8-c025-p0076"
+            },
+            {
+              "id": "rz8-c025-i02",
+              "src": "/illustrations/rezero-arc-8/page-0562-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 25 — أمنيات من يقتربون من الموت",
+              "position": 2,
+              "afterSentenceId": "rz8-c025-p0272"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 312,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-026",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 26 — الأميرة السامة",
+          "position": 26,
+          "durationMs": 2650520,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz8-c026-i01",
+              "src": "/illustrations/rezero-arc-8/page-0593-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 26 — الأميرة السامة",
+              "position": 1,
+              "afterSentenceId": "rz8-c026-p0358"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 358,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-027",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 27 — بيرستيتز فوندالفون",
+          "position": 27,
+          "durationMs": 3209520,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 12,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 441,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-028",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 28 — إخوة الإمبراطورية",
+          "position": 28,
+          "durationMs": 2207190,
+          "isSample": true,
+          "volumeNumber": 35,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz8-c028-i01",
+              "src": "/illustrations/rezero-arc-8/page-0629-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 28 — إخوة الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz8-c028-p0038"
+            },
+            {
+              "id": "rz8-c028-i02",
+              "src": "/illustrations/rezero-arc-8/page-0640-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 28 — إخوة الإمبراطورية",
+              "position": 2,
+              "afterSentenceId": "rz8-c028-p0174"
+            },
+            {
+              "id": "rz8-c028-i03",
+              "src": "/illustrations/rezero-arc-8/page-0652-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 28 — إخوة الإمبراطورية",
+              "position": 3,
+              "afterSentenceId": "rz8-c028-p0301"
+            },
+            {
+              "id": "rz8-c028-i04",
+              "src": "/illustrations/rezero-arc-8/page-0654-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 28 — إخوة الإمبراطورية",
+              "position": 4,
+              "afterSentenceId": "rz8-c028-p0301"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 301,
+          "contentFile": "books/ReZero Arc 8/derived/volume-35.json"
+        },
+        {
+          "id": "ch-rezero-8-029",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 29 — لم أُرِد أن أحب",
+          "position": 29,
+          "durationMs": 1259900,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz8-c029-i01",
+              "src": "/illustrations/rezero-arc-8/page-0661-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 29 — لم أُرِد أن أحب",
+              "position": 1,
+              "afterSentenceId": "rz8-c029-p0076"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 184,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-030",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 30 — أخبار سيئة",
+          "position": 30,
+          "durationMs": 2070450,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 240,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-031",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 31 — الحجر",
+          "position": 31,
+          "durationMs": 2010250,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz8-c031-i01",
+              "src": "/illustrations/rezero-arc-8/page-0693-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 31 — الحجر",
+              "position": 1,
+              "afterSentenceId": "rz8-c031-p0053"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 239,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-032",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 32 — اختيار الأعضاء",
+          "position": 32,
+          "durationMs": 1885550,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz8-c032-i01",
+              "src": "/illustrations/rezero-arc-8/page-0712-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 32 — اختيار الأعضاء",
+              "position": 1,
+              "afterSentenceId": "rz8-c032-p0035"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 251,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-033",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 33 — الحكم على الحب",
+          "position": 33,
+          "durationMs": 1780630,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz8-c033-i01",
+              "src": "/illustrations/rezero-arc-8/page-0733-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 33 — الحكم على الحب",
+              "position": 1,
+              "afterSentenceId": "rz8-c033-p0047"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 226,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-034",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 34 — لن أسامحك حتى تشرح",
+          "position": 34,
+          "durationMs": 1813310,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 6,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 274,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-035",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 35 — العمل الذي يهدد الحياة",
+          "position": 35,
+          "durationMs": 1634860,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 7,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 208,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-036",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 36 — لوبوغانا، عاصمة الموتى الأحياء",
+          "position": 36,
+          "durationMs": 1878670,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz8-c036-i01",
+              "src": "/illustrations/rezero-arc-8/page-0789-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 36 — لوبوغانا، عاصمة الموتى الأحياء",
+              "position": 1,
+              "afterSentenceId": "rz8-c036-p0092"
+            },
+            {
+              "id": "rz8-c036-i02",
+              "src": "/illustrations/rezero-arc-8/page-0797-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 36 — لوبوغانا، عاصمة الموتى الأحياء",
+              "position": 2,
+              "afterSentenceId": "rz8-c036-p0188"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 250,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-037",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 37 — وقت التمهيد",
+          "position": 37,
+          "durationMs": 2017130,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 9,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 230,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-038",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 38 — روان سيغمونت",
+          "position": 38,
+          "durationMs": 1928120,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz8-c038-i01",
+              "src": "/illustrations/rezero-arc-8/page-0839-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 38 — روان سيغمونت",
+              "position": 1,
+              "afterSentenceId": "rz8-c038-p0219"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 219,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-039",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 39 — ضحكة من لا حدود لها",
+          "position": 39,
+          "durationMs": 1974560,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz8-c039-i01",
+              "src": "/illustrations/rezero-arc-8/page-0857-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 39 — ضحكة من لا حدود لها",
+              "position": 1,
+              "afterSentenceId": "rz8-c039-p0231"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 243,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-040",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 40 — تهديد غير مهم",
+          "position": 40,
+          "durationMs": 1361810,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz8-c040-i01",
+              "src": "/illustrations/rezero-arc-8/page-0868-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 40 — تهديد غير مهم",
+              "position": 1,
+              "afterSentenceId": "rz8-c040-p0115"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 181,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-041",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 41 — حيث يقيم الجحيم",
+          "position": 41,
+          "durationMs": 1979290,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz8-c041-i01",
+              "src": "/illustrations/rezero-arc-8/page-0892-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 41 — حيث يقيم الجحيم",
+              "position": 1,
+              "afterSentenceId": "rz8-c041-p0218"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 218,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-042",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 42 — العبد الأعظم",
+          "position": 42,
+          "durationMs": 1595730,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz8-c042-i01",
+              "src": "/illustrations/rezero-arc-8/page-0902-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 42 — العبد الأعظم",
+              "position": 1,
+              "afterSentenceId": "rz8-c042-p0121"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 203,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-043",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 43 — لكلٍّ أمانيه التي طال انتظارها",
+          "position": 43,
+          "durationMs": 2194290,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz8-c043-i01",
+              "src": "/illustrations/rezero-arc-8/page-0929-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 43 — لكلٍّ أمانيه التي طال انتظارها",
+              "position": 1,
+              "afterSentenceId": "rz8-c043-p0245"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 267,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-044",
+          "bookId": "book-rezero-arc-8",
+          "title": "فاصل — أوبيلك (الجزء أ)",
+          "position": 44,
+          "durationMs": 1365250,
+          "isSample": true,
+          "volumeNumber": 36,
+          "volumePosition": 16,
+          "illustrations": [
+            {
+              "id": "rz8-c044-i01",
+              "src": "/illustrations/rezero-arc-8/page-0945-image-01.jpg",
+              "alt": "رسم من الآرك 8، فاصل — أوبيلك (الجزء أ)",
+              "position": 1,
+              "afterSentenceId": "rz8-c044-p0171"
+            },
+            {
+              "id": "rz8-c044-i02",
+              "src": "/illustrations/rezero-arc-8/page-0947-image-01.jpg",
+              "alt": "رسم من الآرك 8، فاصل — أوبيلك (الجزء أ)",
+              "position": 2,
+              "afterSentenceId": "rz8-c044-p0171"
+            },
+            {
+              "id": "rz8-c044-i03",
+              "src": "/illustrations/rezero-arc-8/page-0949-image-01.jpg",
+              "alt": "رسم من الآرك 8، فاصل — أوبيلك (الجزء أ)",
+              "position": 3,
+              "afterSentenceId": "rz8-c044-p0171"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 171,
+          "contentFile": "books/ReZero Arc 8/derived/volume-36.json"
+        },
+        {
+          "id": "ch-rezero-8-045",
+          "bookId": "book-rezero-arc-8",
+          "title": "فاصل — أوبيلك (الجزء ب)",
+          "position": 45,
+          "durationMs": 1093920,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 124,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-046",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 44 — كيفية الرد على الإيمان",
+          "position": 46,
+          "durationMs": 1935000,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 248,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-047",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 45 — كيف تُسقَط النجوم",
+          "position": 47,
+          "durationMs": 1519620,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz8-c047-i01",
+              "src": "/illustrations/rezero-arc-8/page-0994-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 45 — كيف تُسقَط النجوم",
+              "position": 1,
+              "afterSentenceId": "rz8-c047-p0192"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 192,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-048",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 46 — طعم الريح",
+          "position": 48,
+          "durationMs": 1363530,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 4,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 175,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-049",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 47 — تنزا",
+          "position": 49,
+          "durationMs": 1908340,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz8-c049-i01",
+              "src": "/illustrations/rezero-arc-8/page-1028-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 47 — تنزا",
+              "position": 1,
+              "afterSentenceId": "rz8-c049-p0269"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 269,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-050",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 48 — لعنة الشوك",
+          "position": 50,
+          "durationMs": 1440500,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 6,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 176,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-051",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 49 — ملك الشوك",
+          "position": 51,
+          "durationMs": 1431470,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 7,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 183,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-052",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 50 — يوجارد فولّاكيا",
+          "position": 52,
+          "durationMs": 2209770,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz8-c052-i01",
+              "src": "/illustrations/rezero-arc-8/page-1078-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 50 — يوجارد فولّاكيا",
+              "position": 1,
+              "afterSentenceId": "rz8-c052-p0259"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 259,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-053",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 51 — تينوزان",
+          "position": 53,
+          "durationMs": 1812880,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 9,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 204,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-054",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 52 — ميديوم أوكونيل",
+          "position": 54,
+          "durationMs": 1595300,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz8-c054-i01",
+              "src": "/illustrations/rezero-arc-8/page-1111-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 52 — ميديوم أوكونيل",
+              "position": 1,
+              "afterSentenceId": "rz8-c054-p0200"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 200,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-055",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 53 — القناص السحري",
+          "position": 55,
+          "durationMs": 3372060,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 11,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 385,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-056",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 54 — سوماتو",
+          "position": 56,
+          "durationMs": 2353820,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 12,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 334,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-057",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 55 — مادلين إيشارت",
+          "position": 57,
+          "durationMs": 3301540,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz8-c057-i01",
+              "src": "/illustrations/rezero-arc-8/page-1188-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 55 — مادلين إيشارت",
+              "position": 1,
+              "afterSentenceId": "rz8-c057-p0248"
+            },
+            {
+              "id": "rz8-c057-i02",
+              "src": "/illustrations/rezero-arc-8/page-1200-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 55 — مادلين إيشارت",
+              "position": 2,
+              "afterSentenceId": "rz8-c057-p0396"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 407,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-058",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 56 — أراكيّا",
+          "position": 58,
+          "durationMs": 1702800,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz8-c058-i01",
+              "src": "/illustrations/rezero-arc-8/page-1211-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 56 — أراكيّا",
+              "position": 1,
+              "afterSentenceId": "rz8-c058-p0108"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 227,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-059",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 57 — سيسيلوس سيغمونت",
+          "position": 59,
+          "durationMs": 4162400,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz8-c059-i01",
+              "src": "/illustrations/rezero-arc-8/page-1259-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 57 — سيسيلوس سيغمونت",
+              "position": 1,
+              "afterSentenceId": "rz8-c059-p0474"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 474,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-060",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 58 — إثبات الوجود",
+          "position": 60,
+          "durationMs": 2145700,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 16,
+          "illustrations": [
+            {
+              "id": "rz8-c060-i01",
+              "src": "/illustrations/rezero-arc-8/page-1280-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 58 — إثبات الوجود",
+              "position": 1,
+              "afterSentenceId": "rz8-c060-p0251"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 251,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-061",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 59 — سفينكس",
+          "position": 61,
+          "durationMs": 4660340,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 17,
+          "illustrations": [
+            {
+              "id": "rz8-c061-i01",
+              "src": "/illustrations/rezero-arc-8/page-1317-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 59 — سفينكس",
+              "position": 1,
+              "afterSentenceId": "rz8-c061-p0496"
+            },
+            {
+              "id": "rz8-c061-i02",
+              "src": "/illustrations/rezero-arc-8/page-1327-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 59 — سفينكس",
+              "position": 2,
+              "afterSentenceId": "rz8-c061-p0626"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 652,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-062",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 60 — ساحرة",
+          "position": 62,
+          "durationMs": 770560,
+          "isSample": true,
+          "volumeNumber": 37,
+          "volumePosition": 18,
+          "illustrations": [
+            {
+              "id": "rz8-c062-i01",
+              "src": "/illustrations/rezero-arc-8/page-1338-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 60 — ساحرة",
+              "position": 1,
+              "afterSentenceId": "rz8-c062-p0095"
+            },
+            {
+              "id": "rz8-c062-i02",
+              "src": "/illustrations/rezero-arc-8/page-1340-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 60 — ساحرة",
+              "position": 2,
+              "afterSentenceId": "rz8-c062-p0095"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 95,
+          "contentFile": "books/ReZero Arc 8/derived/volume-37.json"
+        },
+        {
+          "id": "ch-rezero-8-063",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 61 — بالاديو مانيسك",
+          "position": 63,
+          "durationMs": 1903180,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 1,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 238,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-064",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 62 — قوة الحب",
+          "position": 64,
+          "durationMs": 1739780,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 2,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 232,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-065",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 63 — على هذه الشفاه أتذوق هذه المعجزة",
+          "position": 65,
+          "durationMs": 1665390,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz8-c065-i01",
+              "src": "/illustrations/rezero-arc-8/page-1391-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 63 — على هذه الشفاه أتذوق هذه المعجزة",
+              "position": 1,
+              "afterSentenceId": "rz8-c065-p0199"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 225,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-066",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 64 — أبٌ وابنٌ من الإمبراطورية",
+          "position": 66,
+          "durationMs": 2051960,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz8-c066-i01",
+              "src": "/illustrations/rezero-arc-8/page-1405-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 64 — أبٌ وابنٌ من الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz8-c066-p0141"
+            },
+            {
+              "id": "rz8-c066-i02",
+              "src": "/illustrations/rezero-arc-8/page-1415-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 64 — أبٌ وابنٌ من الإمبراطورية",
+              "position": 2,
+              "afterSentenceId": "rz8-c066-p0263"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 263,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-067",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 65 — سقوط النجوم على العاصمة الإمبراطورية",
+          "position": 67,
+          "durationMs": 2767050,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz8-c067-i01",
+              "src": "/illustrations/rezero-arc-8/page-1439-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 65 — سقوط النجوم على العاصمة الإمبراطورية",
+              "position": 1,
+              "afterSentenceId": "rz8-c067-p0306"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 374,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-068",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 66 — المدفع الكريستالي السحري",
+          "position": 68,
+          "durationMs": 1825780,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 6,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 254,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-069",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 67 — ما في اليد من أوراق",
+          "position": 69,
+          "durationMs": 2031320,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz8-c069-i01",
+              "src": "/illustrations/rezero-arc-8/page-1484-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 67 — ما في اليد من أوراق",
+              "position": 1,
+              "afterSentenceId": "rz8-c069-p0262"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 262,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-070",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 68 — الرجل الذي أحببته",
+          "position": 70,
+          "durationMs": 1997780,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz8-c070-i01",
+              "src": "/illustrations/rezero-arc-8/page-1503-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 68 — الرجل الذي أحببته",
+              "position": 1,
+              "afterSentenceId": "rz8-c070-p0251"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 263,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-071",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 69 — لقد سامحتك",
+          "position": 71,
+          "durationMs": 1290430,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 9,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 181,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-072",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 70 — الإستراتيجية النهائية",
+          "position": 72,
+          "durationMs": 1521340,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 10,
+          "illustrations": [],
+          "sentences": [],
+          "sentenceCount": 179,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-073",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 71 — أحلام بطولية",
+          "position": 73,
+          "durationMs": 2154300,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz8-c073-i01",
+              "src": "/illustrations/rezero-arc-8/page-1557-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 71 — أحلام بطولية",
+              "position": 1,
+              "afterSentenceId": "rz8-c073-p0325"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 325,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-074",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 72 — أميرة الشمس",
+          "position": 74,
+          "durationMs": 1595300,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz8-c074-i01",
+              "src": "/illustrations/rezero-arc-8/page-1570-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 72 — أميرة الشمس",
+              "position": 1,
+              "afterSentenceId": "rz8-c074-p0161"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 234,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-075",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 73 — خصمان جمعهما القدر",
+          "position": 75,
+          "durationMs": 1944460,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz8-c075-i01",
+              "src": "/illustrations/rezero-arc-8/page-1583-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 73 — خصمان جمعهما القدر",
+              "position": 1,
+              "afterSentenceId": "rz8-c075-p0100"
+            },
+            {
+              "id": "rz8-c075-i02",
+              "src": "/illustrations/rezero-arc-8/page-1598-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 73 — خصمان جمعهما القدر",
+              "position": 2,
+              "afterSentenceId": "rz8-c075-p0305"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 305,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-076",
+          "bookId": "book-rezero-arc-8",
+          "title": "الفصل 74 — الحب",
+          "position": 76,
+          "durationMs": 2704270,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz8-c076-i01",
+              "src": "/illustrations/rezero-arc-8/page-1627-image-01.jpg",
+              "alt": "رسم من الآرك 8، الفصل 74 — الحب",
+              "position": 1,
+              "afterSentenceId": "rz8-c076-p0374"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 374,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        },
+        {
+          "id": "ch-rezero-8-077",
+          "bookId": "book-rezero-arc-8",
+          "title": "الخاتمة — بريسيلا بارييل",
+          "position": 77,
+          "durationMs": 3684240,
+          "isSample": true,
+          "volumeNumber": 38,
+          "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz8-c077-i01",
+              "src": "/illustrations/rezero-arc-8/page-1662-image-01.jpg",
+              "alt": "رسم من الآرك 8، الخاتمة — بريسيلا بارييل",
+              "position": 1,
+              "afterSentenceId": "rz8-c077-p0469"
+            },
+            {
+              "id": "rz8-c077-i02",
+              "src": "/illustrations/rezero-arc-8/page-1665-image-01.jpg",
+              "alt": "رسم من الآرك 8، الخاتمة — بريسيلا بارييل",
+              "position": 2,
+              "afterSentenceId": "rz8-c077-p0483"
+            }
+          ],
+          "sentences": [],
+          "sentenceCount": 483,
+          "contentFile": "books/ReZero Arc 8/derived/volume-38.json"
+        }
+      ]
     }
   ],
   "orders": [],

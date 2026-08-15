@@ -22,3 +22,5 @@ apps/api/data/tts-cache/
 apps/api/data/*.json
 apps/api/data/*.tmp
 !apps/api/data/deploy-seed.json
+/apps/web/public/re zero arc 7 - 9/
+/tmp/pdfs/rezero-arcs/

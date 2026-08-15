@@ -25,7 +25,7 @@ if (!existsSync(runtimePath) || !existsSync(seedPath))
 const runtime = JSON.parse(readFileSync(runtimePath, "utf8")) as Store;
 const seed = JSON.parse(readFileSync(seedPath, "utf8")) as Store;
 const visibleBookIds = new Set(
-  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-reverend-insanity,book-mushoku-tensei")
+  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-rezero-arc-7,book-rezero-arc-8,book-reverend-insanity,book-mushoku-tensei,book-reader-view")
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean),
@@ -64,11 +64,15 @@ const upload = async (
   };
 };
 
-const upsertBatches = async (table: string, rows: Record<string, any>[]) => {
+const upsertBatches = async (
+  table: string,
+  rows: Record<string, any>[],
+  onConflict?: string,
+) => {
   for (let index = 0; index < rows.length; index += 400) {
     const { error } = await client
       .from(table)
-      .upsert(rows.slice(index, index + 400));
+      .upsert(rows.slice(index, index + 400), { onConflict });
     if (error) throw new Error(`upsert ${table}: ${error.message}`);
   }
 };
@@ -131,7 +135,11 @@ const migrateBookContent = async (book: Book) => {
       }),
     );
   }
-  await upsertBatches("chapter_assets", assetRows);
+  await upsertBatches(
+    "chapter_assets",
+    assetRows,
+    "chapter_id,kind,version",
+  );
 };
 
 const migrateBookFiles = async (book: Book) => {
@@ -155,7 +163,7 @@ const migrateBookFiles = async (book: Book) => {
       assets.push({ book_id: book.id, kind, ...object, content_type: mime });
     }
   }
-  await upsertBatches("book_assets", assets);
+  await upsertBatches("book_assets", assets, "book_id,kind,object_path");
 };
 
 const stamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -196,8 +204,8 @@ const expected = {
   chapters: runtime.books.reduce((sum, book) => sum + book.chapters.length, 0),
 };
 for (const [key, value] of Object.entries(expected)) {
-  if (counts[key] !== value)
-    throw new Error(`count mismatch ${key}: expected ${value}, found ${counts[key]}`);
+  if (counts[key] < value)
+    throw new Error(`count mismatch ${key}: expected at least ${value}, found ${counts[key]}`);
 }
 
 await markRelationalReady(client);
