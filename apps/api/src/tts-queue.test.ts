@@ -26,4 +26,22 @@ describe("TtsGenerationQueue", () => {
     await expect(queue.run("bad", async () => { throw new Error("temporary"); })).rejects.toThrow("temporary");
     await expect(queue.run("good", async () => "ready")).resolves.toBe("ready");
   });
+
+  it("runs narration work before queued background warming", async () => {
+    const queue = new TtsGenerationQueue(0);
+    const order: string[] = [];
+    let releaseFirst!: () => void;
+    const first = queue.run("first", async () => {
+      order.push("first");
+      await new Promise<void>((resolve) => { releaseFirst = resolve; });
+      return "first";
+    });
+    await Promise.resolve();
+    const warming = queue.run("warming", async () => { order.push("warming"); return "warming"; }, "background");
+    const narration = queue.run("narration", async () => { order.push("narration"); return "narration"; });
+    releaseFirst();
+
+    await expect(Promise.all([first, warming, narration])).resolves.toEqual(["first", "warming", "narration"]);
+    expect(order).toEqual(["first", "narration", "warming"]);
+  });
 });

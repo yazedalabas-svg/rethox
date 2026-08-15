@@ -437,6 +437,7 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
   const parsed = z
     .object({
       text: z.string().min(1).max(3000),
+      priority: z.enum(["foreground", "background"]).default("foreground"),
     })
     .safeParse(req.body);
   if (!parsed.success)
@@ -484,7 +485,7 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
           }
         }
         throw lastError || new Error("TTS generation failed");
-      });
+      }, parsed.data.priority);
     }
     const metadata = JSON.parse(readFileSync(metaPath, "utf8"));
     if (!Array.isArray(metadata.boundaries) || metadata.boundaries.length === 0) {

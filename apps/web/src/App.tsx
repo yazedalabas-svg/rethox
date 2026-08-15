@@ -3124,7 +3124,7 @@ function ReaderPage() {
           if (sentences.length) {
             const startIndex = Math.floor(Math.random() * sentences.length);
             const text = buildWarmupSegment(sentences, startIndex);
-            if (text) await requestVoice(text).catch(() => {});
+            if (text) await requestVoice(text, "background").catch(() => {});
           }
         } catch {
           // Best-effort only — warmup failures must never surface to the reader.
@@ -3322,17 +3322,17 @@ function ReaderPage() {
           endMs: 0,
           confidence: 1,
         }));
-  const requestVoice = (text: string) =>
+  const requestVoice = (text: string, priority: "foreground" | "background" = "foreground") =>
     api<VoiceResult>("/tts", {
       method: "POST",
-      body: JSON.stringify({ text }),
+      body: JSON.stringify({ text, priority }),
     });
-  const requestVoiceReliable = async (text: string) => {
+  const requestVoiceReliable = async (text: string, priority: "foreground" | "background" = "foreground") => {
     let lastError: unknown;
     const attempts = 4;
     for (let attempt = 0; attempt < attempts; attempt += 1) {
       try {
-        return await requestVoice(text);
+        return await requestVoice(text, priority);
       } catch (error) {
         lastError = error;
         const retryDelay = Math.min(8_000, 900 * 2 ** attempt);
@@ -3400,13 +3400,22 @@ function ReaderPage() {
   // Fetches one segment's audio, memoized on the cache so a repeated request
   // (from a re-click, or from the background warmer catching up to a segment
   // the reader already jumped to) reuses the same in-flight or settled promise.
-  const loadSegment = (cache: ChapterNarrationCache, index: number): Promise<PreparedNarrationSegment> => {
+  const loadSegment = (
+    cache: ChapterNarrationCache,
+    index: number,
+    priority: "foreground" | "background" = "foreground",
+  ): Promise<PreparedNarrationSegment> => {
     const cached = cache.segments[index];
     if (cached) return Promise.resolve(cached);
-    const inFlight = cache.loading[index];
-    if (inFlight) return inFlight;
     const draft = cache.drafts[index];
-    const promise = requestVoiceReliable(draft.text).then((result) => {
+    const inFlight = cache.loading[index];
+    if (inFlight) {
+      // Escalate a queued pre-warm request as soon as narration needs it.
+      // The API merges it by cache key, so this does not synthesize twice.
+      if (priority === "foreground") void requestVoice(draft.text, priority).catch(() => {});
+      return inFlight;
+    }
+    const promise = requestVoiceReliable(draft.text, priority).then((result) => {
       const segment: PreparedNarrationSegment = {
         ...draft,
         result,
@@ -3435,7 +3444,7 @@ function ReaderPage() {
       while (index < cache.drafts.length) {
         if (session !== playbackSessionRef.current || chapterCacheRef.current !== cache) return;
         try {
-          await loadSegment(cache, index);
+          await loadSegment(cache, index, "background");
           cache.nextWarmIndex = index + 1;
           index += 1;
           failures = 0;
@@ -3473,7 +3482,7 @@ function ReaderPage() {
     for (let attempt = 0; attempt < 3; attempt += 1) {
       if (session !== playbackSessionRef.current) throw new Error("playback-cancelled");
       try {
-        return await loadSegment(cache, index);
+        return await loadSegment(cache, index, "foreground");
       } catch (error) {
         lastError = error;
         await new Promise((resolve) => window.setTimeout(resolve, 600 * (attempt + 1)));
