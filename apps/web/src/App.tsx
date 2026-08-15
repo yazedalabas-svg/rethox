@@ -52,8 +52,6 @@ import {
   Menu,
   Minus,
   MoreVertical,
-  Maximize2,
-  Minimize2,
   Moon,
   ArrowDown,
   RotateCcw,
@@ -2746,7 +2744,6 @@ function ReaderPage() {
   } | null>(null);
   const [lockedChapter, setLockedChapter] = useState<{ id: string; title: string } | null>(null);
   const [showChapterList, setShowChapterList] = useState(false);
-  const [focusMode, setFocusMode] = useState(false);
   const [focusControlsVisible, setFocusControlsVisible] = useState(true);
   const [atChapterEnd, setAtChapterEnd] = useState(false);
   const [transitionTitle, setTransitionTitle] = useState("");
@@ -2912,23 +2909,15 @@ function ReaderPage() {
     prefixed.mozPreservesPitch = true;
   };
   const wakeFocusControls = useCallback(() => {
-    if (!focusMode) return;
     setFocusControlsVisible(true);
     window.clearTimeout(focusControlsTimerRef.current);
     focusControlsTimerRef.current = window.setTimeout(() => {
       setFocusControlsVisible(false);
     }, 3000);
-  }, [focusMode]);
-  const toggleFocusMode = () => {
-    const next = !focusMode;
+  }, []);
+  const hideReaderControls = () => {
     window.clearTimeout(focusControlsTimerRef.current);
-    setFocusControlsVisible(true);
-    setFocusMode(next);
-    if (next) {
-      focusControlsTimerRef.current = window.setTimeout(() => {
-        setFocusControlsVisible(false);
-      }, 3000);
-    }
+    setFocusControlsVisible(false);
   };
   const releaseAudio = (audio: HTMLAudioElement | null) => {
     if (!audio) return;
@@ -3095,6 +3084,13 @@ function ReaderPage() {
       .catch(() => setChapterComments([]));
     return () => { active = false; };
   }, [chapterId, ready, sectionSentenceId, user?.id]);
+  // Reader chrome follows inactivity, not a separate mode. This keeps the
+  // page calm by default while a simple mouse move, touch, or keyboard focus
+  // immediately restores the controls for three seconds.
+  useEffect(() => {
+    wakeFocusControls();
+    return () => window.clearTimeout(focusControlsTimerRef.current);
+  }, [chapterId, wakeFocusControls]);
   // Background cache warmup: the moment the reader opens the book, quietly ask
   // the TTS endpoint to synthesize a few random spots across the novel so the
   // audio is already cached whenever the reader actually gets there. This never
@@ -3877,7 +3873,7 @@ function ReaderPage() {
         event.preventDefault();
         void toggleNarration();
       }
-      if (event.key.toLowerCase() === "f") toggleFocusMode();
+      if (event.key.toLowerCase() === "f") hideReaderControls();
       if (event.key === "ArrowRight") {
         event.preventDefault();
         seek(currentMsRef.current + 5000);
@@ -4142,7 +4138,7 @@ function ReaderPage() {
   };
   return (
     <div
-      className={`reader ${focusMode ? "focus-mode" : ""} ${focusControlsVisible ? "focus-controls-visible" : ""}`}
+      className={`reader ${focusControlsVisible ? "focus-controls-visible" : ""}`}
       onPointerMove={(event) => {
         if (event.pointerType !== "touch") wakeFocusControls();
       }}
@@ -4188,8 +4184,8 @@ function ReaderPage() {
           <button onClick={() => setShowChapterList((value) => !value)} title={`فهرس ${book.contentUnitLabelPlural || "الفصول"}`}>
             <List />
           </button>
-          <button onClick={toggleFocusMode} title="وضع التركيز" aria-label={focusMode ? "إيقاف وضع التركيز" : "تشغيل وضع التركيز"}>
-            {focusMode ? <Minimize2 /> : <Maximize2 />}
+          <button onClick={hideReaderControls} title="إخفاء الأدوات" aria-label="إخفاء أدوات القراءة">
+            <EyeOff />
           </button>
           <button onClick={() => setFontSize((v) => Math.min(46, v + 2))}>
             + أ

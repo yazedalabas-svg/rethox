@@ -26,3 +26,4 @@ apps/api/data/*.tmp
 /tmp/pdfs/rezero-arcs/
 /tmp/pdfs/rezero-arc-6/
 /tmp/trace-*
+/tmp/focus-review/
