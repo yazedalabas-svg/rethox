@@ -2821,6 +2821,7 @@ function ReaderPage() {
   const animationRef = useRef(0);
   const trackingHeartbeatRef = useRef(0);
   const trackingFramePendingRef = useRef(false);
+  const narrationRecoveryRef = useRef({ session: 0, segment: -1, attempts: 0 });
   const syncTrackingRef = useRef<(() => void) | null>(null);
   const lastTrackedBoundaryRef = useRef(-1);
   const currentSegmentRef = useRef(0);
@@ -3301,9 +3302,6 @@ function ReaderPage() {
     };
   }, [chapter]);
   useEffect(() => {
-    if (durationMs && currentMs >= durationMs) setPlaying(false);
-  }, [currentMs, durationMs]);
-  useEffect(() => {
     if (!atChapterEnd || !chapter) return;
     try {
       const completed: string[] = JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]");
@@ -3520,6 +3518,29 @@ function ReaderPage() {
       setPlaying(false);
       return;
     }
+    const recoverPreparedSegment = () => {
+      if (session !== playbackSessionRef.current) return;
+      const previous = narrationRecoveryRef.current;
+      const attempts = previous.session === session && previous.segment === segmentIndex
+        ? previous.attempts + 1
+        : 1;
+      narrationRecoveryRef.current = { session, segment: segmentIndex, attempts };
+      if (attempts > 3) {
+        setNarrationBusy(false);
+        setPlaying(false);
+        setPlayerError("تعذر استعادة هذا المقطع الصوتي. حاول مرة أخرى.");
+        return;
+      }
+      setNarrationBusy(true);
+      // Recreate the media request from the current word. A temporary range or
+      // decode failure must not silently end a long narration.
+      const resumeBoundary = Math.max(0, lastTrackedBoundaryRef.current);
+      window.setTimeout(() => {
+        if (session === playbackSessionRef.current) {
+          void playPreparedSegment(cache, segmentIndex, resumeBoundary, session);
+        }
+      }, 700 * attempts);
+    };
     try {
       cancelAnimationFrame(animationRef.current);
       const audio = audioRef.current || new Audio();
@@ -3628,7 +3649,9 @@ function ReaderPage() {
       audio.onseeking = resumeTracking;
       audio.onseeked = resumeTracking;
       audio.onplay = () => {
+        narrationRecoveryRef.current = { session: 0, segment: -1, attempts: 0 };
         setPlayerError("");
+        setNarrationBusy(false);
         setPlaying(true);
         resumeTracking();
       };
@@ -3639,6 +3662,10 @@ function ReaderPage() {
         // long playback. This inexpensive clock check keeps the spoken word
         // synchronized without relying on one event source.
         trackingHeartbeatRef.current = window.setInterval(resumeTracking, 250);
+      };
+      audio.onerror = () => {
+        if (session !== playbackSessionRef.current || audio !== audioRef.current) return;
+        recoverPreparedSegment();
       };
       audio.onpause = () => {
         cancelAnimationFrame(animationRef.current);
@@ -3699,8 +3726,7 @@ function ReaderPage() {
       await audio.play();
     } catch {
       if (session === playbackSessionRef.current) {
-        setPlaying(false);
-        setPlayerError("تعذر تجهيز الصوت الآن. حاول مرة أخرى.");
+        recoverPreparedSegment();
       }
     }
   };
