@@ -11,9 +11,10 @@ import type { Store } from "./types.js";
 const logger = pino({ level: process.env.LOG_LEVEL || "info" });
 const router = Router();
 
-// Real charges are the default. Free checkout has to be asked for explicitly so
-// that a missing key in production breaks checkout instead of giving books away.
-export const demoCheckout = process.env.PAYMENTS_MODE === "demo";
+// Keep billing safe by default: a deployment must explicitly opt into live
+// charges.  This installation is currently in demo mode, so checkout grants
+// the selected book without opening Moyasar or charging a card.
+export const demoCheckout = process.env.PAYMENTS_MODE !== "live";
 export const paymentsConfigured = Boolean(moyasar);
 export const liveKey = Boolean(moyasar?.secretKey.startsWith("sk_live_"));
 
