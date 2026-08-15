@@ -280,6 +280,9 @@ type ChapterNarrationCache = {
   segments: (PreparedNarrationSegment | null)[];
   loading: (Promise<PreparedNarrationSegment> | null)[];
   warmed: boolean;
+  nextWarmIndex: number;
+  warmSession: number | null;
+  warmPromise: Promise<void> | null;
 };
 type LastRead = {
   bookSlug: string;
@@ -3319,6 +3322,9 @@ function ReaderPage() {
       segments: new Array(drafts.length).fill(null),
       loading: new Array(drafts.length).fill(null),
       warmed: false,
+      nextWarmIndex: 0,
+      warmSession: null,
+      warmPromise: null,
     };
     chapterCacheRef.current = cache;
     return cache;
@@ -3353,25 +3359,47 @@ function ReaderPage() {
     cache.loading[index] = promise;
     return promise;
   };
-  // Walks the chapter's segments forward from `fromIndex` in the background so
-  // ordinary continued reading always has the next segment ready. Starts at
-  // wherever the reader actually is — not segment 0 — so warming effort goes
-  // toward what's about to be needed, not toward text already behind them.
-  // Runs once per chapter; a later jump backward is served on demand by
-  // loadSegment instead of restarting the walk.
+  // Walks forward until every remaining segment is generated. Unlike the old
+  // one-pass warmer, a temporary TTS failure does not mark the chapter as done:
+  // it keeps the same queue position, retries with a bounded delay, then moves
+  // on only after that segment is genuinely ready.
   const warmChapterCache = (cache: ChapterNarrationCache, session: number, fromIndex: number) => {
-    if (cache.warmed) return;
-    cache.warmed = true;
-    const walk = (async () => {
-      for (let index = fromIndex; index < cache.drafts.length; index += 1) {
+    if (cache.warmed || (cache.warmSession === session && cache.warmPromise)) return;
+    cache.warmSession = session;
+    const walk = async () => {
+      let index = Math.max(fromIndex, cache.nextWarmIndex);
+      let failures = 0;
+      while (index < cache.drafts.length) {
         if (session !== playbackSessionRef.current || chapterCacheRef.current !== cache) return;
-        await loadSegment(cache, index).catch(() => {});
-        if (index < cache.drafts.length - 1) await new Promise((resolve) => window.setTimeout(resolve, 120));
+        try {
+          await loadSegment(cache, index);
+          cache.nextWarmIndex = index + 1;
+          index += 1;
+          failures = 0;
+          if (index < cache.drafts.length) {
+            await new Promise((resolve) => window.setTimeout(resolve, 120));
+          }
+        } catch {
+          // Do not skip a failed segment: the reader needs the following audio
+          // to be generated in order, and Edge TTS can reject a short burst.
+          failures += 1;
+          const retryDelay = Math.min(10_000, 700 * 2 ** Math.min(failures, 4));
+          await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
+        }
       }
-    })();
-    backgroundNarrationRef.current = walk.finally(() => {
-      if (backgroundNarrationRef.current === walk) backgroundNarrationRef.current = null;
+      cache.warmed = true;
+    };
+    const task = walk();
+    let settled: Promise<void>;
+    settled = task.finally(() => {
+      if (cache.warmPromise === settled) {
+        cache.warmPromise = null;
+        cache.warmSession = null;
+      }
+      if (backgroundNarrationRef.current === settled) backgroundNarrationRef.current = null;
     });
+    cache.warmPromise = settled;
+    backgroundNarrationRef.current = settled;
   };
   // Single entry point for both "press play from where I left off" and
   // "clicked this word": resolves the segment covering the target word
