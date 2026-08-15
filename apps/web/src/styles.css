@@ -2994,6 +2994,9 @@ html:has(.reader-index.open) .theme-fab {
   pointer-events:auto;
   transform:none;
 }
+/* The rail is vertically centered with its own transform; do not reset it
+   while revealing the rest of the reader controls. */
+.reader.focus-controls-visible .scroll-rail { transform:translateY(-50%); }
 html:has(.reader:not(.focus-controls-visible)) .theme-fab {
   opacity:0;
   pointer-events:none;
