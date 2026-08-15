@@ -47,27 +47,11 @@ export const ttsEngines: TtsEngine[] = [
     wordTimings: "exact",
   },
   {
-    id: "shakir",
-    label: "شاكر — مصري",
-    description: "صوت رجالي بلكنة مصرية. تظليل دقيق لكل كلمة.",
-    kind: "edge",
-    voice: "ar-EG-ShakirNeural",
-    wordTimings: "exact",
-  },
-  {
     id: "salma",
     label: "سلمى — مصرية",
     description: "صوت نسائي بلكنة مصرية. تظليل دقيق لكل كلمة.",
     kind: "edge",
     voice: "ar-EG-SalmaNeural",
-    wordTimings: "exact",
-  },
-  {
-    id: "hala",
-    label: "هلا — إماراتي",
-    description: "صوت نسائي بلكنة إماراتية. تظليل دقيق لكل كلمة.",
-    kind: "edge",
-    voice: "ar-AE-FatimaNeural",
     wordTimings: "exact",
   },
   {
