@@ -396,6 +396,14 @@ app.get("/api/auth/csrf", (_req, res) => {
   res.set("Cache-Control", "no-store");
   res.status(204).end();
 });
+app.get("/api/checkout/config", (_req, res) => {
+  res.set("Cache-Control", "no-store");
+  res.json({
+    demoCheckout,
+    paymentAvailable: demoCheckout || paymentsConfigured,
+    minimumAmountMinor: demoCheckout ? 0 : 100,
+  });
+});
 app.get("/api/integrations/status", async (_req, res) => {
   try {
     res.json(await integrationStatus());

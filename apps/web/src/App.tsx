@@ -2084,8 +2084,29 @@ function CartPage() {
   }, [ids.join("|"), ownedBookIds.join("|")]);
   const total = books.reduce((s, b) => s + b.priceMinor, 0);
   const [redirecting, setRedirecting] = useState(false);
+  const [checkoutConfig, setCheckoutConfig] = useState({
+    demoCheckout: false,
+    paymentAvailable: false,
+    minimumAmountMinor: 100,
+  });
+  useEffect(() => {
+    let active = true;
+    api<typeof checkoutConfig>("/checkout/config")
+      .then((config) => { if (active) setCheckoutConfig(config); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, []);
+  const minimumPaymentNotMet = total < checkoutConfig.minimumAmountMinor;
   const checkout = async () => {
     if (!user) return nav("/login");
+    if (!checkoutConfig.paymentAvailable) {
+      setError("الدفع غير متاح حاليًا. حاول لاحقًا.");
+      return;
+    }
+    if (minimumPaymentNotMet) {
+      setError("سعر السلة أقل من الحد الأدنى للدفع. عدّل سعر الرواية إلى ريال واحد على الأقل من لوحة الإدارة.");
+      return;
+    }
     const purchasableIds = ids.filter((id) => !ownedBookIds.includes(id));
     if (!purchasableIds.length) {
       setNotice("هذه المنتجات تم شراؤها مسبقًا.");
@@ -2153,13 +2174,19 @@ function CartPage() {
               <span>الإجمالي</span>
               <b>{total / 100} ر.س</b>
             </div>
-            <p>الدفع بمدى أو فيزا أو ماستركارد عبر بوابة ميسر الآمنة.</p>
+            {minimumPaymentNotMet ? (
+              <p className="cart-notice">هذا الكتاب مسعّر بـ0 ر.س. بوابة ميسر تقبل طلبات تبدأ من ريال واحد؛ حدّث السعر من لوحة الإدارة لإتمام الدفع.</p>
+            ) : (
+              <p>الدفع بمدى أو فيزا أو ماستركارد عبر بوابة ميسر الآمنة.</p>
+            )}
             {error && <p className="error">{error}</p>}
-            <button className="btn primary full" onClick={checkout} disabled={redirecting}>
+            <button className="btn primary full" onClick={checkout} disabled={redirecting || !checkoutConfig.paymentAvailable || minimumPaymentNotMet}>
               {redirecting
                 ? "جارٍ تحويلك لصفحة الدفع…"
                 : user
-                  ? "إتمام الشراء"
+                  ? minimumPaymentNotMet
+                    ? "حدّث السعر لإتمام الدفع"
+                    : "إتمام الشراء"
                   : "سجّل الدخول وأكمل"}
             </button>
           </aside>
