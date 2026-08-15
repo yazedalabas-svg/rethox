@@ -8,8 +8,8 @@ import helmet from "helmet";
 import getMp3Duration from "get-mp3-duration";
 import pino from "pino";
 import { createHash, randomUUID } from "node:crypto";
-import { spawn, spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
@@ -40,6 +40,10 @@ import { createRelationalBackup, startBackupScheduler } from "./backup-service.j
 import { summaryProvider } from "./summary-provider.js";
 import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
 import { TtsGenerationQueue } from "./tts-queue.js";
+import { runProcess } from "./process-runner.js";
+import { clientHttpError } from "./http-errors.js";
+import { rotateRefreshSession } from "./refresh-sessions.js";
+import { trimPairedCache } from "./cache-budget.js";
 import {
   createInvoice,
   demoCheckout,
@@ -83,9 +87,22 @@ app.use(cors({
 }));
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
+app.use("/api/auth", (_req, res, next) => {
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
 const logger = pino({ level: process.env.LOG_LEVEL || "info" });
-app.use((req, _res, next) => {
-  logger.info({ method: req.method, path: req.path }, "request");
+app.use((req, res, next) => {
+  const requestId = randomUUID();
+  const startedAt = performance.now();
+  res.setHeader("X-Request-Id", requestId);
+  res.once("finish", () => logger.info({
+    requestId,
+    method: req.method,
+    path: req.path,
+    status: res.statusCode,
+    durationMs: Math.round(performance.now() - startedAt),
+  }, "request completed"));
   next();
 });
 const authLimit = rateLimit({
@@ -139,7 +156,6 @@ const chapterImageUploadLimit = rateLimit({
 // Narration is deliberately pinned to Hamed. A failed generation must surface
 // as an error instead of silently replacing the narrator with another voice.
 const hamedVoice = "ar-SA-HamedNeural";
-const googleCloudVoice = process.env.GOOGLE_TTS_VOICE?.trim() || "ar-XA-Chirp3-HD-Aoede";
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const ttsScript = resolve(rootDir, "tools/tts_edge.py");
 const pythonCommand = process.platform === "win32" ? "python" : "python3";
@@ -156,159 +172,18 @@ const ttsCache = process.env.TTS_CACHE_DIR
 // Imported source files stay outside the web root; reading data and cover metadata live in the store.
 mkdirSync(ttsCache, { recursive: true });
 const ttsGenerationQueue = new TtsGenerationQueue(450);
-
-const splitTtsText = (text: string, limit = 180) => {
-  const chunks: string[] = [];
-  let current = "";
-  for (const word of text.split(/\s+/).filter(Boolean)) {
-    if (current && `${current} ${word}`.length > limit) {
-      chunks.push(current);
-      current = word;
-    } else current = current ? `${current} ${word}` : word;
-  }
-  if (current) chunks.push(current);
-  return chunks;
-};
-
-const generateGoogleNarration = async (
-  text: string,
-  audioPath: string,
-  metaPath: string,
-) => {
-  const buffers: Buffer[] = [];
-  const boundaries: { text: string; startMs: number; endMs: number }[] = [];
-  let timelineMs = 0;
-  for (const chunk of splitTtsText(text)) {
-    const url = new URL("https://translate.google.com/translate_tts");
-    url.searchParams.set("ie", "UTF-8");
-    url.searchParams.set("client", "tw-ob");
-    url.searchParams.set("tl", "ar");
-    url.searchParams.set("q", chunk);
-    const response = await fetch(url, {
-      headers: { "user-agent": "Mozilla/5.0 rethox/1.0" },
-      signal: AbortSignal.timeout(20_000),
-    });
-    if (!response.ok) throw new Error(`Google TTS returned ${response.status}`);
-    const buffer = Buffer.from(await response.arrayBuffer());
-    if (buffer.length < 500) throw new Error("Google TTS returned empty audio");
-    buffers.push(buffer);
-    const durationMs = Math.max(1, getMp3Duration(buffer));
-    const words = chunk.split(/\s+/).filter(Boolean);
-    const totalWeight = words.reduce((sum, word) => sum + Math.max(2, word.length), 0);
-    let cursorMs = timelineMs;
-    words.forEach((word, index) => {
-      const share = Math.max(2, word.length) / totalWeight;
-      const endMs =
-        index === words.length - 1
-          ? timelineMs + durationMs
-          : cursorMs + Math.max(1, Math.round(durationMs * share));
-      boundaries.push({ text: word, startMs: cursorMs, endMs });
-      cursorMs = endMs;
-    });
-    timelineMs += durationMs;
-  }
-  writeFileSync(audioPath, Buffer.concat(buffers));
-  {
-    const loweredPath = `${audioPath}.male.mp3`;
-    await new Promise<void>((done, reject) => {
-      const child = spawn(
-        "ffmpeg",
-        [
-          "-y",
-          "-loglevel",
-          "error",
-          "-i",
-          audioPath,
-          "-filter:a",
-          "asetrate=24000*0.82,aresample=24000,atempo=1.219512",
-          "-codec:a",
-          "libmp3lame",
-          "-q:a",
-          "4",
-          loweredPath,
-        ],
-        { stdio: ["ignore", "ignore", "pipe"] },
-      );
-      let error = "";
-      child.stderr.on("data", (chunk) => (error += chunk.toString()));
-      child.on("error", reject);
-      child.on("close", (code) =>
-        code === 0 ? done() : reject(new Error(error || `ffmpeg exited ${code}`)),
-      );
-    });
-    renameSync(loweredPath, audioPath);
-  }
-  const metadata = {
-    voice: "ar-SA-HamedNeural-compatible",
-    rate: "+0%",
-    pitch: "+0Hz",
-    durationMs: timelineMs,
-    boundaries,
-  };
-  writeFileSync(metaPath, JSON.stringify(metadata), "utf8");
-  return metadata;
-};
-
-// Local Google Cloud TTS trial. The API key is read only by this server and is
-// never sent to the browser. Word timings are distributed from the real audio
-// duration because the synchronous Cloud TTS API does not return word marks.
-const generateGoogleCloudNarration = async (
-  text: string,
-  audioPath: string,
-  metaPath: string,
-) => {
-  const apiKey = process.env.GOOGLE_TTS_API_KEY?.trim();
-  if (!apiKey) throw new Error("GOOGLE_TTS_API_KEY is missing for the local Google Cloud TTS trial");
-
-  const buffers: Buffer[] = [];
-  const boundaries: { text: string; startMs: number; endMs: number }[] = [];
-  let timelineMs = 0;
-  for (const chunk of splitTtsText(text, 700)) {
-    const response = await fetch(`https://texttospeech.googleapis.com/v1/text:synthesize?key=${encodeURIComponent(apiKey)}`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        input: { text: chunk },
-        voice: { languageCode: "ar-XA", name: googleCloudVoice },
-        audioConfig: { audioEncoding: "MP3", speakingRate: 1 },
-      }),
-      signal: AbortSignal.timeout(30_000),
-    });
-    if (!response.ok) {
-      const detail = (await response.text()).slice(0, 180);
-      throw new Error(`Google Cloud TTS returned ${response.status}: ${detail}`);
-    }
-    const result = await response.json() as { audioContent?: string };
-    if (!result.audioContent) throw new Error("Google Cloud TTS returned no audio");
-    const buffer = Buffer.from(result.audioContent, "base64");
-    if (buffer.length < 500) throw new Error("Google Cloud TTS returned empty audio");
-    buffers.push(buffer);
-
-    const durationMs = Math.max(1, getMp3Duration(buffer));
-    const words = chunk.split(/\s+/).filter(Boolean);
-    const totalWeight = words.reduce((sum, word) => sum + Math.max(2, word.length), 0) || 1;
-    let cursorMs = timelineMs;
-    words.forEach((word, index) => {
-      const endMs = index === words.length - 1
-        ? timelineMs + durationMs
-        : cursorMs + Math.max(1, Math.round(durationMs * Math.max(2, word.length) / totalWeight));
-      boundaries.push({ text: word, startMs: cursorMs, endMs });
-      cursorMs = endMs;
-    });
-    timelineMs += durationMs;
-  }
-
-  writeFileSync(audioPath, Buffer.concat(buffers));
-  const metadata = {
-    provider: "google-cloud",
-    voice: googleCloudVoice,
-    rate: "+0%",
-    pitch: "+0Hz",
-    durationMs: timelineMs,
-    boundaries,
-  };
-  writeFileSync(metaPath, JSON.stringify(metadata), "utf8");
-  return metadata;
+const ttsCacheMaxBytes = Number(process.env.TTS_CACHE_MAX_BYTES || 600 * 1024 * 1024);
+let lastTtsCacheMaintenanceAt = 0;
+let ttsCacheMaintenance = Promise.resolve();
+const scheduleTtsCacheMaintenance = (keepKey: string) => {
+  if (Date.now() - lastTtsCacheMaintenanceAt < 60_000) return;
+  lastTtsCacheMaintenanceAt = Date.now();
+  ttsCacheMaintenance = ttsCacheMaintenance
+    .then(async () => {
+      const removedBytes = await trimPairedCache(ttsCache, ttsCacheMaxBytes, keepKey);
+      if (removedBytes) logger.info({ removedBytes }, "trimmed narration cache");
+    })
+    .catch((error) => logger.warn({ error: String(error) }, "narration cache maintenance failed"));
 };
 app.use(
   "/api/tts/audio",
@@ -512,32 +387,21 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
         let lastError: unknown;
         for (let attempt = 0; attempt < 5; attempt += 1) {
           try {
-            await new Promise<void>((done, reject) => {
-              const child = spawn(
-                pythonCommand,
-                [
-                  ttsScript,
-                  "--out",
-                  audioPath,
-                  "--voice",
-                  voice,
-                  "--rate",
-                  rate,
-                  "--pitch",
-                  pitch,
-                ],
-                { stdio: ["pipe", "ignore", "pipe"] },
-              );
-              let error = "";
-              child.stderr.on("data", (chunk) => (error += chunk.toString()));
-              child.on("error", reject);
-              child.on("close", (code) =>
-                code === 0
-                  ? done()
-                  : reject(new Error(error || `TTS exited ${code}`)),
-              );
-              child.stdin.end(narrationText, "utf8");
-            });
+            await runProcess(
+              pythonCommand,
+              [
+                ttsScript,
+                "--out",
+                audioPath,
+                "--voice",
+                voice,
+                "--rate",
+                rate,
+                "--pitch",
+                pitch,
+              ],
+              { input: narrationText, timeoutMs: 90_000 },
+            );
             return;
           } catch (error) {
             lastError = error;
@@ -565,6 +429,7 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
       metadata.durationMs = durationMs;
       writeFileSync(metaPath, JSON.stringify(metadata), "utf8");
     }
+    scheduleTtsCacheMaintenance(key);
     res.json({
       ...metadata,
       audioUrl: `/api/tts/audio/${key}.mp3`,
@@ -574,7 +439,9 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
     logger.error({ error: String(error) }, "edge tts failed");
     return res.status(502).json({
       message: "تعذر تجهيز صوت حامد الآن",
-      detail: error instanceof Error ? error.message.slice(0, 300) : String(error).slice(0, 300),
+      ...(process.env.NODE_ENV === "production"
+        ? {}
+        : { detail: error instanceof Error ? error.message.slice(0, 300) : String(error).slice(0, 300) }),
     });
   }
 });
@@ -962,15 +829,22 @@ app.post("/api/auth/refresh", authLimit, async (req, res) => {
   const value = req.cookies.rethox_refresh;
   if (!value) return res.status(401).json({ message: "لا توجد جلسة" });
   const hash = tokenHash(value);
-  const session = db().refreshTokens.find(
-    (t) => t.hash === hash && new Date(t.expiresAt) > new Date(),
+  const nextValue = refreshValue();
+  const rotation = rotateRefreshSession(
+    db().refreshTokens,
+    hash,
+    tokenHash(nextValue),
+    Date.now(),
+    SESSION_LIFETIME_MS,
   );
-  if (!session) return res.status(401).json({ message: "انتهت الجلسة" });
-  const user = db().users.find((u) => u.id === session.userId);
+  if (!rotation) return res.status(401).json({ message: "انتهت الجلسة" });
+  const user = db().users.find((u) => u.id === rotation.next.userId);
   if (!user) return res.status(401).json({ message: "المستخدم غير موجود" });
-  session.expiresAt = new Date(Date.now() + SESSION_LIFETIME_MS).toISOString();
-  setRefreshCookie(res, value);
-  await saveSessionChange({ issued: session });
+  setRefreshCookie(res, nextValue);
+  await saveSessionChange({
+    issued: rotation.next,
+    revokedHashes: [rotation.previous.hash],
+  });
   res.json({
     accessToken: accessToken(user.id, user.role),
     user: publicUser(user.id),
@@ -2543,8 +2417,16 @@ app.use((req, res) => {
   res.status(404).json({ message: "المسار غير موجود" });
 });
 const apiErrorHandler: ErrorRequestHandler = (error, req, res, _next) => {
-  logger.error({ method: req.method, path: req.path, error: String(error) }, "request failed");
   if (res.headersSent) return;
+  const clientError = clientHttpError(error);
+  if (clientError) {
+    logger.warn(
+      { method: req.method, path: req.path, status: clientError.status },
+      "invalid request",
+    );
+    return res.status(clientError.status).json({ message: clientError.message });
+  }
+  logger.error({ method: req.method, path: req.path, error: String(error) }, "request failed");
   res.status(500).json({ message: "تعذر حفظ العملية بأمان، حاول مجددًا" });
 };
 app.use(apiErrorHandler);

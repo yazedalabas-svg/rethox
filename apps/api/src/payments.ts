@@ -30,6 +30,7 @@ const moyasarFetch = async (path: string, init?: RequestInit) => {
       Authorization: authHeader(),
       ...init?.headers,
     },
+    signal: init?.signal || AbortSignal.timeout(20_000),
   });
   const body = await response.json().catch(() => null);
   if (!response.ok) {

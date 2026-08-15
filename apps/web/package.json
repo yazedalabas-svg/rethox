@@ -9,7 +9,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.110.0",
     "@vitejs/plugin-react": "^5.1.1",
     "heic2any": "^0.0.4",
     "libphonenumber-js": "^1.12.29",

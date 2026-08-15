@@ -31,6 +31,7 @@ export class OpenRouterSummaryProvider implements SummaryProvider {
           { role: "user", content: text },
         ],
       }),
+      signal: AbortSignal.timeout(30_000),
     });
     if (!response.ok)
       throw new Error(`OpenRouter request failed: ${response.status}`);
