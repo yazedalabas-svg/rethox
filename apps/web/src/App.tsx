@@ -84,7 +84,7 @@ import {
   setToken,
   type AuthSession,
 } from "./api";
-import type { Book, Chapter, ChapterComment, ChapterMeta, ChapterSection, ContentReport, Progress, Review, Sentence, User } from "./types";
+import type { Book, Chapter, ChapterComment, ChapterMeta, ChapterSection, ContentReport, Progress, Review, Sentence, User, VoiceOption } from "./types";
 import { groupBidiRuns, paragraphDirection } from "./bidi";
 import { alignBoundaries, formatTime } from "./utils";
 
@@ -273,6 +273,8 @@ type PreparedNarrationSegment = {
 // TTS endpoint.
 type ChapterNarrationCache = {
   chapterId: string;
+  /** Audio is voice-specific, so switching narrator must rebuild the cache. */
+  voiceId: string;
   drafts: { text: string; tokens: PreparedNarrationSegment["tokens"] }[];
   sentenceSegmentIndex: number[];
   segments: (PreparedNarrationSegment | null)[];
@@ -319,11 +321,24 @@ type ReadingSettings = {
   autoNarration: boolean;
   notifications: boolean;
   privateHistory: boolean;
+  voiceId: string;
 };
 type ReadingHistoryItem = LastRead & { visitedAt: string; seconds: number };
 const defaultReadingSettings: ReadingSettings = {
   fontSize: 32, lineHeight: 2.25, wordSpacing: 0.14, playbackSpeed: 1, volume: 1,
-  autoNarration: false, notifications: true, privateHistory: true,
+  autoNarration: false, notifications: true, privateHistory: true, voiceId: "hamed",
+};
+// The installed voices are a property of the deployment, not of the reader, so
+// one fetch per visit is shared by the settings page and every chapter.
+let voiceOptionsRequest: Promise<VoiceOption[]> | null = null;
+const fetchVoiceOptions = () => {
+  voiceOptionsRequest ||= api<{ voices: VoiceOption[] }>("/tts/voices")
+    .then((result) => result.voices)
+    .catch(() => {
+      voiceOptionsRequest = null;
+      return [] as VoiceOption[];
+    });
+  return voiceOptionsRequest;
 };
 const readSettings = (): ReadingSettings => {
   try { return { ...defaultReadingSettings, ...JSON.parse(localStorage.getItem("rethox-reading-settings") || "{}") }; }
@@ -2299,6 +2314,12 @@ function PaymentCallback() {
 function SettingsPage() {
   const [settings, setSettings] = useState<ReadingSettings>(readSettings);
   const [notice, setNotice] = useState("");
+  const [voiceOptions, setVoiceOptions] = useState<VoiceOption[]>([]);
+  useEffect(() => {
+    let active = true;
+    void fetchVoiceOptions().then((options) => { if (active) setVoiceOptions(options); });
+    return () => { active = false; };
+  }, []);
   const updateSetting = <K extends keyof ReadingSettings>(key: K, value: ReadingSettings[K]) => {
     const next = { ...settings, [key]: value };
     setSettings(next);
@@ -2331,6 +2352,22 @@ function SettingsPage() {
         </article>
         <article className="settings-panel">
           <header><div><span className="kicker">الصوت</span><h2>السرد والتشغيل</h2></div></header>
+          {voiceOptions.length > 0 && (
+            <label className="setting-select">
+              <span>
+                <b>صوت السرد</b>
+                <small>
+                  {voiceOptions.find((option) => option.id === settings.voiceId)?.description
+                    || "اختر الصوت الذي يقرأ لك الفصول."}
+                </small>
+              </span>
+              <select value={settings.voiceId} onChange={(e) => updateSetting("voiceId", e.target.value)}>
+                {voiceOptions.map((option) => (
+                  <option key={option.id} value={option.id}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+          )}
           <label><span>سرعة الصوت <b>{settings.playbackSpeed}×</b></span><input type="range" min="0.5" max="4" step="0.25" value={settings.playbackSpeed} onChange={(e) => updateSetting("playbackSpeed", Number(e.target.value))} /></label>
           <label><span>مستوى الصوت <b>{Math.round(settings.volume * 100)}%</b></span><input type="range" min="0" max="1" step="0.05" value={settings.volume} onChange={(e) => updateSetting("volume", Number(e.target.value))} /></label>
           <label className="setting-toggle"><span><b>تشغيل السرد تلقائيًا</b><small>يبدأ عند فتح الفصل عندما يسمح المتصفح</small></span><input type="checkbox" checked={settings.autoNarration} onChange={(e) => updateSetting("autoNarration", e.target.checked)} /></label>
@@ -2775,6 +2812,8 @@ function ReaderPage() {
   const [fontSize, setFontSize] = useState(initialSettings.fontSize);
   const [lineHeight] = useState(initialSettings.lineHeight);
   const [wordSpacing] = useState(initialSettings.wordSpacing);
+  const [voiceId, setVoiceId] = useState(initialSettings.voiceId);
+  const [voiceOptions, setVoiceOptions] = useState<VoiceOption[]>([]);
   const [summary, setSummary] = useState("");
   const [summaryBusy, setSummaryBusy] = useState(false);
   const [activeSentence, setActiveSentence] = useState<Sentence | null>(null);
@@ -2818,6 +2857,7 @@ function ReaderPage() {
   const speedRef = useRef(speed);
   const backgroundNarrationRef = useRef<Promise<void> | null>(null);
   const chapterCacheRef = useRef<ChapterNarrationCache | null>(null);
+  const voiceIdRef = useRef(voiceId);
   const animationRef = useRef(0);
   const trackingHeartbeatRef = useRef(0);
   const trackingFramePendingRef = useRef(false);
@@ -3176,6 +3216,35 @@ function ReaderPage() {
     if (previewAudioRef.current) previewAudioRef.current.volume = volume;
   }, [volume]);
   useEffect(() => {
+    let active = true;
+    void fetchVoiceOptions().then((options) => {
+      if (!active || !options.length) return;
+      setVoiceOptions(options);
+      // A stored voice can disappear when the server's installed engines
+      // change; fall back to the first one that still exists.
+      if (!options.some((option) => option.id === voiceIdRef.current)) {
+        voiceIdRef.current = options[0].id;
+        setVoiceId(options[0].id);
+        saveSettings({ ...readSettings(), voiceId: options[0].id });
+      }
+    });
+    return () => { active = false; };
+  }, []);
+  // Switching narrator invalidates every segment already fetched for this
+  // chapter, so stop playback and drop the cache instead of mixing voices.
+  const applyVoice = (nextVoiceId: string) => {
+    if (nextVoiceId === voiceIdRef.current) return;
+    stopAllPlayback();
+    chapterCacheRef.current = null;
+    voiceIdRef.current = nextVoiceId;
+    setVoiceId(nextVoiceId);
+    saveSettings({ ...readSettings(), voiceId: nextVoiceId });
+    setTtsBoundaries([]);
+    setNarrationDuration(0);
+    setCurrentMs(0);
+    setPlayerError("");
+  };
+  useEffect(() => {
     if (!chapter) return;
     const savedWord = sectionSentenceId || illustrationTarget ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
     const savedIndex = sectionSentenceId || illustrationTarget
@@ -3325,7 +3394,7 @@ function ReaderPage() {
   const requestVoice = (text: string, priority: "foreground" | "background" = "foreground") =>
     api<VoiceResult>("/tts", {
       method: "POST",
-      body: JSON.stringify({ text, priority }),
+      body: JSON.stringify({ text, priority, voice: voiceIdRef.current }),
     });
   const requestVoiceReliable = async (text: string, priority: "foreground" | "background" = "foreground") => {
     let lastError: unknown;
@@ -3375,7 +3444,10 @@ function ReaderPage() {
   };
   const getChapterCache = (): ChapterNarrationCache | null => {
     if (!chapter) return null;
-    if (chapterCacheRef.current?.chapterId === chapter.id) return chapterCacheRef.current;
+    if (
+      chapterCacheRef.current?.chapterId === chapter.id &&
+      chapterCacheRef.current.voiceId === voiceIdRef.current
+    ) return chapterCacheRef.current;
     const drafts = buildChapterDrafts();
     const sentenceSegmentIndex = new Array(chapter.sentences.length).fill(-1);
     drafts.forEach((draft, index) => {
@@ -3385,6 +3457,7 @@ function ReaderPage() {
     });
     const cache: ChapterNarrationCache = {
       chapterId: chapter.id,
+      voiceId: voiceIdRef.current,
       drafts,
       sentenceSegmentIndex,
       segments: new Array(drafts.length).fill(null),
@@ -4746,6 +4819,20 @@ function ReaderPage() {
               <option value="4">4×</option>
             </select>
           </label>
+          {voiceOptions.length > 1 && (
+            <label>
+              الصوت
+              <select
+                value={voiceId}
+                onChange={(event) => applyVoice(event.target.value)}
+                title={voiceOptions.find((option) => option.id === voiceId)?.description}
+              >
+                {voiceOptions.map((option) => (
+                  <option key={option.id} value={option.id}>{option.label}</option>
+                ))}
+              </select>
+            </label>
+          )}
         </div>
       </footer>
       {openIllustration && (

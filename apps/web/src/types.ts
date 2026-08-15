@@ -2,6 +2,7 @@ export type User={id:string;name:string;email:string;phone?:string;role:"CUSTOME
 export type Book={id:string;slug:string;title:string;author:string;synopsis:string;priceMinor:number;currency:string;genre:string;tags:string[];coverTheme:string;coverUrl?:string;rating:number;chapterCount?:number;sampleChapterId?:string;chapters?:ChapterMeta[];contentUnitLabel?:string;contentUnitLabelPlural?:string;hasPdf?:boolean;pageCount?:number};
 export type ChapterSection={id:string;title:string;sentenceId:string;position:number;isSample?:boolean;locked?:boolean};
 export type ChapterMeta={id:string;title:string;position:number;durationMs:number;isSample:boolean;locked?:boolean;sentenceCount?:number;rating?:number;sections?:ChapterSection[];volumeNumber?:number;volumePosition?:number};
+export type VoiceOption={id:string;label:string;description:string;wordTimings:"exact"|"estimated"};
 export type TokenTiming={id:string;text:string;position:number;startMs:number;endMs:number;confidence:number};
 export type Sentence={id:string;position:number;text:string;summary?:string;tokens:TokenTiming[]};
 export type ChapterIllustration={id?:string;src:string;alt:string;afterSentenceId?:string;position?:number;storagePath?:string};

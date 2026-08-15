@@ -52,6 +52,12 @@ import {
 } from "./payments.js";
 import { isStaticSpaPath } from "./spa-paths.js";
 import { normalizeNarrationText } from "./narration.js";
+import {
+  availableEngines,
+  defaultEngineId,
+  findEngine,
+  piperVoiceDir,
+} from "./tts-engines.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4181);
@@ -166,11 +172,11 @@ app.use("/api", (req, res, next) => {
     return writeLimit(req, res, next);
   next();
 });
-// Narration is deliberately pinned to Hamed. A failed generation must surface
-// as an error instead of silently replacing the narrator with another voice.
-const hamedVoice = "ar-SA-HamedNeural";
+// The reader picks the narrator; the server never substitutes one. A failed
+// generation surfaces as an error instead of silently switching voices.
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const ttsScript = resolve(rootDir, "tools/tts_edge.py");
+const piperScript = resolve(rootDir, "tools/tts_piper.py");
 const pythonCommand = process.platform === "win32" ? "python" : "python3";
 if (spawnSync(pythonCommand, ["-c", "import edge_tts"], { stdio: "ignore" }).status !== 0) {
   spawnSync(
@@ -433,10 +439,24 @@ app.get("/api/integrations/status", async (_req, res) => {
     res.status(503).json({ message: "تعذر فحص خدمات التخزين الآن" });
   }
 });
+// Lets the reader UI offer only the voices this deployment can actually
+// generate, instead of failing after the reader has already picked one.
+app.get("/api/tts/voices", (_req, res) => {
+  res.json({
+    voices: availableEngines(pythonCommand).map((engine) => ({
+      id: engine.id,
+      label: engine.label,
+      description: engine.description,
+      wordTimings: engine.wordTimings,
+    })),
+    defaultVoiceId: defaultEngineId,
+  });
+});
 app.post("/api/tts", ttsLimit, async (req, res) => {
   const parsed = z
     .object({
       text: z.string().min(1).max(3000),
+      voice: z.string().max(60).optional(),
       priority: z.enum(["foreground", "background"]).default("foreground"),
     })
     .safeParse(req.body);
@@ -445,11 +465,16 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
   const narrationText = normalizeNarrationText(parsed.data.text);
   if (!narrationText || narrationText.includes("\uFFFD"))
     return res.status(400).json({ message: "ترميز النص غير صالح" });
-  const voice = hamedVoice;
+  const engine = findEngine(parsed.data.voice || defaultEngineId);
+  if (!engine)
+    return res.status(400).json({ message: "الصوت المطلوب غير متاح" });
+  if (!availableEngines(pythonCommand).some((item) => item.id === engine.id))
+    return res.status(503).json({ message: `صوت ${engine.label} غير مثبّت على الخادم` });
+  const voice = engine.voice;
   const rate = "+0%";
   const pitch = "+0Hz";
   const key = createHash("sha256")
-    .update(`utf8-v10-hamed-smooth-arabic-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
+    .update(`utf8-v11-multi-voice|${engine.id}|${voice}|${rate}|${pitch}|${narrationText}`)
     .digest("hex")
     .slice(0, 32);
   const audioPath = resolve(ttsCache, `${key}.mp3`);
@@ -459,23 +484,19 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
       await ttsGenerationQueue.run(key, async () => {
         // A queued duplicate may have finished while this caller was waiting.
         if (existsSync(audioPath) && existsSync(metaPath)) return;
+        const generatorArgs = engine.kind === "piper"
+          ? [piperScript, "--out", audioPath, "--voice", voice, "--voice-dir", piperVoiceDir]
+          : [ttsScript, "--out", audioPath, "--voice", voice, "--rate", rate, "--pitch", pitch];
+        // Piper runs locally on CPU: it never fails from a network hiccup, so a
+        // retry would only repeat the same deterministic failure more slowly.
+        const attempts = engine.kind === "piper" ? 1 : 5;
         let lastError: unknown;
-        for (let attempt = 0; attempt < 5; attempt += 1) {
+        for (let attempt = 0; attempt < attempts; attempt += 1) {
           try {
             await runProcess(
               pythonCommand,
-              [
-                ttsScript,
-                "--out",
-                audioPath,
-                "--voice",
-                voice,
-                "--rate",
-                rate,
-                "--pitch",
-                pitch,
-              ],
-              { input: narrationText, timeoutMs: 90_000 },
+              generatorArgs,
+              { input: narrationText, timeoutMs: engine.kind === "piper" ? 180_000 : 90_000 },
             );
             return;
           } catch (error) {
@@ -511,9 +532,9 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
       cached: existsSync(audioPath),
     });
   } catch (error) {
-    logger.error({ error: String(error) }, "edge tts failed");
+    logger.error({ error: String(error), engine: engine.id }, "tts generation failed");
     return res.status(502).json({
-      message: "تعذر تجهيز صوت حامد الآن",
+      message: `تعذر تجهيز صوت ${engine.label} الآن`,
       ...(process.env.NODE_ENV === "production"
         ? {}
         : { detail: error instanceof Error ? error.message.slice(0, 300) : String(error).slice(0, 300) }),
