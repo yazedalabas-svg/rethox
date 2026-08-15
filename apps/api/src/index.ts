@@ -39,6 +39,7 @@ import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
 import { createRelationalBackup, startBackupScheduler } from "./backup-service.js";
 import { summaryProvider } from "./summary-provider.js";
 import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
+import { TtsGenerationQueue } from "./tts-queue.js";
 import {
   createInvoice,
   demoCheckout,
@@ -154,6 +155,7 @@ const ttsCache = process.env.TTS_CACHE_DIR
   : resolve(process.cwd(), "data/tts-cache");
 // Imported source files stay outside the web root; reading data and cover metadata live in the store.
 mkdirSync(ttsCache, { recursive: true });
+const ttsGenerationQueue = new TtsGenerationQueue(450);
 
 const splitTtsText = (text: string, limit = 180) => {
   const chunks: string[] = [];
@@ -504,45 +506,47 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
   const metaPath = resolve(ttsCache, `${key}.json`);
   try {
     if (!existsSync(audioPath) || !existsSync(metaPath)) {
-      let lastError: unknown;
-      for (let attempt = 0; attempt < 3; attempt += 1) {
-        try {
-          await new Promise<void>((done, reject) => {
-            const child = spawn(
-              pythonCommand,
-              [
-                ttsScript,
-                "--out",
-                audioPath,
-                "--voice",
-                voice,
-                "--rate",
-                rate,
-                "--pitch",
-                pitch,
-              ],
-              { stdio: ["pipe", "ignore", "pipe"] },
-            );
-            let error = "";
-            child.stderr.on("data", (chunk) => (error += chunk.toString()));
-            child.on("error", reject);
-            child.on("close", (code) =>
-              code === 0
-                ? done()
-                : reject(new Error(error || `TTS exited ${code}`)),
-            );
-            child.stdin.end(narrationText, "utf8");
-          });
-          lastError = undefined;
-          break;
-        } catch (error) {
-          lastError = error;
-          await new Promise((resolveDelay) =>
-            setTimeout(resolveDelay, 700 * (attempt + 1)),
-          );
+      await ttsGenerationQueue.run(key, async () => {
+        // A queued duplicate may have finished while this caller was waiting.
+        if (existsSync(audioPath) && existsSync(metaPath)) return;
+        let lastError: unknown;
+        for (let attempt = 0; attempt < 5; attempt += 1) {
+          try {
+            await new Promise<void>((done, reject) => {
+              const child = spawn(
+                pythonCommand,
+                [
+                  ttsScript,
+                  "--out",
+                  audioPath,
+                  "--voice",
+                  voice,
+                  "--rate",
+                  rate,
+                  "--pitch",
+                  pitch,
+                ],
+                { stdio: ["pipe", "ignore", "pipe"] },
+              );
+              let error = "";
+              child.stderr.on("data", (chunk) => (error += chunk.toString()));
+              child.on("error", reject);
+              child.on("close", (code) =>
+                code === 0
+                  ? done()
+                  : reject(new Error(error || `TTS exited ${code}`)),
+              );
+              child.stdin.end(narrationText, "utf8");
+            });
+            return;
+          } catch (error) {
+            lastError = error;
+            const retryDelay = Math.min(12_000, 1_000 * 2 ** attempt);
+            await new Promise((resolveDelay) => setTimeout(resolveDelay, retryDelay));
+          }
         }
-      }
-      if (lastError) throw lastError;
+        throw lastError || new Error("TTS generation failed");
+      });
     }
     const metadata = JSON.parse(readFileSync(metaPath, "utf8"));
     if (!Array.isArray(metadata.boundaries) || metadata.boundaries.length === 0) {
@@ -572,7 +576,6 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
       message: "تعذر تجهيز صوت حامد الآن",
       detail: error instanceof Error ? error.message.slice(0, 300) : String(error).slice(0, 300),
     });
-    res.status(502).json({ message: "تعذر تجهيز الصوت العصبي الآن" });
   }
 });
 app.post("/api/auth/register", authLimit, async (req, res) => {

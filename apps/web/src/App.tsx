@@ -3262,13 +3262,14 @@ function ReaderPage() {
     });
   const requestVoiceReliable = async (text: string) => {
     let lastError: unknown;
-    const attempts = import.meta.env.PROD ? 1 : 3;
+    const attempts = 4;
     for (let attempt = 0; attempt < attempts; attempt += 1) {
       try {
         return await requestVoice(text);
       } catch (error) {
         lastError = error;
-        await new Promise((resolve) => window.setTimeout(resolve, 700 * (attempt + 1)));
+        const retryDelay = Math.min(8_000, 900 * 2 ** attempt);
+        await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
       }
     }
     throw lastError;
