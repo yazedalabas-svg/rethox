@@ -2291,6 +2291,141 @@ app.get("/api/admin/users", auth, requireRole("ADMIN"), async (_req, res) => {
     .filter((user, index, all) => all.findIndex((item) => item?.id === user?.id) === index);
   res.json({ users });
 });
+
+const supportSnapshot = async () => {
+  if (!supabaseAdmin) throw new Error("قاعدة البيانات غير متصلة");
+  const [usersResult, profilesResult, identitiesResult, ordersResult, orderItemsResult, reportsResult, progressResult, booksResult, chaptersResult] = await Promise.all([
+    supabaseAdmin.from("app_users").select("id,email,phone,role,status,created_at").neq("status", "DELETED").order("created_at", { ascending: false }).limit(500),
+    supabaseAdmin.from("profiles").select("user_id,display_name,avatar_url").limit(500),
+    supabaseAdmin.from("user_identities").select("user_id,provider,provider_email").limit(800),
+    supabaseAdmin.from("orders").select("id,public_number,user_id,status,total_minor,currency,created_at,completed_at").order("created_at", { ascending: false }).limit(100),
+    supabaseAdmin.from("order_items").select("order_id,title_snapshot,price_minor").limit(500),
+    supabaseAdmin.from("content_reports").select("id,user_id,book_id,chapter_id,message,status,created_at,updated_at").order("created_at", { ascending: false }).limit(100),
+    supabaseAdmin.from("reading_progress").select("user_id,book_id,chapter_id,percentage,updated_at").order("updated_at", { ascending: false }).limit(500),
+    supabaseAdmin.from("books").select("id,title").limit(500),
+    supabaseAdmin.from("chapters").select("id,title").limit(2000),
+  ]);
+  const failed = [usersResult, profilesResult, identitiesResult, ordersResult, orderItemsResult, reportsResult, progressResult, booksResult, chaptersResult]
+    .find((result) => result.error);
+  if (failed?.error) throw new Error(failed.error.message);
+
+  const profilesByUser = new Map((profilesResult.data || []).map((item: any) => [item.user_id, item]));
+  const identitiesByUser = new Map<string, any[]>();
+  for (const identity of identitiesResult.data || []) {
+    const current = identitiesByUser.get(identity.user_id) || [];
+    current.push(identity);
+    identitiesByUser.set(identity.user_id, current);
+  }
+  const orderItemsByOrder = new Map<string, any[]>();
+  for (const item of orderItemsResult.data || []) {
+    const current = orderItemsByOrder.get(item.order_id) || [];
+    current.push(item);
+    orderItemsByOrder.set(item.order_id, current);
+  }
+  const booksById = new Map((booksResult.data || []).map((item: any) => [item.id, item.title]));
+  const chaptersById = new Map((chaptersResult.data || []).map((item: any) => [item.id, item.title]));
+  const usersById = new Map((usersResult.data || []).map((item: any) => [item.id, item]));
+  const customer = (id: string) => {
+    const user: any = usersById.get(id) || {};
+    const profile: any = profilesByUser.get(id) || {};
+    const identities = identitiesByUser.get(id) || [];
+    return {
+      id,
+      name: profile.display_name || "قارئ rethox",
+      email: user.email || identities.find((item) => item.provider_email)?.provider_email || "",
+      phone: user.phone || "",
+      role: user.role || "CUSTOMER",
+      status: user.status || "ACTIVE",
+      createdAt: user.created_at || null,
+      avatarUrl: profile.avatar_url || "",
+      providers: identities.map((item) => item.provider),
+    };
+  };
+  const orders = (ordersResult.data || []).map((order: any) => ({
+    id: order.id,
+    number: order.public_number,
+    status: order.status,
+    totalMinor: order.total_minor,
+    currency: order.currency,
+    createdAt: order.created_at,
+    completedAt: order.completed_at,
+    customer: customer(order.user_id),
+    items: (orderItemsByOrder.get(order.id) || []).map((item) => ({ title: item.title_snapshot, priceMinor: item.price_minor })),
+  }));
+  const reports = (reportsResult.data || []).map((report: any) => ({
+    id: report.id,
+    status: report.status,
+    message: report.message,
+    createdAt: report.created_at,
+    updatedAt: report.updated_at,
+    bookTitle: booksById.get(report.book_id) || "كتاب محذوف",
+    chapterTitle: chaptersById.get(report.chapter_id) || "فصل محذوف",
+    customer: customer(report.user_id),
+  }));
+  const progressByUser = new Map<string, any[]>();
+  for (const progress of progressResult.data || []) {
+    const current = progressByUser.get(progress.user_id) || [];
+    current.push({
+      bookTitle: booksById.get(progress.book_id) || "كتاب محذوف",
+      chapterTitle: chaptersById.get(progress.chapter_id) || "فصل محذوف",
+      percentage: Number(progress.percentage || 0),
+      updatedAt: progress.updated_at,
+    });
+    progressByUser.set(progress.user_id, current);
+  }
+  const customers = (usersResult.data || []).map((item: any) => {
+    const itemOrders = orders.filter((order) => order.customer.id === item.id);
+    const itemReports = reports.filter((report) => report.customer.id === item.id);
+    return {
+      ...customer(item.id),
+      orderCount: itemOrders.length,
+      completedOrders: itemOrders.filter((order) => order.status === "COMPLETED").length,
+      openReports: itemReports.filter((report) => report.status === "OPEN").length,
+      latestProgress: (progressByUser.get(item.id) || [])[0] || null,
+    };
+  });
+  return {
+    refreshedAt: new Date().toISOString(),
+    counts: {
+      customers: customers.length,
+      pendingOrders: orders.filter((order) => order.status === "PENDING").length,
+      openReports: reports.filter((report) => report.status === "OPEN").length,
+      activeReaders: customers.filter((item) => item.latestProgress && Date.now() - new Date(item.latestProgress.updatedAt).getTime() < 24 * 60 * 60 * 1000).length,
+    },
+    customers,
+    orders,
+    reports,
+    progressByUser,
+  };
+};
+
+app.get("/api/admin/support", auth, requireRole("ADMIN"), async (_req, res) => {
+  try {
+    const snapshot = await supportSnapshot();
+    res.setHeader("Cache-Control", "no-store");
+    res.json(snapshot);
+  } catch (error) {
+    logger.error({ error: String(error) }, "support dashboard load failed");
+    res.status(503).json({ message: "تعذر تحميل بيانات خدمة العملاء من Supabase" });
+  }
+});
+app.get("/api/admin/support/customers/:id", auth, requireRole("ADMIN"), async (req, res) => {
+  try {
+    const snapshot = await supportSnapshot();
+    const customer = snapshot.customers.find((item) => item.id === req.params.id);
+    if (!customer) return res.status(404).json({ message: "العميل غير موجود" });
+    res.setHeader("Cache-Control", "no-store");
+    res.json({
+      customer,
+      orders: snapshot.orders.filter((item) => item.customer.id === customer.id),
+      reports: snapshot.reports.filter((item) => item.customer.id === customer.id),
+      progress: snapshot.progressByUser.get(customer.id) || [],
+    });
+  } catch (error) {
+    logger.error({ error: String(error) }, "support customer load failed");
+    res.status(503).json({ message: "تعذر تحميل ملف العميل من Supabase" });
+  }
+});
 app.patch(
   "/api/admin/users/:id/role",
   auth,

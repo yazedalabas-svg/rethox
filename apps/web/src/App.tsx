@@ -677,7 +677,7 @@ function ThemeProvider({ children }: { children: ReactNode }) {
 function RouteSeo() {
   const { pathname } = useLocation();
   useEffect(() => {
-    const privateRoute = /^\/(?:login|register|account|cart|settings|admin|reader)(?:\/|$)/.test(pathname);
+    const privateRoute = /^\/(?:login|register|account|cart|settings|admin|support|reader)(?:\/|$)/.test(pathname);
     const robots = document.querySelector<HTMLMetaElement>('meta[name="robots"]');
     if (robots) robots.content = privateRoute
       ? "noindex,nofollow"
@@ -714,6 +714,7 @@ function App() {
               </Route>
               <Route element={<ProtectedRoute admin />}>
                 <Route path="admin" element={<AdminPage />} />
+                <Route path="support" element={<SupportDeskPage />} />
               </Route>
             </Route>
             <Route path="reader/:chapterId" element={<ReaderPage />} />
@@ -744,7 +745,10 @@ function Shell() {
             <a href="/#features">كيف تعمل؟</a>
             <a href="/#new">الإصدارات</a>
             {user?.role === "ADMIN" && (
-              <NavLink to="/admin">لوحة الإدارة</NavLink>
+              <>
+                <NavLink to="/admin">لوحة الإدارة</NavLink>
+                <Link to="/support" target="_blank" rel="noreferrer">مركز العملاء</Link>
+              </>
             )}
           </nav>
           <div className="nav-actions">
@@ -4672,6 +4676,160 @@ function ReaderPage() {
     </div>
   );
 }
+type SupportCustomer = {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: "CUSTOMER" | "ADMIN";
+  status: string;
+  createdAt: string | null;
+  avatarUrl: string;
+  providers: string[];
+  orderCount: number;
+  completedOrders: number;
+  openReports: number;
+  latestProgress: { bookTitle: string; chapterTitle: string; percentage: number; updatedAt: string } | null;
+};
+type SupportSnapshot = {
+  refreshedAt: string;
+  counts: { customers: number; pendingOrders: number; openReports: number; activeReaders: number };
+  customers: SupportCustomer[];
+  orders: Array<{ id: string; number: string; status: string; totalMinor: number; currency: string; createdAt: string; customer: SupportCustomer; items: Array<{ title: string }> }>;
+  reports: Array<{ id: string; status: "OPEN" | "RESOLVED"; message: string; createdAt: string; bookTitle: string; chapterTitle: string; customer: SupportCustomer }>;
+};
+type SupportCustomerDetail = {
+  customer: SupportCustomer;
+  orders: SupportSnapshot["orders"];
+  reports: SupportSnapshot["reports"];
+  progress: Array<{ bookTitle: string; chapterTitle: string; percentage: number; updatedAt: string }>;
+};
+
+function SupportDeskPage() {
+  const { user, ready } = useAuth();
+  const [snapshot, setSnapshot] = useState<SupportSnapshot | null>(null);
+  const [selectedId, setSelectedId] = useState("");
+  const [detail, setDetail] = useState<SupportCustomerDetail | null>(null);
+  const [query, setQuery] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const refresh = useCallback(async (quiet = false) => {
+    try {
+      if (!quiet) setLoading(true);
+      const result = await api<SupportSnapshot>("/admin/support");
+      setSnapshot(result);
+      setMessage("");
+    } catch (error) {
+      setMessage((error as Error).message);
+    } finally {
+      if (!quiet) setLoading(false);
+    }
+  }, []);
+  useEffect(() => {
+    if (user?.role !== "ADMIN") return;
+    void refresh();
+    const interval = window.setInterval(() => void refresh(true), 15_000);
+    return () => window.clearInterval(interval);
+  }, [user?.role, refresh]);
+  useEffect(() => {
+    if (!selectedId) {
+      setDetail(null);
+      return;
+    }
+    api<SupportCustomerDetail>(`/admin/support/customers/${selectedId}`)
+      .then(setDetail)
+      .catch((error) => setMessage((error as Error).message));
+  }, [selectedId, snapshot?.refreshedAt]);
+  if (!ready) return <Loading />;
+  if (!user) return <Navigate to="/login" />;
+  if (user.role !== "ADMIN") return <Navigate to="/account" />;
+  const visibleCustomers = (snapshot?.customers || []).filter((customer) => {
+    const term = query.trim().toLocaleLowerCase();
+    return !term || `${customer.name} ${customer.email} ${customer.phone}`.toLocaleLowerCase().includes(term);
+  });
+  const amount = (minor: number, currency: string) => new Intl.NumberFormat("ar-SA", { style: "currency", currency }).format(minor / 100);
+  return (
+    <main className="support-desk wrap">
+      <header className="support-desk-header">
+        <div>
+          <span className="kicker">SUPABASE · LIVE SUPPORT</span>
+          <h1>مركز خدمة العملاء</h1>
+          <p>طلبات العملاء وبلاغاتهم وملفاتهم في مكان واحد. تُحدَّث البيانات تلقائيًا كل 15 ثانية.</p>
+        </div>
+        <button className="btn secondary" onClick={() => void refresh()} disabled={loading}>{loading ? "جارٍ التحديث..." : "تحديث الآن"}</button>
+      </header>
+      {message && <p className="support-message" role="alert">{message}</p>}
+      <section className="support-stats" aria-label="ملخص خدمة العملاء">
+        <article><span>العملاء</span><b>{snapshot?.counts.customers ?? "—"}</b></article>
+        <article><span>طلبات معلّقة</span><b>{snapshot?.counts.pendingOrders ?? "—"}</b></article>
+        <article><span>بلاغات مفتوحة</span><b>{snapshot?.counts.openReports ?? "—"}</b></article>
+        <article><span>قرّاء نشطون اليوم</span><b>{snapshot?.counts.activeReaders ?? "—"}</b></article>
+      </section>
+      <section className="support-workspace">
+        <aside className="support-customers">
+          <header>
+            <div><span className="kicker">CUSTOMERS</span><h2>العملاء</h2></div>
+            <span>{visibleCustomers.length}</span>
+          </header>
+          <label className="support-search"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="ابحث بالاسم أو الإيميل أو الجوال" /></label>
+          <div className="support-customer-list">
+            {visibleCustomers.map((customer) => (
+              <button key={customer.id} className={selectedId === customer.id ? "selected" : ""} onClick={() => setSelectedId(customer.id)}>
+                {customer.avatarUrl ? <img src={customer.avatarUrl} alt="" referrerPolicy="no-referrer" /> : <span>{customer.name[0]}</span>}
+                <strong>{customer.name}<small>{customer.email || "لا يوجد بريد"}</small></strong>
+                {customer.openReports > 0 && <em>{customer.openReports} بلاغ</em>}
+              </button>
+            ))}
+            {!visibleCustomers.length && <p className="panel-empty">لا يوجد عميل مطابق.</p>}
+          </div>
+        </aside>
+        <section className="support-customer-detail">
+          {!selectedId && <div className="support-placeholder"><UserRound size={28} /><h2>اختر عميلاً</h2><p>ستظهر هنا بيانات التواصل، الطلبات، البلاغات، وآخر قراءة له.</p></div>}
+          {detail && <>
+            <header className="support-profile">
+              {detail.customer.avatarUrl ? <img src={detail.customer.avatarUrl} alt="" referrerPolicy="no-referrer" /> : <span>{detail.customer.name[0]}</span>}
+              <div><span className="kicker">CUSTOMER PROFILE</span><h2>{detail.customer.name}</h2><p>{detail.customer.providers.join(" · ") || "حساب محلي"} · انضم {detail.customer.createdAt ? formatDateTime(detail.customer.createdAt) : "—"}</p></div>
+              <b className={`support-status ${detail.customer.status.toLocaleLowerCase()}`}>{detail.customer.status}</b>
+            </header>
+            <div className="support-contact">
+              <a href={detail.customer.email ? `mailto:${detail.customer.email}` : undefined}>{detail.customer.email || "لا يوجد بريد إلكتروني"}</a>
+              {detail.customer.phone && <a href={`tel:${detail.customer.phone}`}>{detail.customer.phone}</a>}
+              <span>{detail.customer.completedOrders}/{detail.customer.orderCount} طلب مكتمل</span>
+            </div>
+            <section className="support-detail-section">
+              <header><h3>أحدث الطلبات</h3><span>{detail.orders.length}</span></header>
+              {detail.orders.map((order) => <article key={order.id}><div><b>{order.number}</b><small>{order.items.map((item) => item.title).join("، ") || "—"}</small></div><span>{amount(order.totalMinor, order.currency)}</span><em className={`support-status ${order.status.toLocaleLowerCase()}`}>{order.status}</em></article>)}
+              {!detail.orders.length && <p className="panel-empty">لا توجد طلبات لهذا العميل.</p>}
+            </section>
+            <section className="support-detail-section">
+              <header><h3>البلاغات</h3><span>{detail.reports.length}</span></header>
+              {detail.reports.map((report) => <article key={report.id}><div><b>{report.bookTitle} · {report.chapterTitle}</b><small>{report.message}</small></div><button className="btn secondary" onClick={async () => {
+                const status = report.status === "OPEN" ? "RESOLVED" : "OPEN";
+                await api(`/admin/reports/${report.id}`, { method: "PATCH", body: JSON.stringify({ status }) });
+                await refresh(true);
+              }}>{report.status === "OPEN" ? "تمت المعالجة" : "إعادة الفتح"}</button></article>)}
+              {!detail.reports.length && <p className="panel-empty">لا توجد بلاغات لهذا العميل.</p>}
+            </section>
+            <section className="support-detail-section">
+              <header><h3>آخر نشاط قراءة</h3><span>{detail.progress.length}</span></header>
+              {detail.progress.slice(0, 5).map((progress, index) => <article key={`${progress.bookTitle}-${index}`}><div><b>{progress.bookTitle}</b><small>{progress.chapterTitle} · {formatDateTime(progress.updatedAt)}</small></div><strong>{Math.round(progress.percentage)}%</strong></article>)}
+              {!detail.progress.length && <p className="panel-empty">لم يسجل نشاط قراءة بعد.</p>}
+            </section>
+          </>}
+        </section>
+        <aside className="support-queue">
+          <header><div><span className="kicker">LIVE QUEUE</span><h2>الأولوية الآن</h2></div><span>{snapshot?.reports.filter((report) => report.status === "OPEN").length || 0}</span></header>
+          {(snapshot?.reports || []).filter((report) => report.status === "OPEN").slice(0, 8).map((report) => <button key={report.id} onClick={() => setSelectedId(report.customer.id)}><b>{report.customer.name}</b><small>{report.customer.email || "بدون بريد"}</small><p>{report.message}</p><em>{report.bookTitle} · {report.chapterTitle}</em></button>)}
+          {!snapshot?.reports.filter((report) => report.status === "OPEN").length && <p className="panel-empty">لا توجد بلاغات مفتوحة.</p>}
+          <header className="support-orders-title"><div><span className="kicker">ORDERS</span><h2>أحدث الطلبات</h2></div></header>
+          {(snapshot?.orders || []).slice(0, 6).map((order) => <button key={order.id} onClick={() => setSelectedId(order.customer.id)}><b>{order.number} · {order.customer.name}</b><small>{order.customer.email || "بدون بريد"}</small><em className={`support-status ${order.status.toLocaleLowerCase()}`}>{order.status} · {amount(order.totalMinor, order.currency)}</em></button>)}
+        </aside>
+      </section>
+      {snapshot && <small className="support-refreshed">آخر مزامنة من Supabase: {formatDateTime(snapshot.refreshedAt)}</small>}
+    </main>
+  );
+}
+
 type AdminCatalogBook = {
   id: string;
   title: string;
