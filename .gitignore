@@ -24,3 +24,4 @@ apps/api/data/*.tmp
 !apps/api/data/deploy-seed.json
 /apps/web/public/re zero arc 7 - 9/
 /tmp/pdfs/rezero-arcs/
+/tmp/pdfs/rezero-arc-6/
