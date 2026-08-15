@@ -4,6 +4,11 @@ interface Env {
 
 const API_ORIGIN = "https://api.rethox.online";
 const PUBLIC_ORIGIN = "https://rethox.online";
+const isDocumentRequest = (request: Request) =>
+  request.method === "GET" && (
+    request.headers.get("sec-fetch-dest") === "document" ||
+    request.headers.get("accept")?.includes("text/html") === true
+  );
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -28,6 +33,12 @@ export default {
       return fetch(new Request(upstream, init));
     }
 
-    return env.ASSETS.fetch(request);
+    const assetResponse = await env.ASSETS.fetch(request);
+    if (assetResponse.status !== 404 || !isDocumentRequest(request)) return assetResponse;
+
+    // The reader is a React SPA: direct links such as `/support` must load
+    // the application entry point, then React Router selects the page.  Do
+    // not apply this fallback to asset/API requests, which must keep 404s.
+    return env.ASSETS.fetch(new Request(new URL("/", incoming), request));
   },
 };
