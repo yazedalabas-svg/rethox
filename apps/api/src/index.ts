@@ -319,7 +319,16 @@ const csrfCookie = (res: Response, value: string) => res.cookie("rethox_csrf", v
   sameSite: "lax",
   secure: process.env.NODE_ENV === "production",
   maxAge: SESSION_LIFETIME_MS,
+  // The frontend reads this double-submit value from pages such as `/` and
+  // `/login`, then sends it only to API mutations.  A `/api` path makes the
+  // cookie invisible to document.cookie on those pages and breaks the first
+  // refresh after an OAuth redirect.
+  path: "/",
+});
+const clearLegacyCsrfCookie = (res: Response) => res.clearCookie("rethox_csrf", {
   path: "/api",
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
 });
 const csrfOriginIsAllowed = (req: express.Request) => {
   const origin = req.get("origin");
@@ -392,6 +401,10 @@ app.get("/api/health", (_req, res) => {
 // protection strict instead of turning a transient migration issue into a
 // blanket CSRF bypass.
 app.get("/api/auth/csrf", (_req, res) => {
+  // Clear the short-lived cookie path used by the previous release before
+  // setting the site-wide token.  Otherwise browsers can send two values for
+  // the same name and the server may read the obsolete one first.
+  clearLegacyCsrfCookie(res);
   csrfCookie(res, randomUUID());
   res.set("Cache-Control", "no-store");
   res.status(204).end();
@@ -918,10 +931,11 @@ app.post("/api/auth/logout", requireCsrf, async (req, res) => {
     secure: process.env.NODE_ENV === "production",
   });
   res.clearCookie("rethox_csrf", {
-    path: "/api",
+    path: "/",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
   });
+  clearLegacyCsrfCookie(res);
   if (value) await saveSessionChange({ revokedHashes: [tokenHash(value)] });
   res.status(204).end();
 });
