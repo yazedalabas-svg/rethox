@@ -385,6 +385,17 @@ app.get("/api/health", (_req, res) => {
     time: new Date().toISOString(),
   });
 });
+// A reader can retain a refresh cookie across a deployment while their
+// JavaScript bundle predates (or missed) the CSRF cookie.  Give the client a
+// small, cache-proof bootstrap endpoint so it can obtain the double-submit
+// cookie before attempting a protected session refresh.  This keeps the
+// protection strict instead of turning a transient migration issue into a
+// blanket CSRF bypass.
+app.get("/api/auth/csrf", (_req, res) => {
+  csrfCookie(res, randomUUID());
+  res.set("Cache-Control", "no-store");
+  res.status(204).end();
+});
 app.get("/api/integrations/status", async (_req, res) => {
   try {
     res.json(await integrationStatus());

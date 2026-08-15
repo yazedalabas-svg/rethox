@@ -36,6 +36,7 @@ describe("auth session transport", () => {
       status: 200,
       headers: { "content-type": "application/json" },
     }));
+    vi.stubGlobal("document", { cookie: "rethox_csrf=csrf-token" });
     vi.stubGlobal("fetch", fetchMock);
 
     const first = refreshSession();
@@ -55,5 +56,28 @@ describe("auth session transport", () => {
 
     const headers = new Headers(fetchMock.mock.calls[0][1].headers);
     expect(headers.get("x-rethox-csrf")).toBe("csrf-token");
+  });
+
+  it("bootstraps a missing CSRF cookie once before a protected request", async () => {
+    const session = {
+      accessToken: jwt(1_800_000_000),
+      user: { id: "u1", name: "قارئ", email: "reader@example.com", role: "CUSTOMER" as const, theme: "light" },
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(session), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }));
+    vi.stubGlobal("document", { cookie: "" });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await refreshSession();
+
+    expect(fetchMock).toHaveBeenNthCalledWith(1, "/api/auth/csrf", {
+      credentials: "include",
+      cache: "no-store",
+    });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/auth/refresh", expect.objectContaining({ credentials: "include" }));
   });
 });

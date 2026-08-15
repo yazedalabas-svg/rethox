@@ -7,6 +7,7 @@ export type AuthSession = { accessToken: string; user: User };
 type AuthSessionListener = (session: AuthSession | null) => void;
 let sessionListener: AuthSessionListener | null = null;
 let refreshPromise: Promise<AuthSession> | null = null;
+let csrfBootstrapPromise: Promise<void> | null = null;
 
 const csrfToken = () => {
   if (typeof document === "undefined") return "";
@@ -54,7 +55,27 @@ export class ApiError extends Error {
   }
 }
 
+const mutatingMethod = (method?: string) =>
+  ["POST", "PUT", "PATCH", "DELETE"].includes((method || "GET").toUpperCase());
+
+// The refresh cookie is HttpOnly, so an old browser session cannot repair its
+// CSRF state from JavaScript.  Prime the cookie through a same-origin GET once
+// before any mutating request.  Concurrent requests share one bootstrap call.
+const ensureCsrfToken = async () => {
+  if (csrfToken()) return;
+  if (!csrfBootstrapPromise) {
+    csrfBootstrapPromise = fetch(apiUrl("/auth/csrf"), {
+      credentials: "include",
+      cache: "no-store",
+    }).then((response) => {
+      if (!response.ok) throw new ApiError(response.status, {});
+    }).finally(() => { csrfBootstrapPromise = null; });
+  }
+  await csrfBootstrapPromise;
+};
+
 const request = async <T>(path: string, options: RequestInit = {}): Promise<T> => {
+  if (mutatingMethod(options.method)) await ensureCsrfToken();
   const headers = new Headers(options.headers);
   if (options.body && !headers.has("content-type")) headers.set("content-type", "application/json");
   if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
