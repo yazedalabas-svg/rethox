@@ -2330,6 +2330,7 @@ function AccountPage() {
   const [profileMessage, setProfileMessage] = useState("");
   const [profileAvatarBusy, setProfileAvatarBusy] = useState(false);
   const [avatarEditorSrc, setAvatarEditorSrc] = useState("");
+  const safeAvatarEditorSrc = avatarEditorSrc.startsWith("blob:") ? avatarEditorSrc : "";
   const [avatarNaturalSize, setAvatarNaturalSize] = useState({ width: 1, height: 1 });
   const [avatarZoom, setAvatarZoom] = useState(1);
   const [avatarOffset, setAvatarOffset] = useState({ x: 0, y: 0 });
@@ -2559,7 +2560,7 @@ function AccountPage() {
         <button className="btn secondary">حفظ التغييرات</button>
         {profileMessage && <small className="profile-message" aria-live="polite">{profileMessage}</small>}
       </form>
-      {avatarEditorSrc && createPortal(
+      {safeAvatarEditorSrc && createPortal(
         <div className="avatar-editor-backdrop" role="presentation" onPointerDown={(event) => {
           if (event.target === event.currentTarget && !profileAvatarBusy) setAvatarEditorSrc("");
         }}>
@@ -2578,7 +2579,7 @@ function AccountPage() {
             >
               <img
                 ref={avatarCropImageRef}
-                src={avatarEditorSrc}
+                src={safeAvatarEditorSrc}
                 alt="معاينة موضع الصورة"
                 draggable={false}
                 onLoad={(event) => setAvatarNaturalSize({ width: event.currentTarget.naturalWidth, height: event.currentTarget.naturalHeight })}

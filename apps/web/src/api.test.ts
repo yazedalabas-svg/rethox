@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   accessTokenExpiresAt,
+  api,
   refreshSession,
   setAuthSessionListener,
   setToken,
@@ -43,5 +44,16 @@ describe("auth session transport", () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith("/api/auth/refresh", expect.objectContaining({ credentials: "include" }));
+  });
+
+  it("sends the double-submit CSRF token with mutating requests", async () => {
+    vi.stubGlobal("document", { cookie: "rethox_csrf=csrf-token" });
+    const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await api("/auth/logout", { method: "POST" });
+
+    const headers = new Headers(fetchMock.mock.calls[0][1].headers);
+    expect(headers.get("x-rethox-csrf")).toBe("csrf-token");
   });
 });

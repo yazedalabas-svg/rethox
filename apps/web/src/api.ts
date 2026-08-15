@@ -8,6 +8,15 @@ type AuthSessionListener = (session: AuthSession | null) => void;
 let sessionListener: AuthSessionListener | null = null;
 let refreshPromise: Promise<AuthSession> | null = null;
 
+const csrfToken = () => {
+  if (typeof document === "undefined") return "";
+  const prefix = "rethox_csrf=";
+  const value = document.cookie.split(";").map((item) => item.trim()).find((item) => item.startsWith(prefix));
+  if (!value) return "";
+  try { return decodeURIComponent(value.slice(prefix.length)); }
+  catch { return ""; }
+};
+
 export const setAuthSessionListener = (listener: AuthSessionListener | null) => {
   sessionListener = listener;
   return () => {
@@ -49,6 +58,8 @@ const request = async <T>(path: string, options: RequestInit = {}): Promise<T> =
   const headers = new Headers(options.headers);
   if (options.body && !headers.has("content-type")) headers.set("content-type", "application/json");
   if (accessToken) headers.set("authorization", `Bearer ${accessToken}`);
+  const csrf = csrfToken();
+  if (csrf) headers.set("x-rethox-csrf", csrf);
   const response = await fetch(apiUrl(path), { ...options, headers, credentials: "include" });
   if (!response.ok) {
     const data = await response.json().catch(() => ({})) as Record<string, unknown>;

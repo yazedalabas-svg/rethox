@@ -153,6 +153,17 @@ const chapterImageUploadLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+const writeLimit = rateLimit({
+  windowMs: 60_000,
+  limit: 240,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api", (req, res, next) => {
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method))
+    return writeLimit(req, res, next);
+  next();
+});
 // Narration is deliberately pinned to Hamed. A failed generation must surface
 // as an error instead of silently replacing the narrator with another voice.
 const hamedVoice = "ar-SA-HamedNeural";
@@ -303,6 +314,31 @@ const setRefreshCookie = (res: Response, value: string) => res.cookie("rethox_re
   maxAge: SESSION_LIFETIME_MS,
   path: "/api/auth",
 });
+const csrfCookie = (res: Response, value: string) => res.cookie("rethox_csrf", value, {
+  httpOnly: false,
+  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+  maxAge: SESSION_LIFETIME_MS,
+  path: "/api",
+});
+const csrfOriginIsAllowed = (req: express.Request) => {
+  const origin = req.get("origin");
+  return Boolean(origin && allowedOrigins.has(origin));
+};
+const requireCsrf = (req: express.Request, res: Response, next: express.NextFunction) => {
+  const csrfCookieValue = typeof req.cookies.rethox_csrf === "string"
+    ? req.cookies.rethox_csrf
+    : "";
+  const csrfHeader = req.get("x-rethox-csrf") || "";
+  if (csrfCookieValue && csrfHeader === csrfCookieValue) return next();
+  // Existing readers may still have a refresh cookie from before CSRF was
+  // introduced. Accept exactly one same-origin renewal and issue their token.
+  if (!csrfCookieValue && csrfOriginIsAllowed(req)) {
+    csrfCookie(res, randomUUID());
+    return next();
+  }
+  res.status(403).json({ message: "تعذر التحقق من حماية الطلب" });
+};
 const issueSession = async (
   res: Response,
   user: { id: string; role: Role },
@@ -316,6 +352,7 @@ const issueSession = async (
   };
   db().refreshTokens.push(session);
   setRefreshCookie(res, refresh);
+  csrfCookie(res, randomUUID());
   if (options.persistState) await save();
   else await saveSessionChange({ issued: session });
   return accessToken(user.id, user.role);
@@ -825,7 +862,7 @@ app.get("/api/auth/google/callback", async (req, res) => {
     fail("google");
   }
 });
-app.post("/api/auth/refresh", authLimit, async (req, res) => {
+app.post("/api/auth/refresh", authLimit, requireCsrf, async (req, res) => {
   const value = req.cookies.rethox_refresh;
   if (!value) return res.status(401).json({ message: "لا توجد جلسة" });
   const hash = tokenHash(value);
@@ -850,7 +887,7 @@ app.post("/api/auth/refresh", authLimit, async (req, res) => {
     user: publicUser(user.id),
   });
 });
-app.post("/api/auth/logout", async (req, res) => {
+app.post("/api/auth/logout", requireCsrf, async (req, res) => {
   const value = req.cookies.rethox_refresh;
   if (value)
     db().refreshTokens = db().refreshTokens.filter(
@@ -858,6 +895,11 @@ app.post("/api/auth/logout", async (req, res) => {
     );
   res.clearCookie("rethox_refresh", {
     path: "/api/auth",
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.clearCookie("rethox_csrf", {
+    path: "/api",
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
   });
@@ -877,7 +919,7 @@ app.post(
       return res.status(503).json({ message: "رفع الصور غير متاح الآن" });
     const storageAdmin = supabaseAdmin;
 
-    const contentType = String(req.headers["content-type"] || "").split(";", 1)[0] as keyof typeof avatarTypes;
+    const contentType = (req.get("content-type") || "").split(";", 1)[0] as keyof typeof avatarTypes;
     const descriptor = avatarTypes[contentType];
     const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     if (!descriptor || body.length < 128 || body.length > 5 * 1024 * 1024 || !descriptor.matches(body))
@@ -1743,7 +1785,8 @@ const imageExtension: Record<string, string> = {
   "image/webp": "webp",
   "image/gif": "gif",
 };
-const detectedImageMime = (body: Buffer) => {
+const detectedImageMime = (body: unknown) => {
+  if (!Buffer.isBuffer(body)) return "";
   if (body.length >= 8 && body.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])))
     return "image/png";
   if (body.length >= 3 && body[0] === 0xff && body[1] === 0xd8 && body[2] === 0xff)
@@ -1913,7 +1956,7 @@ app.post(
         bucket: "chapter-images",
         object_path: objectPath,
         content_type: declaredMime,
-        byte_size: body.length,
+        byte_size: Buffer.byteLength(body),
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
         version,
         alt_text: alt,
@@ -2034,7 +2077,7 @@ app.put(
         bucket: "chapter-images",
         object_path: objectPath,
         content_type: declaredMime,
-        byte_size: body.length,
+        byte_size: Buffer.byteLength(body),
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
         alt_text: automaticIllustrationAlt(context.chapter, current.after_sentence_id || undefined),
         updated_at: new Date().toISOString(),
