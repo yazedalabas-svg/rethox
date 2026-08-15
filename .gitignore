@@ -17,6 +17,7 @@ apps/api/data/runtime-store.json
 antigravity-claude-proxy*/
 /wild-paper-877c/
 *.tsbuildinfo
+worker-configuration.d.ts
 apps/api/data/tts-cache/
 apps/api/data/*.json
 apps/api/data/*.tmp

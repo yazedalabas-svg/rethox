@@ -3,6 +3,7 @@
   "name": "rethox",
   "compatibility_date": "2026-07-13",
   "main": "./apps/web/src/worker.ts",
+  "workers_dev": true,
   "assets": {
     "directory": "./apps/web/dist",
     "binding": "ASSETS",
