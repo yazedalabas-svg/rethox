@@ -50,6 +50,7 @@ import {
   paymentsConfigured,
   paymentsRouter,
 } from "./payments.js";
+import { isStaticSpaPath } from "./spa-paths.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4181);
@@ -2554,16 +2555,6 @@ if (existsSync(webDist))
     }),
   );
 
-const staticSpaPaths = new Set([
-  "/",
-  "/login",
-  "/register",
-  "/cart",
-  "/settings",
-  "/account",
-  "/admin",
-]);
-
 const decodePathSegment = (value: string) => {
   try {
     return decodeURIComponent(value);
@@ -2575,7 +2566,7 @@ const decodePathSegment = (value: string) => {
 const isKnownSpaPath = (requestPath: string) => {
   const normalizedPath =
     requestPath.length > 1 ? requestPath.replace(/\/+$/, "") : requestPath;
-  if (staticSpaPaths.has(normalizedPath)) return true;
+  if (isStaticSpaPath(normalizedPath)) return true;
 
   const bookMatch = normalizedPath.match(/^\/book\/([^/]+)$/);
   if (bookMatch) {
