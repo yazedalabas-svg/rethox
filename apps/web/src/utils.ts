@@ -18,26 +18,39 @@ export const normalizeWord = (value: string) =>
 export const alignBoundaries = (
   boundaries: { text: string }[],
   tokens: { id: string; text: string; sentenceIndex: number }[],
-  lookahead = 12,
+  lookahead = 96,
 ): ({ id: string; sentenceIndex: number } | null)[] => {
   let cursor = 0;
   return boundaries.map((boundary) => {
     const target = normalizeWord(boundary.text);
     if (!target) return null;
-    for (
-      let index = cursor;
-      index < Math.min(tokens.length, cursor + lookahead);
-      index += 1
-    ) {
+    const limit = Math.min(tokens.length, cursor + lookahead);
+    // Prefer an exact match anywhere in the recovery window.  Looking for a
+    // fuzzy match while walking the window lets "كلمة2" steal "كلمة28" and
+    // is precisely the type of error that compounds in a long chapter.
+    for (let index = cursor; index < limit; index += 1) {
       const candidate = normalizeWord(tokens[index].text);
-      if (
-        candidate &&
-        (candidate === target ||
-          candidate.includes(target) ||
-          target.includes(candidate))
-      ) {
+      if (candidate === target) {
         cursor = index + 1;
         return { id: tokens[index].id, sentenceIndex: tokens[index].sentenceIndex };
+      }
+    }
+    // Edge can still omit an Arabic clitic or suffix.  Use that weaker match
+    // only after the exact pass, and never for alphanumeric labels such as
+    // chapter numbers, where one value is commonly a prefix of another.
+    if (!/\p{N}/u.test(target)) {
+      for (let index = cursor; index < limit; index += 1) {
+        const candidate = normalizeWord(tokens[index].text);
+        if (
+          candidate &&
+          !/\p{N}/u.test(candidate) &&
+          target.length > 1 &&
+          candidate.length > 1 &&
+          (candidate.includes(target) || target.includes(candidate))
+        ) {
+          cursor = index + 1;
+          return { id: tokens[index].id, sentenceIndex: tokens[index].sentenceIndex };
+        }
       }
     }
     return null;

@@ -2896,9 +2896,21 @@ function ReaderPage() {
     localStorage.setItem("rethox-playback-speed", String(next));
     [audioRef.current, previewAudioRef.current].forEach((audio) => {
       if (!audio) return;
+      keepNarrationPitch(audio);
       audio.defaultPlaybackRate = next;
       audio.playbackRate = next;
     });
+  };
+  // Browsers otherwise raise the narrator's pitch at ×2, making normal pauses
+  // sound abrupt and tiring. Keep the natural Hamed voice at every speed.
+  const keepNarrationPitch = (audio: HTMLAudioElement) => {
+    audio.preservesPitch = true;
+    const prefixed = audio as HTMLAudioElement & {
+      webkitPreservesPitch?: boolean;
+      mozPreservesPitch?: boolean;
+    };
+    prefixed.webkitPreservesPitch = true;
+    prefixed.mozPreservesPitch = true;
   };
   const releaseAudio = (audio: HTMLAudioElement | null) => {
     if (!audio) return;
@@ -2914,6 +2926,7 @@ function ReaderPage() {
     audio.loop = true;
     audio.muted = true;
     audio.volume = 0;
+    keepNarrationPitch(audio);
     audio.defaultPlaybackRate = speedRef.current;
     audioRef.current = audio;
     void audio.play().catch(() => {});
@@ -3383,6 +3396,7 @@ function ReaderPage() {
       // known, well ahead of when playback actually reaches it.
       const preload = new Audio(result.audioUrl);
       preload.preload = "auto";
+      keepNarrationPitch(preload);
       preloadAudioRefs.current.push(preload);
       return segment;
     }).catch((error) => {
@@ -3489,6 +3503,7 @@ function ReaderPage() {
       audio.volume = volumeRef.current;
       audio.src = segment.result.audioUrl;
       audio.preload = "auto";
+      keepNarrationPitch(audio);
       audio.defaultPlaybackRate = speedRef.current;
       audio.playbackRate = speedRef.current;
       audioRef.current = audio;
@@ -3509,7 +3524,17 @@ function ReaderPage() {
         releaseAudio(audio);
         return;
       }
-      const start = segment.result.boundaries[boundaryIndex]?.startMs || 0;
+      // Word-boundary timestamps are supplied by the voice service while the
+      // browser follows the decoded MP3 clock.  Even a tiny encoding offset
+      // accumulates during a long chapter, so convert between the two clocks
+      // from the actual loaded duration for every segment.
+      const boundaryDuration = Math.max(1, segment.result.durationMs);
+      const audioDuration = Number.isFinite(audio.duration) && audio.duration > 0
+        ? Math.round(audio.duration * 1000)
+        : boundaryDuration;
+      const boundaryToAudioScale = audioDuration / boundaryDuration;
+      const startBoundaryMs = segment.result.boundaries[boundaryIndex]?.startMs || 0;
+      const start = startBoundaryMs * boundaryToAudioScale;
       audio.currentTime = start / 1000;
       const syncTracking = () => {
         if (session !== playbackSessionRef.current || audio !== audioRef.current) return;
@@ -3520,7 +3545,10 @@ function ReaderPage() {
           lastTimelinePaintRef.current = now;
           setCurrentMs(time);
         }
-        const activeBoundary = findActiveBoundary(segment.result.boundaries, time);
+        const activeBoundary = findActiveBoundary(
+          segment.result.boundaries,
+          time / boundaryToAudioScale,
+        );
         // Always compare the boundary against the actual audio clock, rather
         // than only accepting forward movement. Browsers can coalesce audio
         // events, resume from a buffered position, or briefly report an older
@@ -3620,7 +3648,7 @@ function ReaderPage() {
         setCurrentSentenceIndex(firstToken.sentenceIndex);
       }
       setTtsBoundaries(segment.result.boundaries);
-      setNarrationDuration(segment.result.durationMs);
+      setNarrationDuration(audioDuration);
       setCurrentMs(start);
       await audio.play();
     } catch {
@@ -3673,6 +3701,7 @@ function ReaderPage() {
       const result = await requestVoice(text);
       if (session !== playbackSessionRef.current) return;
       const audio = new Audio(result.audioUrl);
+      keepNarrationPitch(audio);
       audio.defaultPlaybackRate = speedRef.current;
       audio.playbackRate = speedRef.current;
       audio.volume = volumeRef.current;

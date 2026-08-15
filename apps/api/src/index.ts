@@ -51,6 +51,7 @@ import {
   paymentsRouter,
 } from "./payments.js";
 import { isStaticSpaPath } from "./spa-paths.js";
+import { normalizeNarrationText } from "./narration.js";
 
 const app = express();
 const port = Number(process.env.PORT || 4181);
@@ -434,17 +435,14 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
     .safeParse(req.body);
   if (!parsed.success)
     return res.status(400).json({ message: "النص أو إعدادات الصوت غير صحيحة" });
-  const narrationText = parsed.data.text
-    .normalize("NFC")
-    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "")
-    .trim();
+  const narrationText = normalizeNarrationText(parsed.data.text);
   if (!narrationText || narrationText.includes("\uFFFD"))
     return res.status(400).json({ message: "ترميز النص غير صالح" });
   const voice = hamedVoice;
   const rate = "+0%";
   const pitch = "+0Hz";
   const key = createHash("sha256")
-    .update(`utf8-v9-hamed-only-word-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
+    .update(`utf8-v10-hamed-smooth-arabic-boundary|${voice}|${rate}|${pitch}|${narrationText}`)
     .digest("hex")
     .slice(0, 32);
   const audioPath = resolve(ttsCache, `${key}.mp3`);

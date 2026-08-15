@@ -72,4 +72,22 @@ describe("alignBoundaries", () => {
     const mapped = alignBoundaries(boundaries, tokens);
     expect(mapped.map((item) => item?.id)).toEqual(["t0", "t2", "t4"]);
   });
+
+  it("does not let a one-letter Arabic prefix steal a full word", () => {
+    const tokens = makeTokens(["للمحاكمة", "جاء"]);
+    const mapped = alignBoundaries(
+      [{ text: "ل" }, { text: "للمحاكمة" }, { text: "جاء" }],
+      tokens,
+    );
+    expect(mapped.map((item) => item?.id ?? null)).toEqual([null, "t0", "t1"]);
+  });
+
+  it("recovers after the speech engine skips a long aside", () => {
+    const tokens = makeTokens(Array.from({ length: 40 }, (_, index) => `كلمة${index}`));
+    const mapped = alignBoundaries(
+      [{ text: "كلمة0" }, { text: "كلمة28" }, { text: "كلمة29" }],
+      tokens,
+    );
+    expect(mapped.map((item) => item?.id)).toEqual(["t0", "t28", "t29"]);
+  });
 });
