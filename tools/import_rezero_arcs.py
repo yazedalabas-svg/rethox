@@ -23,6 +23,7 @@ DATA_DIR = PROJECT / "apps" / "api" / "data"
 CACHE_DIR = PROJECT / "tmp" / "pdfs" / "rezero-arcs"
 LATIN = re.compile(r"[A-Za-z]")
 LATIN_WORD = re.compile(r"[A-Za-z][A-Za-z'’~-]*")
+CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]")
 SPACE = re.compile(r"[ \t]+")
 CHAPTER_HEADING = re.compile(
     r"^Arc\s+(?P<arc>[78])\s+(?P<kind>Chapter\s+(?P<number>\d+)|Intermission|Curtain[’']s\s+Close)\s*[–—―-]\s*(?P<title>.+?)\s*$",
@@ -500,7 +501,19 @@ def replace_known_names(value: str) -> str:
     value = value.replace("\u200e", "").replace("\u200f", "").replace("\ufeff", "")
     value = value.replace("...", "…")
     value = value.replace("“", "«").replace("”", "»")
+    value = value.replace("『", "«").replace("』", "»")
+    value = value.replace("「", "«").replace("」", "»")
     value = re.sub(r'"([^"\n]+)"', r"«\1»", value)
+    # The English source occasionally includes the original Japanese spelling
+    # in parentheses. The Arabic text already carries the meaning, so keeping
+    # those glyphs only creates mixed-direction reader and TTS glitches.
+    value = re.sub(
+        r"\s*[\(（][^()（）\n]*[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff][^()（）\n]*[\)）]",
+        "",
+        value,
+    )
+    value = CJK.sub("", value)
+    value = re.sub(r"[«‹‘]\s*[»›’]", "", value)
     for source, target in {
         "باتراشي": "باتراش",
         "أستازيا": "أناستازيا",
@@ -543,9 +556,20 @@ def protect_source_terms(value: str) -> str:
 
 
 def valid_translation(source: str, value: str) -> bool:
-    if not value or LATIN.search(value):
+    if not value or LATIN.search(value) or CJK.search(value):
         return False
     return len(source) <= 40 or arabic_ratio(value) >= 0.72
+
+
+def is_editorial_note(value: str) -> bool:
+    stripped = value.strip()
+    if re.match(
+        r"^\(?\s*(?:TL|TN|Translator(?:'s)?|Translation|Editor(?:'s)?)\s+Note\s*:",
+        stripped,
+        flags=re.IGNORECASE,
+    ):
+        return True
+    return bool(re.match(r"^\d{1,3}\s+", stripped) and CJK.search(stripped))
 
 
 def phonetic_arabize(word: str) -> str:
@@ -813,6 +837,8 @@ def chapter_payload(
     sentences: list[dict[str, Any]] = []
     paragraph_pages: list[tuple[int, str]] = []
     for paragraph in chapter["paragraphs"]:
+        if paragraph["id"] not in translations:
+            continue
         text = translations[paragraph["id"]]
         position = len(sentences) + 1
         sentence_id = f"rz{config.number}-c{chapter['position']:03d}-p{position:04d}"
@@ -866,7 +892,12 @@ def write_arc(config: ArcConfig, extracted: dict[str, Any], translator: Translat
                 key: replace_known_names(value)
                 for key, value in json.loads(cache_path.read_text(encoding="utf-8")).items()
             }
-        source_by_id = {paragraph["id"]: paragraph["text"] for paragraph in chapter["paragraphs"]}
+        included_paragraphs = [
+            paragraph
+            for paragraph in chapter["paragraphs"]
+            if not is_editorial_note(paragraph["text"])
+        ]
+        source_by_id = {paragraph["id"]: paragraph["text"] for paragraph in included_paragraphs}
         original_cache_size = len(cache)
         cache = {
             key: value
@@ -876,7 +907,7 @@ def write_arc(config: ArcConfig, extracted: dict[str, Any], translator: Translat
         if len(cache) != original_cache_size:
             atomic_json(cache_path, cache)
         groups = translation_groups(
-            chapter["paragraphs"],
+            included_paragraphs,
             cache,
             getattr(translator, "max_group_chars", 12_000),
             getattr(translator, "max_group_items", 80),
@@ -895,7 +926,7 @@ def write_arc(config: ArcConfig, extracted: dict[str, Any], translator: Translat
                     first = futures[future][0]["id"]
                     last = futures[future][-1]["id"]
                     print(f"arc={config.number} translated={first}-{last}", flush=True)
-        missing = [paragraph["id"] for paragraph in chapter["paragraphs"] if paragraph["id"] not in cache]
+        missing = [paragraph["id"] for paragraph in included_paragraphs if paragraph["id"] not in cache]
         if missing:
             raise ValueError(f"missing translations for chapter {chapter['position']}: {missing[:3]}")
 
