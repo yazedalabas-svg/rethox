@@ -49,6 +49,30 @@ describe("auth session transport", () => {
     expect(fetchMock).toHaveBeenCalledWith("/api/auth/refresh", expect.objectContaining({ credentials: "include" }));
   });
 
+  it("keeps the session when another tab has just rotated the refresh cookie", async () => {
+    vi.useFakeTimers();
+    const session = {
+      accessToken: jwt(1_800_000_000),
+      user: { id: "u1", name: "قارئ", email: "reader@example.com", role: "CUSTOMER" as const, theme: "light" },
+    };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ message: "انتهت الجلسة" }), {
+        status: 401,
+        headers: { "content-type": "application/json" },
+      }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(session), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }));
+    vi.stubGlobal("document", { cookie: "rethox_csrf=csrf-token" });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const refreshed = refreshSession();
+    await vi.advanceTimersByTimeAsync(300);
+    await expect(refreshed).resolves.toEqual(session);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
   it("sends the double-submit CSRF token with mutating requests", async () => {
     vi.stubGlobal("document", { cookie: "rethox_csrf=csrf-token" });
     const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));

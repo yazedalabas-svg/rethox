@@ -115,7 +115,18 @@ const downloadRequest = async (path: string) => {
 
 export const refreshSession = (): Promise<AuthSession> => {
   if (!refreshPromise) {
-    refreshPromise = request<AuthSession>("/auth/refresh", { method: "POST" })
+    const refreshRequest = () => request<AuthSession>("/auth/refresh", { method: "POST" });
+    refreshPromise = refreshRequest()
+      .catch(async (error) => {
+        // A refresh token is rotated after every renewal. Two open tabs can
+        // legitimately renew at the same moment: the first response updates
+        // the shared cookie, while the second request still carries the old
+        // value. Retry once after that cookie update instead of logging the
+        // reader out for a harmless cross-tab race.
+        if (!(error instanceof ApiError) || error.status !== 401) throw error;
+        await new Promise((resolve) => globalThis.setTimeout(resolve, 300));
+        return refreshRequest();
+      })
       .then((session) => {
         setToken(session.accessToken);
         sessionListener?.(session);
