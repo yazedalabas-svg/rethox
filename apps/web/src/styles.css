@@ -3489,10 +3489,18 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
   .menu,
   .theme-fab,
   .volume-control > button,
-  .player-controls .skip {
+  .player-controls .skip,
+  .reader-head > button {
     display: inline-grid;
     place-items: center;
   }
+  /* Reader header actions and the player's dropdowns are the controls a
+     reader reaches for mid-chapter, so they need a full-size hit box too. */
+  .reader-head > button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .speech-controls select { min-height: 44px; }
   /* The cart badge is positioned against the button, so keep it anchored. */
   .bag { position: relative; }
   /* Text controls stay visually compact; padding supplies the tap area. */
