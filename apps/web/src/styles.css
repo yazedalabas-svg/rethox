@@ -371,7 +371,14 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .speech-contr
 @media (max-width: 760px) {
   html[data-identity="studio"] .wrap { width: min(100% - 22px, 1220px); }
   html[data-identity="studio"] .app-shell > header { padding-top: 7px; }
-  html[data-identity="studio"] .nav { min-height: 58px; padding: 7px 9px 7px 12px; border-radius: 16px; }
+  /* The base .nav rule sets gap:30px for the space between the brand and the
+     icon cluster, sized for a wide desktop row. Left at 30px here it's the
+     real cause of the icon row overflowing the pill: brand (~128px) + icon
+     cluster (~190px) + 30px gap already exceeds a 375px screen's available
+     width before border-radius clips anything, so the leftmost icon renders
+     outside the pill. justify-content:space-between already pushes the two
+     groups to opposite ends, so the explicit gap is redundant here. */
+  html[data-identity="studio"] .nav { min-height: 58px; padding: 7px 9px 7px 12px; border-radius: 16px; gap: 6px; }
   html[data-identity="studio"] .brand-mark { width: 36px; height: 34px; }
   html[data-identity="studio"] .brand > b { font-size: 20px; }
   html[data-identity="studio"] .hero { padding-top: 18px; }
@@ -3478,9 +3485,6 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
    icon/glyph keeps its dimensions, only the area that accepts the tap grows.
    Scoped to coarse pointers so desktop spacing is untouched.             */
 @media (max-width: 700px), (pointer: coarse) {
-  .bag,
-  .settings-link,
-  .menu,
   .theme-fab,
   .volume-control > button,
   .player-controls .skip,
@@ -3491,9 +3495,6 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
     min-height: 44px;
   }
   /* Icon buttons center their glyph in the enlarged box. */
-  .bag,
-  .settings-link,
-  .menu,
   .theme-fab,
   .volume-control > button,
   .player-controls .skip,
@@ -3508,8 +3509,24 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
     min-height: 44px;
   }
   .speech-controls select { min-height: 44px; }
-  /* The cart badge is positioned against the button, so keep it anchored. */
-  .bag { position: relative; }
+  /* .bag/.settings-link/.menu sit in a fixed 39x39 grid inside the tight
+     header pill (see html[data-identity="studio"] .nav's mobile padding).
+     Growing their visual box to 44px there pushed the row wider than the
+     pill and made the leftmost icon spill out past the rounded corner.
+     Grow only the invisible tap area via a pseudo-element instead — the
+     drawn icon stays 39x39, but a finger lands within ~44px either way. */
+  .bag,
+  .settings-link,
+  .menu {
+    position: relative;
+  }
+  .bag::after,
+  .settings-link::after,
+  .menu::after {
+    content: "";
+    position: absolute;
+    inset: -3px;
+  }
   /* Text controls stay visually compact; padding supplies the tap area. */
   .user-link,
   .rating-filter button {
