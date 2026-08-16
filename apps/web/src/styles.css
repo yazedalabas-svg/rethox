@@ -3156,6 +3156,13 @@ html:has(.reader) .theme-fab { top:100px;right:68px;bottom:auto;left:auto;width:
   .nav nav.open { display:grid;gap:4px; }
   .nav nav a { min-height:44px;display:flex;align-items:center;padding:0 12px;border-radius:10px; }
   .nav nav a:hover,.nav nav a.active { background:rgba(115,86,216,.1);color:var(--purple); }
+  /* The "studio" identity's nav background is a translucent lavender pill —
+     a subtle accent that reads fine inline in the desktop header. On mobile
+     this same panel becomes an absolutely-positioned dropdown floating over
+     the hero heading, so the 48%-alpha background let the giant hero text
+     show straight through the open menu. Force it opaque here specifically;
+     the desktop rule (higher up, unscoped to this width) is untouched. */
+  html[data-identity="studio"] .nav nav { background:var(--surface); }
   .book-stats { flex-wrap:wrap;gap:10px 14px; }
   .book-stats span { min-height:30px; }
   .chapter-directory { margin-inline:-4px;padding:14px 10px; }
