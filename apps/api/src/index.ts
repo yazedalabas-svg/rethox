@@ -1963,6 +1963,101 @@ const updateMemoryIllustration = (
     ? [...items, illustration]
     : items.map((item, itemIndex) => itemIndex === index ? illustration : item);
 };
+const managedAssetId = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+/**
+ * Gives shipped chapter art a real `chapter_assets` row so it can be edited.
+ *
+ * Art that ships in the deploy seed carries an id like "mt-v01-page001-img01",
+ * but `chapter_assets.id` is a uuid. Editing one sent that string straight into
+ * a uuid comparison, which Postgres rejects before any row is read — so the
+ * admin panel offered replace/reposition/delete on hundreds of images that
+ * could only ever answer "تعذر قراءة بيانات الصورة".
+ *
+ * Registration copies nothing: the row records the image's existing public path
+ * under the "site-public" bucket, exactly as the original CMS migration did, so
+ * readers keep loading the same file from the same URL. Every shipped image in
+ * the chapter is registered together because `illustrations_managed` is
+ * all-or-nothing — flipping it with only one image registered would drop the
+ * rest from the chapter.
+ *
+ * Returns the seeded-id → uuid mapping for the caller to translate its target.
+ */
+const registerSeededIllustrations = async (
+  context: NonNullable<ReturnType<typeof adminChapter>>,
+  userId: string,
+) => {
+  const mapping = new Map<string, string>();
+  const shipped = context.chapter.illustrations || [];
+  if (!shipped.some((item) => item.id && !managedAssetId.test(item.id))) return mapping;
+  const { data: existing, error: existingError } = await supabaseAdmin!
+    .from("chapter_assets")
+    .select("id,object_path,position,version")
+    .eq("chapter_id", context.chapter.id)
+    .eq("kind", "IMAGE");
+  if (existingError) throw new Error(existingError.message);
+  const idByPath = new Map((existing || []).map((row) => [row.object_path, row.id as string]));
+  let position = Math.max(0, ...(existing || []).map((row) => Number(row.position) || 0));
+  // chapter_assets is unique on (chapter_id, kind, version), so each registered
+  // image needs its own version rather than all sharing version 1.
+  let version = Math.max(0, ...(existing || []).map((row) => Number(row.version) || 0));
+  const rows: Record<string, unknown>[] = [];
+  for (const illustration of shipped) {
+    if (!illustration.id || managedAssetId.test(illustration.id)) continue;
+    const alreadyRegistered = idByPath.get(illustration.src);
+    if (alreadyRegistered) {
+      mapping.set(illustration.id, alreadyRegistered);
+      continue;
+    }
+    const id = randomUUID();
+    position += 1;
+    version += 1;
+    mapping.set(illustration.id, id);
+    rows.push({
+      id,
+      chapter_id: context.chapter.id,
+      kind: "IMAGE",
+      bucket: "site-public",
+      object_path: illustration.src,
+      version,
+      alt_text: illustration.alt,
+      after_sentence_id: illustration.afterSentenceId || null,
+      position,
+      created_by: userId,
+      updated_at: new Date().toISOString(),
+    });
+  }
+  if (rows.length) {
+    const { error } = await supabaseAdmin!.from("chapter_assets").insert(rows);
+    if (error) throw new Error(error.message);
+  }
+  const { error: managedError } = await supabaseAdmin!
+    .from("chapters")
+    .update({ illustrations_managed: true })
+    .eq("id", context.chapter.id);
+  if (managedError) throw new Error(managedError.message);
+  const applyIds = (chapter: Chapter) => {
+    if (!chapter.illustrations) return;
+    chapter.illustrations = chapter.illustrations.map((item) => (
+      item.id && mapping.has(item.id) ? { ...item, id: mapping.get(item.id)! } : item
+    ));
+  };
+  applyIds(context.chapterMeta);
+  if (context.chapter !== context.chapterMeta) applyIds(context.chapter);
+  return mapping;
+};
+/**
+ * Resolves the asset id an admin request targets, registering shipped art on
+ * first edit so a seeded id keeps working instead of failing the uuid lookup.
+ */
+const resolveIllustrationAssetId = async (
+  context: NonNullable<ReturnType<typeof adminChapter>>,
+  requestedId: string,
+  userId: string,
+) => {
+  if (managedAssetId.test(requestedId)) return requestedId;
+  const mapping = await registerSeededIllustrations(context, userId);
+  return mapping.get(requestedId) || "";
+};
 
 app.get("/api/admin/catalog", auth, requireRole("ADMIN"), (_req, res) => {
   res.json({
@@ -2127,10 +2222,21 @@ app.patch(
       after_sentence_id: parsed.data.afterSentenceId || null,
       updated_at: new Date().toISOString(),
     };
+    let assetId: string;
+    try {
+      assetId = await resolveIllustrationAssetId(context, String(req.params.illustrationId), req.user!.id);
+    } catch (registrationError) {
+      logger.error(
+        { error: String(registrationError), chapterId: context.chapter.id },
+        "illustration registration failed",
+      );
+      return res.status(503).json({ message: "تعذر تجهيز هذه الصورة للتعديل" });
+    }
+    if (!assetId) return res.status(404).json({ message: "الصورة غير موجودة" });
     const { data: asset, error } = await supabaseAdmin
       .from("chapter_assets")
       .update(updates)
-      .eq("id", req.params.illustrationId)
+      .eq("id", assetId)
       .eq("chapter_id", context.chapter.id)
       .eq("kind", "IMAGE")
       .select("id,bucket,object_path,alt_text,after_sentence_id,position")
@@ -2173,10 +2279,18 @@ app.put(
     } catch {
       return res.status(400).json({ message: "تعذر التعرف على هذا الملف كصورة" });
     }
+    let assetId: string;
+    try {
+      assetId = await resolveIllustrationAssetId(context, String(req.params.illustrationId), req.user!.id);
+    } catch (error) {
+      logger.error({ error: String(error), chapterId: context.chapter.id }, "illustration registration failed");
+      return res.status(503).json({ message: "تعذر تجهيز هذه الصورة للتعديل" });
+    }
+    if (!assetId) return res.status(404).json({ message: "الصورة غير موجودة" });
     const { data: current, error: currentError } = await supabaseAdmin
       .from("chapter_assets")
       .select("id,bucket,object_path,alt_text,after_sentence_id,position")
-      .eq("id", req.params.illustrationId)
+      .eq("id", assetId)
       .eq("chapter_id", context.chapter.id)
       .eq("kind", "IMAGE")
       .maybeSingle();
@@ -2231,10 +2345,21 @@ app.delete(
     if (!supabaseAdmin) return res.status(503).json({ message: "قاعدة البيانات غير متصلة" });
     const context = adminChapter(String(req.params.id));
     if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
+    let assetId: string;
+    try {
+      assetId = await resolveIllustrationAssetId(context, String(req.params.illustrationId), req.user!.id);
+    } catch (registrationError) {
+      logger.error(
+        { error: String(registrationError), chapterId: context.chapter.id },
+        "illustration registration failed",
+      );
+      return res.status(503).json({ message: "تعذر تجهيز هذه الصورة للتعديل" });
+    }
+    if (!assetId) return res.status(404).json({ message: "الصورة غير موجودة" });
     const { data: asset, error: findError } = await supabaseAdmin
       .from("chapter_assets")
       .select("id,bucket,object_path")
-      .eq("id", req.params.illustrationId)
+      .eq("id", assetId)
       .eq("chapter_id", context.chapter.id)
       .eq("kind", "IMAGE")
       .maybeSingle();
