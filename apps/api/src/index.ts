@@ -125,9 +125,13 @@ const summaryLimit = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+// One reader legitimately needs a steady stream of narration segments, and
+// several readers can share a single ISP/NAT address. The client now paces its
+// own pre-generation, so this ceiling only has to stop genuine abuse — set it
+// well above one reader's real demand rather than at the edge of it.
 const ttsLimit = rateLimit({
   windowMs: 60_000,
-  limit: 80,
+  limit: Number(process.env.TTS_RATE_LIMIT || 240),
   standardHeaders: true,
   legacyHeaders: false,
 });

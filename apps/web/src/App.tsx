@@ -272,6 +272,23 @@ type PreparedNarrationSegment = {
 // any word — forward or back — looks up its segment instead of re-fetching:
 // already-visited text plays instantly, and only genuinely new text hits the
 // TTS endpoint.
+// How far ahead of the spoken position narration audio is generated, and how
+// slowly that background work is paced. The TTS endpoint is rate limited per
+// visitor, so an unbounded race to generate a whole chapter exhausts that
+// budget and starves the request narration is actively waiting on. A small
+// lookahead keeps playback seamless while leaving the budget for playback.
+const narrationLookahead = 4;
+const narrationWarmIntervalMs = 1200;
+const narrationDelay = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+/**
+ * Backoff for a failed narration request. A rate-limited response needs to
+ * wait out the server's window rather than retry immediately — retrying fast
+ * only burns the same budget again and guarantees the next failure.
+ */
+const narrationRetryDelayMs = (error: unknown, attempt: number) =>
+  error instanceof ApiError && error.status === 429
+    ? Math.min(30_000, 6_000 * attempt)
+    : Math.min(10_000, 700 * 2 ** Math.min(attempt, 4));
 type ChapterNarrationCache = {
   chapterId: string;
   /** Audio is voice-specific, so switching narrator must rebuild the cache. */
@@ -3483,12 +3500,10 @@ function ReaderPage() {
     if (cached) return Promise.resolve(cached);
     const draft = cache.drafts[index];
     const inFlight = cache.loading[index];
-    if (inFlight) {
-      // Escalate a queued pre-warm request as soon as narration needs it.
-      // The API merges it by cache key, so this does not synthesize twice.
-      if (priority === "foreground") void requestVoice(draft.text, priority).catch(() => {});
-      return inFlight;
-    }
+    // Reuse the in-flight request as-is. Firing a duplicate to "escalate" it
+    // only spends the shared TTS rate limit twice for one segment, which is
+    // exactly what starves the request narration is actually waiting on.
+    if (inFlight) return inFlight;
     const promise = requestVoiceReliable(draft.text, priority).then((result) => {
       const segment: PreparedNarrationSegment = {
         ...draft,
@@ -3517,20 +3532,31 @@ function ReaderPage() {
       let failures = 0;
       while (index < cache.drafts.length) {
         if (session !== playbackSessionRef.current || chapterCacheRef.current !== cache) return;
+        if (cache.segments[index]) {
+          cache.nextWarmIndex = index + 1;
+          index += 1;
+          continue;
+        }
+        // Stay a bounded distance ahead of playback. Racing to generate the
+        // whole chapter spends the shared TTS rate limit within seconds, and
+        // the one request that actually matters — the next segment the reader
+        // is about to hear — is then rejected, which stopped narration
+        // mid-chapter. Waiting here keeps that budget for playback.
+        if (index > Math.max(fromIndex, currentSegmentRef.current) + narrationLookahead) {
+          await narrationDelay(narrationWarmIntervalMs);
+          continue;
+        }
         try {
           await loadSegment(cache, index, "background");
           cache.nextWarmIndex = index + 1;
           index += 1;
           failures = 0;
-          if (index < cache.drafts.length) {
-            await new Promise((resolve) => window.setTimeout(resolve, 120));
-          }
-        } catch {
+          if (index < cache.drafts.length) await narrationDelay(narrationWarmIntervalMs);
+        } catch (error) {
           // Do not skip a failed segment: the reader needs the following audio
           // to be generated in order, and Edge TTS can reject a short burst.
           failures += 1;
-          const retryDelay = Math.min(10_000, 700 * 2 ** Math.min(failures, 4));
-          await new Promise((resolve) => window.setTimeout(resolve, retryDelay));
+          await narrationDelay(narrationRetryDelayMs(error, failures));
         }
       }
       cache.warmed = true;
@@ -3553,13 +3579,15 @@ function ReaderPage() {
     session: number,
   ) => {
     let lastError: unknown;
-    for (let attempt = 0; attempt < 3; attempt += 1) {
+    // Enough attempts, with a long enough total wait, to outlast one server
+    // rate-limit window. A single throttled minute must never end a chapter.
+    for (let attempt = 0; attempt < 6; attempt += 1) {
       if (session !== playbackSessionRef.current) throw new Error("playback-cancelled");
       try {
         return await loadSegment(cache, index, "foreground");
       } catch (error) {
         lastError = error;
-        await new Promise((resolve) => window.setTimeout(resolve, 600 * (attempt + 1)));
+        await narrationDelay(narrationRetryDelayMs(error, attempt + 1));
       }
     }
     throw lastError || new Error("next-segment-unavailable");
