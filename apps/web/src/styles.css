@@ -3462,3 +3462,58 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
 .locked-actions a { text-decoration:none; }
 .locked-screen small { color:var(--muted);font-size:11px; }
 .locked-screen .error { color:#e05b5b;font-size:13px;margin:0; }
+
+/* --- Touch targets -------------------------------------------------------
+   Phone taps land with a fingertip, not a cursor. Several controls were laid
+   out at icon size (20-39px), which is comfortable with a mouse but small
+   enough on a phone that neighbouring controls get hit instead. Grow the
+   touchable box to the 44px guideline without changing the drawn size: the
+   icon/glyph keeps its dimensions, only the area that accepts the tap grows.
+   Scoped to coarse pointers so desktop spacing is untouched.             */
+@media (max-width: 700px), (pointer: coarse) {
+  .bag,
+  .settings-link,
+  .menu,
+  .theme-fab,
+  .volume-control > button,
+  .player-controls .skip,
+  .rating-filter button,
+  .rating-picker button,
+  .user-link {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  /* Icon buttons center their glyph in the enlarged box. */
+  .bag,
+  .settings-link,
+  .menu,
+  .theme-fab,
+  .volume-control > button,
+  .player-controls .skip {
+    display: inline-grid;
+    place-items: center;
+  }
+  /* The cart badge is positioned against the button, so keep it anchored. */
+  .bag { position: relative; }
+  /* Text controls stay visually compact; padding supplies the tap area. */
+  .user-link,
+  .rating-filter button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 12px;
+  }
+  .rating-picker button {
+    font-size: 22px;
+    line-height: 1;
+  }
+  /* Header nav links were ~19x15: too small to hit reliably. */
+  .nav a,
+  .site-nav a,
+  header nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding-inline: 6px;
+  }
+}
