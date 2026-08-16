@@ -2517,6 +2517,7 @@ html:has(.reader-index.open) .theme-fab {
 .admin-image-preview:hover img,.admin-image-preview:focus-visible img { transform:scale(1.025);filter:brightness(.82); }
 .admin-image-preview:hover span,.admin-image-preview:focus-visible span { opacity:1;transform:translateY(0); }
 .admin-image-preview:focus-visible { box-shadow:0 0 0 3px color-mix(in srgb,var(--purple) 75%,transparent); }
+.admin-image-download { grid-column:1/-1;justify-self:start;display:inline-flex;align-items:center;gap:7px; }
 .admin-image-controls { display:grid;gap:11px;align-content:start; }
 .admin-image-controls>form:first-child { display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:end; }
 .admin-replace-image { display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center; }

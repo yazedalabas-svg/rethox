@@ -40,6 +40,7 @@ import {
   ChevronDown,
   ChevronLeft,
   Clock,
+  Download,
   Eye,
   EyeOff,
   FileText,
@@ -5304,6 +5305,27 @@ function AdminPage() {
       setContentBusy(false);
     }
   };
+  const downloadIllustration = async (illustration: { src: string; alt: string }) => {
+    try {
+      const response = await fetch(illustration.src);
+      if (!response.ok) throw new Error("fetch failed");
+      const blob = await response.blob();
+      const extension = blob.type.split("/")[1]?.replace("jpeg", "jpg") || illustration.src.split(".").pop() || "jpg";
+      const safeName = illustration.alt.trim().replace(/[^\p{L}\p{N}\- ]+/gu, "").slice(0, 60) || "صورة";
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${safeName}.${extension}`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      // Cross-origin storage that blocks fetch still opens directly so the
+      // admin can save the image manually instead of hitting a dead end.
+      window.open(illustration.src, "_blank", "noopener");
+    }
+  };
   return (
     <section className="admin-page wrap">
       <div className="page-head">
@@ -5407,6 +5429,11 @@ function AdminPage() {
                     <img src={illustration.src} alt={illustration.alt} />
                     <span>فتح موضعها في القارئ</span>
                   </Link>
+                  <button
+                    type="button"
+                    className="btn secondary admin-image-download"
+                    onClick={() => downloadIllustration(illustration)}
+                  ><Download size={15} /> تنزيل الصورة</button>
                   {illustration.id ? (
                     <div className="admin-image-controls">
                       <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
