@@ -3507,13 +3507,18 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
     font-size: 22px;
     line-height: 1;
   }
-  /* Header nav links were ~19x15: too small to hit reliably. */
+  /* Header and footer link lists were ~19x15: too small to hit reliably. */
   .nav a,
   .site-nav a,
-  header nav a {
+  header nav a,
+  .footer a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
     padding-inline: 6px;
+  }
+  /* The footer wordmark is a block logo, not a text link in a list. */
+  .footer .brand {
+    padding-inline: 0;
   }
 }
