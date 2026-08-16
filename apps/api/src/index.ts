@@ -8,7 +8,7 @@ import helmet from "helmet";
 import getMp3Duration from "get-mp3-duration";
 import pino from "pino";
 import { createHash, randomUUID } from "node:crypto";
-import { spawnSync } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, utimes, writeFileSync } from "node:fs";
 import { dirname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -1832,11 +1832,16 @@ app.delete("/api/chapters/:id/comments/:commentId", communityWriteLimit, auth, a
 });
 
 const chapterImageBody = express.raw({
-  type: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-  // High-resolution PNG artwork is often much larger than compressed web
-  // formats. Keep one generous ceiling for covers and chapter art, while
-  // still protecting the API process from an unbounded request body.
-  // Supabase's current project plan permits Storage files up to 50MB.
+  // Any declared image/* type is buffered — normalizeUploadedImage below
+  // re-encodes whatever ffmpeg can decode (bmp, tiff, heic, avif, and more)
+  // to a clean JPEG, so the admin is never blocked by the source format.
+  // application/octet-stream covers browsers that leave File.type empty for
+  // an unrecognized extension; ffmpeg still validates it's a real image.
+  type: ["image/*", "application/octet-stream"],
+  // High-resolution PNG or scanner artwork can be much larger than compressed
+  // web formats. Keep one generous ceiling, while still protecting the API
+  // process from an unbounded request body. Supabase's current project plan
+  // permits Storage files up to 50MB.
   limit: process.env.ADMIN_IMAGE_UPLOAD_LIMIT || "50mb",
 });
 const imageExtension: Record<string, string> = {
@@ -1856,6 +1861,42 @@ const detectedImageMime = (body: unknown) => {
   const gifHeader = body.subarray(0, 6).toString("ascii");
   if (gifHeader === "GIF87a" || gifHeader === "GIF89a") return "image/gif";
   return "";
+};
+/**
+ * Re-encodes any image ffmpeg can decode (bmp, tiff, heic, avif, raw phone
+ * photos, ...) into a clean JPEG buffer, so an admin upload never fails just
+ * because the source file isn't already jpg/png/webp/gif.
+ */
+const convertImageToJpeg = (input: Buffer) => new Promise<Buffer>((resolvePromise, reject) => {
+  const child = spawn(
+    "ffmpeg",
+    ["-hide_banner", "-loglevel", "error", "-y", "-i", "pipe:0", "-map_metadata", "-1", "-q:v", "3", "-f", "mjpeg", "pipe:1"],
+    { stdio: ["pipe", "pipe", "pipe"] },
+  );
+  const chunks: Buffer[] = [];
+  let stderr = "";
+  child.stdout.on("data", (chunk) => chunks.push(chunk));
+  child.stderr.on("data", (chunk) => { stderr += chunk.toString(); });
+  child.on("error", reject);
+  child.on("close", (code) => {
+    if (code === 0 && chunks.length) resolvePromise(Buffer.concat(chunks));
+    else reject(new Error(stderr.trim() || `ffmpeg exited ${code}`));
+  });
+  child.stdin.on("error", () => undefined);
+  child.stdin.end(input);
+});
+/**
+ * Accepts whatever image bytes the admin uploaded. A file that's already a
+ * clean jpg/png/webp/gif passes through untouched (no generation loss); any
+ * other format — or a declared type that doesn't match the real bytes — is
+ * converted to JPEG. Throws only when the bytes aren't a decodable image at
+ * all, so the ceiling is "must be *an* image", not "must be one of 4 types".
+ */
+const normalizeUploadedImage = async (body: Buffer, declaredMime: string) => {
+  const actualMime = detectedImageMime(body);
+  if (actualMime && actualMime === declaredMime) return { body, mime: actualMime };
+  const converted = await convertImageToJpeg(body);
+  return { body: converted, mime: "image/jpeg" };
 };
 const adminChapter = (chapterId: string) => {
   const book = db().books.find((item) => item.chapters.some((chapter) => chapter.id === chapterId));
@@ -1986,11 +2027,16 @@ app.post(
     if (!metadata.success || !validImagePlacement(context.chapter, metadata.data.afterSentenceId))
       return res.status(400).json({ message: "موضع الصورة غير صحيح" });
     const alt = automaticIllustrationAlt(context.chapter, metadata.data.afterSentenceId);
-    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
-    const actualMime = detectedImageMime(body);
-    if (!body.length || !imageExtension[declaredMime] || actualMime !== declaredMime)
-      return res.status(400).json({ message: "الملف ليس صورة صالحة أو نوعه غير مطابق" });
+    if (!rawBody.length) return res.status(400).json({ message: "الملف ليس صورة صالحة" });
+    let body: Buffer;
+    let mime: string;
+    try {
+      ({ body, mime } = await normalizeUploadedImage(rawBody, declaredMime));
+    } catch {
+      return res.status(400).json({ message: "تعذر التعرف على هذا الملف كصورة" });
+    }
 
     const { data: versions, error: versionError } = await supabaseAdmin
       .from("chapter_assets")
@@ -2000,10 +2046,10 @@ app.post(
     if (versionError) return res.status(503).json({ message: "تعذر قراءة صور الفصل" });
     const version = Math.max(0, ...(versions || []).map((item) => item.version || 0)) + 1;
     const position = Math.max(0, ...(versions || []).map((item) => item.position || 0)) + 1;
-    const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[declaredMime]}`;
+    const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[mime]}`;
     const { error: uploadError } = await supabaseAdmin.storage
       .from("chapter-images")
-      .upload(objectPath, body, { contentType: declaredMime, cacheControl: "31536000", upsert: false });
+      .upload(objectPath, body, { contentType: mime, cacheControl: "31536000", upsert: false });
     if (uploadError) {
       logger.error({ error: uploadError.message }, "chapter image upload failed");
       return res.status(503).json({ message: "تعذر رفع الصورة إلى التخزين" });
@@ -2015,7 +2061,7 @@ app.post(
         kind: "IMAGE",
         bucket: "chapter-images",
         object_path: objectPath,
-        content_type: declaredMime,
+        content_type: mime,
         byte_size: Buffer.byteLength(body),
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
         version,
@@ -2113,10 +2159,16 @@ app.put(
     if (!supabaseAdmin) return res.status(503).json({ message: "التخزين غير متصل" });
     const context = adminChapter(String(req.params.id));
     if (!context) return res.status(404).json({ message: "الفصل غير موجود" });
-    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
-    if (!body.length || !imageExtension[declaredMime] || detectedImageMime(body) !== declaredMime)
-      return res.status(400).json({ message: "الملف ليس صورة صالحة أو نوعه غير مطابق" });
+    if (!rawBody.length) return res.status(400).json({ message: "الملف ليس صورة صالحة" });
+    let body: Buffer;
+    let mime: string;
+    try {
+      ({ body, mime } = await normalizeUploadedImage(rawBody, declaredMime));
+    } catch {
+      return res.status(400).json({ message: "تعذر التعرف على هذا الملف كصورة" });
+    }
     const { data: current, error: currentError } = await supabaseAdmin
       .from("chapter_assets")
       .select("id,bucket,object_path,alt_text,after_sentence_id,position")
@@ -2126,17 +2178,17 @@ app.put(
       .maybeSingle();
     if (currentError) return res.status(503).json({ message: "تعذر قراءة بيانات الصورة" });
     if (!current) return res.status(404).json({ message: "الصورة غير موجودة" });
-    const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[declaredMime]}`;
+    const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[mime]}`;
     const { error: uploadError } = await supabaseAdmin.storage
       .from("chapter-images")
-      .upload(objectPath, body, { contentType: declaredMime, cacheControl: "31536000", upsert: false });
+      .upload(objectPath, body, { contentType: mime, cacheControl: "31536000", upsert: false });
     if (uploadError) return res.status(503).json({ message: "تعذر رفع الصورة البديلة" });
     const { data: asset, error: updateError } = await supabaseAdmin
       .from("chapter_assets")
       .update({
         bucket: "chapter-images",
         object_path: objectPath,
-        content_type: declaredMime,
+        content_type: mime,
         byte_size: Buffer.byteLength(body),
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
         alt_text: automaticIllustrationAlt(context.chapter, current.after_sentence_id || undefined),
@@ -2273,15 +2325,21 @@ app.put(
     if (!supabaseAdmin) return res.status(503).json({ message: "التخزين غير متصل" });
     const book = db().books.find((item) => item.id === req.params.id);
     if (!book) return res.status(404).json({ message: "الكتاب غير موجود" });
-    const body = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
+    const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
-    if (!body.length || !imageExtension[declaredMime] || detectedImageMime(body) !== declaredMime)
-      return res.status(400).json({ message: "الملف ليس صورة صالحة أو نوعه غير مطابق" });
+    if (!rawBody.length) return res.status(400).json({ message: "الملف ليس صورة صالحة" });
+    let body: Buffer;
+    let mime: string;
+    try {
+      ({ body, mime } = await normalizeUploadedImage(rawBody, declaredMime));
+    } catch {
+      return res.status(400).json({ message: "تعذر التعرف على هذا الملف كصورة" });
+    }
 
-    const objectPath = `covers/${book.id}/${randomUUID()}.${imageExtension[declaredMime]}`;
+    const objectPath = `covers/${book.id}/${randomUUID()}.${imageExtension[mime]}`;
     const { error: uploadError } = await supabaseAdmin.storage
       .from("chapter-images")
-      .upload(objectPath, body, { contentType: declaredMime, cacheControl: "31536000", upsert: false });
+      .upload(objectPath, body, { contentType: mime, cacheControl: "31536000", upsert: false });
     if (uploadError) {
       logger.error({ error: uploadError.message, bookId: book.id }, "book cover upload failed");
       return res.status(503).json({ message: "تعذر رفع غلاف الرواية" });
