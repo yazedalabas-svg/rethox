@@ -3511,12 +3511,16 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
   .nav a,
   .site-nav a,
   header nav a,
-  .footer a {
+  .footer a,
+  .crumb a {
     display: inline-flex;
     align-items: center;
     min-height: 44px;
     padding-inline: 6px;
   }
+  /* The breadcrumb sits inline with a chevron, so keep it from gaining a
+     leading gap that would break the arrow alignment. */
+  .crumb a { padding-inline-start: 0; }
   /* The footer wordmark is a block logo, not a text link in a list. */
   .footer .brand {
     padding-inline: 0;
