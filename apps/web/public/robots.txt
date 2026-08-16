@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://rethox.online/sitemap.xml
+Sitemap: https://rethox.online/sitemap-images.xml

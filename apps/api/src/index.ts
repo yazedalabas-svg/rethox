@@ -1059,6 +1059,75 @@ app.patch("/api/auth/profile", auth, async (req: AuthRequest, res) => {
   res.json({ user: publicUser(user.id) });
 });
 
+const escapeXml = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;" }[char] as string
+  ));
+
+// Public image sitemap: lets Google discover chapter illustrations and book
+// covers without needing to render the SPA's JavaScript. Only sample (free)
+// chapters are included — the rest require a paid entitlement, so their
+// images must not appear in a public search index.
+app.get("/sitemap-images.xml", (_req, res) => {
+  const origin = (process.env.PUBLIC_SITE_URL || "https://rethox.online").replace(/\/$/, "");
+  // Cover/illustration URLs are absolute when uploaded to Supabase storage but
+  // relative when served from the web app's own /public folder (seed/demo
+  // assets) — image sitemaps require fully-qualified URLs either way.
+  const absoluteUrl = (path: string) => (/^https?:\/\//i.test(path) ? path : `${origin}${path.startsWith("/") ? "" : "/"}${path}`);
+  const entries: string[] = [];
+
+  for (const book of db().books.filter((b) => b.status === "PUBLISHED")) {
+    if (book.coverUrl) {
+      const caption = escapeXml(`غلاف كتاب ${book.title}`);
+      entries.push(
+        `  <url>\n` +
+          `    <loc>${escapeXml(`${origin}/book/${book.slug}`)}</loc>\n` +
+          `    <image:image>\n` +
+          `      <image:loc>${escapeXml(absoluteUrl(book.coverUrl))}</image:loc>\n` +
+          `      <image:caption>${caption}</image:caption>\n` +
+          `    </image:image>\n` +
+          `  </url>`,
+      );
+    }
+
+    for (const chapterMeta of book.chapters.filter((c) => c.isSample)) {
+      let chapter: Chapter;
+      try {
+        chapter = loadChapterContent(chapterMeta);
+      } catch {
+        continue;
+      }
+      const illustrations = chapter.illustrations || [];
+      if (!illustrations.length) continue;
+      const images = illustrations
+        .map(
+          (illustration) =>
+            `    <image:image>\n` +
+            `      <image:loc>${escapeXml(absoluteUrl(illustration.src))}</image:loc>\n` +
+            `      <image:caption>${escapeXml(illustration.alt)}</image:caption>\n` +
+            `    </image:image>`,
+        )
+        .join("\n");
+      entries.push(
+        `  <url>\n` +
+          `    <loc>${escapeXml(`${origin}/reader/${chapterMeta.id}`)}</loc>\n` +
+          `${images}\n` +
+          `  </url>`,
+      );
+    }
+  }
+
+  const xml =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" ` +
+    `xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n` +
+    `${entries.join("\n")}\n` +
+    `</urlset>`;
+  res.set("Content-Type", "application/xml; charset=utf-8");
+  res.set("Cache-Control", "public, max-age=3600");
+  res.send(xml);
+});
+
 app.get("/api/books", (req, res) => {
   let books = db().books.filter((b) => b.status === "PUBLISHED");
   const q = normalizeArabic(String(req.query.q || ""));
