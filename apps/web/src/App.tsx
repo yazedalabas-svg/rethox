@@ -5429,44 +5429,46 @@ function AdminPage() {
                     <img src={illustration.src} alt={illustration.alt} />
                     <span>فتح موضعها في القارئ</span>
                   </Link>
-                  <button
-                    type="button"
-                    className="btn secondary admin-image-download"
-                    onClick={() => downloadIllustration(illustration)}
-                  ><Download size={15} /> تنزيل الصورة</button>
-                  {illustration.id ? (
-                    <div className="admin-image-controls">
-                      <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
-                        <div className="admin-placement-field">
-                          <label>الموضع<select name="afterSentenceId" value={illustrationPlacementIds[illustration.id] ?? illustration.afterSentenceId ?? ""} onChange={(event) => setIllustrationPlacementIds((current) => ({ ...current, [illustration.id!]: event.target.value }))}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
-                          <button type="button" className="btn secondary admin-placement-trigger" onClick={() => { setPlacementQuery(""); setPlacementPicker({ kind: "illustration", illustrationId: illustration.id }); }}><Search size={15} /> اختر من النص</button>
-                        </div>
-                        <button className="btn secondary" disabled={contentBusy}>حفظ الموضع</button>
-                      </form>
-                      <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
-                        <input name="replacement" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
-                        <button className="btn secondary" disabled={contentBusy}>استبدال الملف</button>
-                      </form>
-                      <button
-                        type="button"
-                        className="admin-danger-button"
-                        disabled={contentBusy}
-                        onClick={async () => {
-                          if (!window.confirm("حذف هذه الصورة من الفصل؟")) return;
-                          setContentBusy(true);
-                          try {
-                            await api(`/admin/chapters/${selectedChapterId}/illustrations/${illustration.id}`, { method: "DELETE" });
-                            await Promise.all([reloadChapter(), reloadAudit()]);
-                            setMessage("تم حذف الصورة من قاعدة البيانات والموقع");
-                          } catch (error) {
-                            setMessage((error as Error).message);
-                          } finally {
-                            setContentBusy(false);
-                          }
-                        }}
-                      ><Trash2 size={15} /> حذف الصورة</button>
-                    </div>
-                  ) : <p>هذه صورة قديمة غير مُدارة بعد.</p>}
+                  <div className="admin-image-controls">
+                    <button
+                      type="button"
+                      className="btn secondary admin-image-download"
+                      onClick={() => downloadIllustration(illustration)}
+                    ><Download size={15} /> تنزيل الصورة</button>
+                    {illustration.id ? (
+                      <>
+                        <form onSubmit={(event) => editIllustration(event, illustration.id!)}>
+                          <div className="admin-placement-field">
+                            <label>الموضع<select name="afterSentenceId" value={illustrationPlacementIds[illustration.id] ?? illustration.afterSentenceId ?? ""} onChange={(event) => setIllustrationPlacementIds((current) => ({ ...current, [illustration.id!]: event.target.value }))}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 70)}</option>)}</select></label>
+                            <button type="button" className="btn secondary admin-placement-trigger" onClick={() => { setPlacementQuery(""); setPlacementPicker({ kind: "illustration", illustrationId: illustration.id }); }}><Search size={15} /> اختر من النص</button>
+                          </div>
+                          <button className="btn secondary" disabled={contentBusy}>حفظ الموضع</button>
+                        </form>
+                        <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
+                          <input name="replacement" type="file" accept="image/jpeg,image/png,image/webp,image/gif" required />
+                          <button className="btn secondary" disabled={contentBusy}>استبدال الملف</button>
+                        </form>
+                        <button
+                          type="button"
+                          className="admin-danger-button"
+                          disabled={contentBusy}
+                          onClick={async () => {
+                            if (!window.confirm("حذف هذه الصورة من الفصل؟")) return;
+                            setContentBusy(true);
+                            try {
+                              await api(`/admin/chapters/${selectedChapterId}/illustrations/${illustration.id}`, { method: "DELETE" });
+                              await Promise.all([reloadChapter(), reloadAudit()]);
+                              setMessage("تم حذف الصورة من قاعدة البيانات والموقع");
+                            } catch (error) {
+                              setMessage((error as Error).message);
+                            } finally {
+                              setContentBusy(false);
+                            }
+                          }}
+                        ><Trash2 size={15} /> حذف الصورة</button>
+                      </>
+                    ) : <p>هذه صورة قديمة غير مُدارة بعد.</p>}
+                  </div>
                 </article>
               ))}
               {!chapterDetails.illustrations.length && <p className="panel-empty">لا توجد صور في هذا {selectedContentUnitLabel}. تستطيع إضافة أول صورة الآن.</p>}
