@@ -1891,14 +1891,18 @@ const convertImageToJpeg = (input: Buffer) => new Promise<Buffer>((resolvePromis
 });
 /**
  * Accepts whatever image bytes the admin uploaded. A file that's already a
- * clean jpg/png/webp/gif passes through untouched (no generation loss); any
- * other format — or a declared type that doesn't match the real bytes — is
- * converted to JPEG. Throws only when the bytes aren't a decodable image at
- * all, so the ceiling is "must be *an* image", not "must be one of 4 types".
+ * clean jpg/png/webp/gif passes through untouched (no generation loss), even
+ * when Windows/the browser sends an empty or incorrect File.type. Any other
+ * format is converted to JPEG. Throws only when the bytes aren't a decodable
+ * image at all, so the ceiling is "must be *an* image", not "must be one of
+ * 4 types".
  */
-const normalizeUploadedImage = async (body: Buffer, declaredMime: string) => {
+const normalizeUploadedImage = async (body: Buffer, _declaredMime: string) => {
   const actualMime = detectedImageMime(body);
-  if (actualMime && actualMime === declaredMime) return { body, mime: actualMime };
+  // File.type is metadata supplied by the browser, not a trustworthy
+  // description of the bytes. Trust the image signature instead so valid PNGs
+  // from apps that send application/octet-stream don't go through ffmpeg.
+  if (actualMime) return { body, mime: actualMime };
   const converted = await convertImageToJpeg(body);
   return { body: converted, mime: "image/jpeg" };
 };

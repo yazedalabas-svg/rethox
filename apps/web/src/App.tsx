@@ -5428,7 +5428,7 @@ function AdminPage() {
                 <h3>إضافة صورة جديدة</h3>
                 <p>اختر الصورة ثم حدد هل تظهر في بداية {selectedContentUnitLabel} أو بعد فقرة محددة من النص.</p>
               </div>
-              <label>ملف الصورة<input name="image" type="file" accept="image/*" required /></label>
+              <label>ملف الصورة<input name="image" type="file" accept="image/*,.jpg,.jpeg,.jpe,.jfif,.png,.webp,.gif,.avif,.heic,.heif,.tif,.tiff,.bmp,.ico" required /></label>
               <div className="admin-placement-field">
                 <label>موضع الصورة<select name="afterSentenceId" value={uploadPlacementId} onChange={(event) => setUploadPlacementId(event.target.value)}><option value="">بداية {selectedContentUnitLabel}</option>{chapterDetails.sentences.map((sentence) => <option key={sentence.id} value={sentence.id}>بعد الفقرة {sentence.position}: {sentence.text.slice(0, 82)}</option>)}</select></label>
                 <button type="button" className="btn secondary admin-placement-trigger" onClick={() => { setPlacementQuery(""); setPlacementPicker({ kind: "upload" }); }}><Search size={15} /> اختر من نص {selectedContentUnitLabel}</button>
@@ -5473,7 +5473,7 @@ function AdminPage() {
                           <button className="btn secondary" disabled={contentBusy}>حفظ الموضع</button>
                         </form>
                         <form className="admin-replace-image" onSubmit={(event) => replaceIllustration(event, illustration.id!)}>
-                          <input name="replacement" type="file" accept="image/*" required />
+                          <input name="replacement" type="file" accept="image/*,.jpg,.jpeg,.jpe,.jfif,.png,.webp,.gif,.avif,.heic,.heif,.tif,.tiff,.bmp,.ico" required />
                           <button className="btn secondary" disabled={contentBusy}>استبدال الملف</button>
                         </form>
                         <button
@@ -5674,7 +5674,7 @@ function AdminPage() {
                   ? <img src={coverPreviewUrl || selectedBook.coverUrl} alt="معاينة غلاف الرواية" />
                   : <span>لا يوجد غلاف مرفوع</span>}
               </div>
-              <label>غلاف الرواية<input name="cover" type="file" accept="image/*" onChange={(event) => {
+              <label>غلاف الرواية<input name="cover" type="file" accept="image/*,.jpg,.jpeg,.jpe,.jfif,.png,.webp,.gif,.avif,.heic,.heif,.tif,.tiff,.bmp,.ico" onChange={(event) => {
                 const file = event.currentTarget.files?.[0];
                 setCoverPreviewUrl(file ? URL.createObjectURL(file) : "");
               }} /><small>JPG أو PNG أو WebP أو GIF — يقبل ملفات PNG الكبيرة حتى 50MB</small></label>
