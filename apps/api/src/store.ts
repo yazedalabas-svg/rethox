@@ -18,8 +18,8 @@ const visibleBookIds = new Set(
     .map((id) => id.trim())
     .filter(Boolean),
 );
-let state:Store;
-let seeded:Store | null = null;
+let state: Store;
+let seeded: Store | null = null;
 let remoteStore: SupabaseClient | null = null;
 let remoteWrite: Promise<void> = Promise.resolve();
 let relationalEnabled = false;
@@ -36,6 +36,38 @@ const mergeLatestProgress = (...sources: Store["progress"][]) => {
   }
   return [...progressByKey.values()];
 };
+
+const normalizeBookLocking = (book: Store["books"][number]): Store["books"][number] => {
+  if (book.id === "book-rezero-arc-7" || book.id === "book-rezero-arc-8") {
+    return {
+      ...book,
+      priceMinor: book.priceMinor > 0 ? book.priceMinor : 2900,
+      chapters: book.chapters.map((chapter) => ({
+        ...chapter,
+        isSample: chapter.position === 1,
+        sections: chapter.sections?.map((section, idx) => ({
+          ...section,
+          isSample: chapter.position === 1 && idx === 0,
+        })),
+      })),
+    };
+  }
+  if (book.priceMinor > 0) {
+    return {
+      ...book,
+      chapters: book.chapters.map((chapter) => ({
+        ...chapter,
+        isSample: chapter.position === 1,
+        sections: chapter.sections?.map((section, idx) => ({
+          ...section,
+          isSample: chapter.position === 1 && idx === 0,
+        })),
+      })),
+    };
+  }
+  return book;
+};
+
 // Refreshes the shipped catalog from the immutable deploy seed (titles,
 // chapter structure, pricing, ...) while keeping each chapter's *current*
 // illustrations. Illustrations uploaded through the admin panel live only in
@@ -43,7 +75,7 @@ const mergeLatestProgress = (...sources: Store["progress"][]) => {
 // shipped book with the raw seed on every boot silently reverted every
 // admin-added image back to whatever static illustrations shipped in git.
 const applyShippedCatalog = (books: Store["books"]): Store["books"] => {
-  if (!seeded?.books?.length) return books;
+  if (!seeded?.books?.length) return books.map(normalizeBookLocking);
   const shippedIds = new Set(seeded.books.map((book) => book.id));
   const currentById = new Map(books.map((book) => [book.id, book]));
   const refreshed = seeded.books.map((seededBook) => {
@@ -61,8 +93,9 @@ const applyShippedCatalog = (books: Store["books"]): Store["books"] => {
       }),
     };
   });
-  return [...refreshed, ...books.filter((book) => !shippedIds.has(book.id))];
+  return [...refreshed, ...books.filter((book) => !shippedIds.has(book.id))].map(normalizeBookLocking);
 };
+
 try {
   seeded = existsSync(deploySeed)
     ? JSON.parse(readFileSync(deploySeed, "utf8"))

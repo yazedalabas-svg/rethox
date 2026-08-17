@@ -3096,16 +3096,35 @@ function ReaderPage() {
     setShowChapterList(false);
     setTransitionTitle("");
     try {
-      setSavedSentenceIds(
-        JSON.parse(localStorage.getItem(`rethox-bookmarks-${chapterId}`) || "[]"),
-      );
+      const localBookmarks: string[] = JSON.parse(localStorage.getItem(`rethox-bookmarks-${chapterId}`) || "[]");
+      const initialSaved = targetSentenceId && !localBookmarks.includes(targetSentenceId)
+        ? [...localBookmarks, targetSentenceId]
+        : localBookmarks;
+      setSavedSentenceIds(initialSaved);
     } catch {
-      setSavedSentenceIds([]);
+      setSavedSentenceIds(targetSentenceId ? [targetSentenceId] : []);
     }
     setCurrentSentenceIndex(
       Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0),
     );
     let active = true;
+    if (user) {
+      void api<{ bookmarks: SavedBookmark[] }>("/bookmarks")
+        .then((res) => {
+          if (!active) return;
+          const chapterBookmarks = (res.bookmarks || [])
+            .filter((b) => b.chapterId === chapterId)
+            .map((b) => b.sentenceId);
+          if (chapterBookmarks.length > 0) {
+            setSavedSentenceIds((prev) => {
+              const merged = Array.from(new Set([...prev, ...chapterBookmarks]));
+              try { localStorage.setItem(`rethox-bookmarks-${chapterId}`, JSON.stringify(merged)); } catch {}
+              return merged;
+            });
+          }
+        })
+        .catch(() => {});
+    }
     getChapterContent(chapterId, sectionSentenceId)
       .then((r) => {
         let savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
@@ -3116,6 +3135,11 @@ function ReaderPage() {
             savedIndex = foundIndex;
             savedWordId = "";
             setSectionTargetId(targetSentenceId);
+            setSavedSentenceIds((prev) => {
+              const updated = prev.includes(targetSentenceId) ? prev : [...prev, targetSentenceId];
+              try { localStorage.setItem(`rethox-bookmarks-${chapterId}`, JSON.stringify(updated)); } catch {}
+              return updated;
+            });
           }
         } else if (sectionSentenceId) {
           savedIndex = 0;
@@ -4474,9 +4498,21 @@ function ReaderPage() {
               <>
                 <b className="reader-index-group">أقسام {chapter.title}</b>
                 {chapter.sections.map((section) => (
-                  <button key={section.id} className="reader-section-link" onClick={() => jumpToSection(section.sentenceId)}>
-                    <i>{String(section.position).padStart(2, "0")}</i>
+                  <button
+                    key={section.id}
+                    className={`reader-section-link ${section.locked ? "locked" : ""}`}
+                    onClick={() => {
+                      if (section.locked) {
+                        setLockedChapter({ id: chapter.id, title: section.title });
+                      } else {
+                        jumpToSection(section.sentenceId);
+                        setShowChapterList(false);
+                      }
+                    }}
+                  >
+                    <i>{section.locked ? <LockKeyhole size={13} /> : String(section.position).padStart(2, "0")}</i>
                     <span>{section.title}</span>
+                    {section.locked && <small className="locked-tag">مغلق</small>}
                   </button>
                 ))}
                 <b className="reader-index-group">مجلدات الرواية</b>
@@ -4485,11 +4521,18 @@ function ReaderPage() {
             {chapterList.map((item) => (
               <button
                 key={item.id}
-                className={`${item.id === chapter.id ? "current" : ""} ${completedChapters.includes(item.id) ? "completed" : ""}`}
-                onClick={() => goToChapter(item)}
+                className={`${item.id === chapter.id ? "current" : ""} ${completedChapters.includes(item.id) ? "completed" : ""} ${item.locked ? "locked" : ""}`}
+                onClick={() => {
+                  if (item.locked) {
+                    setLockedChapter({ id: item.id, title: item.title });
+                  } else {
+                    goToChapter(item);
+                  }
+                }}
               >
-                <i>{completedChapters.includes(item.id) ? <Check /> : item.position}</i>
+                <i>{item.locked ? <LockKeyhole size={13} /> : completedChapters.includes(item.id) ? <Check /> : item.position}</i>
                 <span>{item.title}</span>
+                {item.locked && <small className="locked-tag">مغلق</small>}
               </button>
             ))}
           </nav>
@@ -4628,6 +4671,27 @@ function ReaderPage() {
                 .map((illustration) => chapterIllustration(illustration, true))}
             </Fragment>
           ))}
+          {chapter.sampleTruncated && book && (
+            <div className="reader-paywall">
+              <div className="reader-paywall-blur" aria-hidden="true">
+                <p>وكان صوت إميليا يملأ الغرفة كأنه نجمة في سماء مظلمة...</p>
+                <p>ابتسم سوبارو ببطء، وفي تلك اللحظة أدرك أن الطريق أمامه...</p>
+                <p>همست بياتريس بكلمات لم تقلها من قبل، وكأن الزمن توقف...</p>
+              </div>
+              <div className="reader-paywall-card">
+                <LockKeyhole size={28} />
+                <h3>واصل القراءة</h3>
+                <p>اشترِ الكتاب للوصول لجميع الفصول</p>
+                <b>{(book.priceMinor / 100).toFixed(0)} ر.س</b>
+                <button
+                  className="btn primary"
+                  onClick={() => nav(`/book/${book.slug}`)}
+                >
+                  <ShoppingBag size={16} /> اشترِ الكتاب
+                </button>
+              </div>
+            </div>
+          )}
           <section className="chapter-community">
             <div className="chapter-community-head">
               <div>

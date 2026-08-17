@@ -1097,9 +1097,14 @@ app.get("/api/books/:slug", optionalAuth, (req: AuthRequest, res) => {
         // A chapter can bundle many real chapters as "sections" (e.g. a whole
         // novel volume). Flag which of those are locked individually so a
         // sample volume can still hold paid chapters past the free preview.
-        sections: chapter.sections?.map((section) => ({
+        sections: chapter.sections?.map((section, idx) => ({
           ...section,
-          locked: section.isSample === false && !owns,
+          locked: !owns && (
+            !chapter.isSample ||
+            section.isSample === false ||
+            (chapter.position > 1) ||
+            (idx > 0 && (book.priceMinor > 0 || !chapter.isSample))
+          ),
         })),
       })),
     },
@@ -1159,7 +1164,11 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
   // the free portion and the implicit "no section" full-chapter view.
   const firstLockedSectionIndex = owns
     ? -1
-    : sections.findIndex((section) => section.isSample === false);
+    : (!chapterMeta.isSample || chapterMeta.position > 1)
+      ? 0
+      : (book.priceMinor > 0)
+        ? 1
+        : sections.findIndex((section) => section.isSample === false);
   const effectiveSectionIndex = requestedSectionIndex >= 0 ? requestedSectionIndex : 0;
   if (firstLockedSectionIndex >= 0 && effectiveSectionIndex >= firstLockedSectionIndex)
     return res.status(403).json({
@@ -1194,6 +1203,19 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
         };
       })()
     : chapter;
+  // For paid books, even the free sample chapter is capped to the first
+  // SAMPLE_SENTENCE_LIMIT sentences so guests can preview but not read the
+  // whole chapter for free.
+  const SAMPLE_SENTENCE_LIMIT = 40;
+  const isSampleCapped = !owns && chapterMeta.isSample && book.priceMinor > 0
+    && visibleChapter.sentences.length > SAMPLE_SENTENCE_LIMIT;
+  const finalChapter = isSampleCapped
+    ? {
+        ...visibleChapter,
+        sentences: visibleChapter.sentences.slice(0, SAMPLE_SENTENCE_LIMIT),
+        sampleTruncated: true,
+      }
+    : visibleChapter;
   const chapterIndex = book.chapters.findIndex((item) => item.id === chapterMeta.id);
   const chapterLink = (item: (typeof book.chapters)[number] | undefined) =>
     item
@@ -1216,11 +1238,17 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       priceMinor: book.priceMinor,
     },
     chapter: {
-      ...withAutomaticIllustrationAlt(visibleChapter),
+      ...withAutomaticIllustrationAlt(finalChapter),
       contentFile: undefined,
-      sections: visibleChapter.sections?.map((section) => ({
+      sampleTruncated: finalChapter.sampleTruncated ?? false,
+      sections: finalChapter.sections?.map((section, idx) => ({
         ...section,
-        locked: section.isSample === false && !owns,
+        locked: !owns && (
+          !chapterMeta.isSample ||
+          section.isSample === false ||
+          (chapterMeta.position > 1) ||
+          (idx > 0 && (book.priceMinor > 0 || !chapterMeta.isSample))
+        ),
       })),
     },
     chapterList: book.chapters.map((item) => ({
