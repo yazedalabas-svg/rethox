@@ -12,3 +12,4 @@ export type Review={id:string;bookId:string;rating:number;body:string;spoiler:bo
 export type ChapterComment={id:string;chapterId:string;rating:number;body:string;spoiler:boolean;parentId?:string;provider?:string;createdAt:string;verifiedAccount?:boolean;user:CommunityUser};
 export type Progress={bookId:string;chapterId:string;sentenceId?:string;wordId?:string;positionMs:number;percentage:number;updatedAt:string};
 export type ContentReport={id:string;bookId:string;chapterId:string;sentenceId?:string;message:string;status:"OPEN"|"RESOLVED";createdAt:string;updatedAt:string;bookTitle?:string;chapterTitle?:string;user?:User};
+export type SavedBookmark={id:string;userId:string;bookId:string;chapterId:string;sentenceId:string;createdAt:string;bookTitle?:string;bookSlug?:string;chapterTitle?:string;chapterPosition?:number;sentenceText?:string};

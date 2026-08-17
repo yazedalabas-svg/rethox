@@ -85,7 +85,7 @@ import {
   setToken,
   type AuthSession,
 } from "./api";
-import type { Book, Chapter, ChapterComment, ChapterMeta, ChapterSection, ContentReport, Progress, Review, Sentence, User, VoiceOption } from "./types";
+import type { Book, Chapter, ChapterComment, ChapterMeta, ChapterSection, ContentReport, Progress, Review, SavedBookmark, Sentence, User, VoiceOption } from "./types";
 import { groupBidiRuns, paragraphDirection } from "./bidi";
 import { alignBoundaries, formatTime } from "./utils";
 
@@ -2408,6 +2408,7 @@ function AccountPage() {
   const [bookIds, setBookIds] = useState<string[]>([]);
   const [books, setBooks] = useState<Book[]>([]);
   const [readingListIds, setReadingListIds] = useState<string[]>([]);
+  const [savedBookmarks, setSavedBookmarks] = useState<SavedBookmark[]>([]);
   const [history] = useState<ReadingHistoryItem[]>(readHistory);
   const [profileName, setProfileName] = useState("");
   const [profileAvatar, setProfileAvatar] = useState("");
@@ -2441,7 +2442,14 @@ function AccountPage() {
     api<{ bookIds: string[] }>("/entitlements").then((result) => setBookIds(result.bookIds)).catch(() => setBookIds([]));
     api<{ books: Book[] }>("/books").then((result) => setBooks(result.books)).catch(() => setBooks([]));
     api<{ bookIds: string[] }>("/reading-list").then((result) => setReadingListIds(result.bookIds)).catch(() => setReadingListIds([]));
+    api<{ bookmarks: SavedBookmark[] }>("/bookmarks").then((result) => setSavedBookmarks(result.bookmarks || [])).catch(() => setSavedBookmarks([]));
   }, [user, completedOrderId]);
+  const removeSavedBookmark = async (bookmarkIdOrSentenceId: string) => {
+    try {
+      await api(`/bookmarks/${encodeURIComponent(bookmarkIdOrSentenceId)}`, { method: "DELETE" });
+      setSavedBookmarks((current) => current.filter((b) => b.id !== bookmarkIdOrSentenceId && b.sentenceId !== bookmarkIdOrSentenceId));
+    } catch {}
+  };
   const saveProfile = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
@@ -2753,6 +2761,53 @@ function AccountPage() {
           )}
         </div>
       </section>
+      <section className="saved-quotes-section">
+        <div className="subhead">
+          <div>
+            <span className="kicker">المحفوظات</span>
+            <h2>الكلام والمقتطفات المحفوظة</h2>
+          </div>
+          <span>{savedBookmarks.length} مقتطف</span>
+        </div>
+        {savedBookmarks.length > 0 ? (
+          <div className="saved-quotes-grid">
+            {savedBookmarks.map((item) => (
+              <article key={item.id || item.sentenceId} className="saved-quote-card">
+                <Link
+                  to={`/reader/${item.chapterId}?sentence=${encodeURIComponent(item.sentenceId)}`}
+                  className="saved-quote-content"
+                >
+                  <p className="saved-quote-text">{item.sentenceText || "مقتطف محفوظ"}</p>
+                  <div className="saved-quote-meta">
+                    <span className="saved-quote-book"><BookOpen size={14} /> {item.bookTitle}</span>
+                    <span className="saved-quote-chapter">{item.chapterTitle}</span>
+                    <time>{formatDateTime(item.createdAt)}</time>
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  className="saved-quote-delete"
+                  title="حذف من المحفوظات"
+                  aria-label="حذف من المحفوظات"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    void removeSavedBookmark(item.sentenceId || item.id);
+                  }}
+                >
+                  <Trash2 size={16} />
+                </button>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="panel-empty">
+            <Bookmark />
+            <p>لم تحفظ أي كلام أو مقتطفات بعد. اضغط على أيقونة الإشارة المرجعية بجانب أي جملة أثناء القراءة لحفظها والرجوع لها هنا.</p>
+            <Link to="/">استكشف المكتبة</Link>
+          </div>
+        )}
+      </section>
       <section className="account-dashboard">
         <div className="reading-stats">
           <article><Clock /><b>{Math.floor(totalReadingSeconds / 3600)} س</b><span>وقت القراءة</span></article>
@@ -2781,6 +2836,7 @@ function ReaderPage() {
   const location = useLocation();
   const adminReturn = (location.state as { adminReturn?: { to: string; scrollY: number } } | null)?.adminReturn;
   const sectionSentenceId = new URLSearchParams(location.search).get("section") || "";
+  const targetSentenceId = new URLSearchParams(location.search).get("sentence") || "";
   const illustrationTarget = new URLSearchParams(location.search).get("image") || "";
   const { user, ready } = useAuth();
   const [chapter, setChapter] = useState<Chapter | null>(null);
@@ -3054,7 +3110,14 @@ function ReaderPage() {
       .then((r) => {
         let savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
         let savedWordId = localStorage.getItem(`rethox-word-${chapterId}`) || "";
-        if (sectionSentenceId) {
+        if (targetSentenceId) {
+          const foundIndex = r.chapter.sentences.findIndex((sentence) => sentence.id === targetSentenceId);
+          if (foundIndex >= 0) {
+            savedIndex = foundIndex;
+            savedWordId = "";
+            setSectionTargetId(targetSentenceId);
+          }
+        } else if (sectionSentenceId) {
           savedIndex = 0;
           savedWordId = "";
         }
@@ -3142,7 +3205,7 @@ function ReaderPage() {
       .then((items) => setChapterComments(items))
       .catch(() => setChapterComments([]));
     return () => { active = false; };
-  }, [chapterId, ready, sectionSentenceId, user?.id]);
+  }, [chapterId, ready, sectionSentenceId, targetSentenceId, user?.id]);
   // Reader chrome follows inactivity, not a separate mode. This keeps the
   // page calm by default while a simple mouse move, touch, or keyboard focus
   // immediately restores the controls for three seconds.
@@ -3264,9 +3327,9 @@ function ReaderPage() {
   };
   useEffect(() => {
     if (!chapter) return;
-    const savedWord = sectionSentenceId || illustrationTarget ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
-    const savedIndex = sectionSentenceId || illustrationTarget
-      ? 0
+    const savedWord = targetSentenceId || sectionSentenceId || illustrationTarget ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
+    const savedIndex = targetSentenceId || sectionSentenceId || illustrationTarget
+      ? (targetSentenceId ? Math.max(0, chapter.sentences.findIndex((sentence) => sentence.id === targetSentenceId)) : 0)
       : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
     const sectionStartSentenceId = sectionSentenceId
       ? chapter.sections?.find((section) => section.id === sectionSentenceId || section.sentenceId === sectionSentenceId)?.sentenceId
@@ -3276,18 +3339,25 @@ function ReaderPage() {
         ? Array.from(document.querySelectorAll<HTMLElement>("[data-illustration-key]"))
           .find((element) => element.dataset.illustrationKey === illustrationTarget)
         : undefined;
+      const targetSentenceElement = targetSentenceId ? document.querySelector(`[data-sentence-id="${targetSentenceId}"]`) : null;
       const target = illustrationElement ||
+        targetSentenceElement ||
         (sectionStartSentenceId && document.querySelector(`[data-sentence-id="${sectionStartSentenceId}"]`)) ||
         (savedWord && document.querySelector(`[data-word-id="${savedWord}"]`)) ||
         document.querySelector(`[data-sentence-index="${savedIndex}"]`);
-      target?.scrollIntoView({ block: "center", behavior: sectionSentenceId || illustrationTarget ? "auto" : "smooth" });
+      target?.scrollIntoView({ block: "center", behavior: targetSentenceId || sectionSentenceId || illustrationTarget ? "auto" : "smooth" });
       illustrationElement?.querySelector<HTMLButtonElement>("button")?.focus({ preventScroll: true });
+      if (targetSentenceId) {
+        setSectionTargetId(targetSentenceId);
+        window.clearTimeout(sectionHighlightTimerRef.current);
+        sectionHighlightTimerRef.current = window.setTimeout(() => setSectionTargetId(""), 3500);
+      }
       if (savedWord) {
         activeWordRef.current = savedWord;
         setActiveWordId(savedWord);
       }
     });
-  }, [chapter?.id, chapterId, illustrationTarget, sectionSentenceId]);
+  }, [chapter?.id, chapterId, illustrationTarget, sectionSentenceId, targetSentenceId]);
   useEffect(
     () => () => {
       window.clearTimeout(focusControlsTimerRef.current);

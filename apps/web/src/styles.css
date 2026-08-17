@@ -3558,3 +3558,108 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
     padding-inline: 0;
   }
 }
+
+.saved-quotes-section {
+  margin: 38px 0;
+}
+.saved-quotes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+.saved-quote-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03);
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.saved-quote-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--purple);
+  box-shadow: 0 8px 24px rgba(115, 86, 216, 0.12);
+}
+.saved-quote-content {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.saved-quote-text {
+  margin: 0;
+  font-family: "Noto Naskh Arabic", serif;
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  border-right: 3px solid var(--purple);
+  padding-right: 12px;
+}
+.saved-quote-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  color: var(--muted);
+}
+.saved-quote-meta .saved-quote-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 700;
+  color: var(--purple);
+}
+.saved-quote-meta .saved-quote-chapter {
+  font-weight: 600;
+  color: var(--ink);
+}
+.saved-quote-meta time {
+  margin-right: auto;
+  font-size: 10px;
+}
+.saved-quote-delete {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.18s ease, color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+.saved-quote-card:hover .saved-quote-delete {
+  opacity: 1;
+}
+.saved-quote-delete:hover {
+  color: #e03131;
+  border-color: rgba(224, 49, 49, 0.4);
+  background: rgba(224, 49, 49, 0.08);
+  transform: scale(1.08);
+}
+@media (max-width: 650px) {
+  .saved-quotes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

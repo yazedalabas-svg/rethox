@@ -1543,6 +1543,25 @@ app.get("/api/progress/:bookId", auth, (req: AuthRequest, res) =>
       ) || null,
   }),
 );
+app.get("/api/bookmarks", auth, (req: AuthRequest, res) => {
+  const userBookmarks = (db().bookmarks || []).filter(
+    (b) => b.userId === req.user!.id,
+  );
+  const enriched = userBookmarks.map((b) => {
+    const book = db().books.find((bk) => bk.id === b.bookId);
+    const chapter = book?.chapters.find((ch) => ch.id === b.chapterId);
+    const sentence = chapter?.sentences.find((s) => s.id === b.sentenceId);
+    return {
+      ...b,
+      bookTitle: book?.title || "كتاب",
+      bookSlug: book?.slug || "",
+      chapterTitle: chapter?.title || "فصل",
+      chapterPosition: chapter?.position || 1,
+      sentenceText: sentence?.text || "",
+    };
+  });
+  res.json({ bookmarks: enriched.reverse() });
+});
 app.post("/api/bookmarks", auth, async (req: AuthRequest, res) => {
   const parsed = z
     .object({
