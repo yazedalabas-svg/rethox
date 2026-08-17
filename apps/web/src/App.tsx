@@ -3036,6 +3036,20 @@ function ReaderPage() {
   };
   const releaseAudio = (audio: HTMLAudioElement | null) => {
     if (!audio) return;
+    // Detach first: pausing and clearing the source both fire media events,
+    // and a live handler here would report a pause or an error for a player
+    // that is being torn down on purpose.
+    audio.onplay = null;
+    audio.onplaying = null;
+    audio.onpause = null;
+    audio.onwaiting = null;
+    audio.onstalled = null;
+    audio.ontimeupdate = null;
+    audio.onseeking = null;
+    audio.onseeked = null;
+    audio.onended = null;
+    audio.onerror = null;
+    audio.onloadedmetadata = null;
     audio.pause();
     audio.removeAttribute("src");
     audio.load();
@@ -3756,6 +3770,8 @@ function ReaderPage() {
       audio.onseeking = null;
       audio.onseeked = null;
       audio.onplaying = null;
+      audio.onwaiting = null;
+      audio.onstalled = null;
       audio.onerror = null;
       window.clearInterval(trackingHeartbeatRef.current);
       audio.pause();
@@ -3793,7 +3809,13 @@ function ReaderPage() {
       const audioDuration = Number.isFinite(audio.duration) && audio.duration > 0
         ? Math.round(audio.duration * 1000)
         : boundaryDuration;
-      const boundaryToAudioScale = audioDuration / boundaryDuration;
+      // The scale only corrects small encoder drift between the two clocks.
+      // A wildly different ratio means one of the durations is wrong (missing
+      // or bogus metadata), and applying it would push the mapped time past
+      // the end of the boundary list, pinning the highlight on the last word
+      // while the audio keeps playing. Fall back to an unscaled clock instead.
+      const rawScale = audioDuration / boundaryDuration;
+      const boundaryToAudioScale = rawScale > 0.5 && rawScale < 2 ? rawScale : 1;
       const startBoundaryMs = segment.result.boundaries[boundaryIndex]?.startMs || 0;
       const start = startBoundaryMs * boundaryToAudioScale;
       audio.currentTime = start / 1000;
@@ -3853,14 +3875,25 @@ function ReaderPage() {
       audio.ontimeupdate = resumeTracking;
       audio.onseeking = resumeTracking;
       audio.onseeked = resumeTracking;
+      // "play" only means playback was requested — the browser fires it before
+      // a single sample is decoded. Reporting "playing" here is what made the
+      // control look active during a silent buffering stall, so it only clears
+      // the error and shows the loader; "playing" flips the real state.
       audio.onplay = () => {
         narrationRecoveryRef.current = { session: 0, segment: -1, attempts: 0 };
         setPlayerError("");
+        setNarrationBusy(true);
+      };
+      // The browser ran out of buffered audio mid-sentence. Surface it instead
+      // of leaving a play icon on top of silence.
+      audio.onwaiting = () => {
+        if (session !== playbackSessionRef.current || audio !== audioRef.current) return;
+        setNarrationBusy(true);
+      };
+      audio.onstalled = audio.onwaiting;
+      audio.onplaying = () => {
         setNarrationBusy(false);
         setPlaying(true);
-        resumeTracking();
-      };
-      audio.onplaying = () => {
         resumeTracking();
         window.clearInterval(trackingHeartbeatRef.current);
         // Some browsers throttle requestAnimationFrame or timeupdate after
