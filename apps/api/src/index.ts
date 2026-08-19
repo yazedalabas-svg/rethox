@@ -37,7 +37,7 @@ import {
 import type { Book, Chapter, ChapterIllustration, Role, Sentence, User } from "./types.js";
 import { integrationStatus, supabase, supabaseAdmin } from "./integrations.js";
 import { createRelationalBackup, startBackupScheduler } from "./backup-service.js";
-import { summaryProvider } from "./summary-provider.js";
+import { summaryProvider, illustrationAltProvider } from "./summary-provider.js";
 import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
 import { TtsGenerationQueue } from "./tts-queue.js";
 import { runProcess } from "./process-runner.js";
@@ -1238,7 +1238,7 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
       priceMinor: book.priceMinor,
     },
     chapter: {
-      ...withAutomaticIllustrationAlt(finalChapter),
+      ...finalChapter,
       contentFile: undefined,
       sampleTruncated: finalChapter.sampleTruncated ?? false,
       sections: finalChapter.sections?.map((section, idx) => ({
@@ -1969,13 +1969,19 @@ const automaticIllustrationAlt = (chapter: Chapter, afterSentenceId?: string) =>
     ? `صورة بعد الفقرة ${sentencePosition} من الفصل`
     : "صورة في بداية الفصل";
 };
-const withAutomaticIllustrationAlt = (chapter: Chapter): Chapter => ({
-  ...chapter,
-  illustrations: chapter.illustrations?.map((illustration) => ({
-    ...illustration,
-    alt: automaticIllustrationAlt(chapter, illustration.afterSentenceId),
-  })),
-});
+// Describes the actual uploaded image via a vision model when configured;
+// falls back to the position-based placeholder when there is no provider or
+// the call fails, mirroring the sentence-summary feature's degradation.
+const illustrationAlt = async (image: Buffer, mime: string, chapter: Chapter, afterSentenceId?: string) => {
+  if (illustrationAltProvider) {
+    try {
+      return await illustrationAltProvider.describe(image, mime);
+    } catch (error) {
+      logger.warn({ error: String(error) }, "OpenRouter illustration alt failed");
+    }
+  }
+  return automaticIllustrationAlt(chapter, afterSentenceId);
+};
 const publicChapterAssetUrl = (bucket: string, objectPath: string) =>
   bucket === "site-public"
     ? objectPath
@@ -2142,10 +2148,7 @@ app.get("/api/admin/chapters/:id", auth, requireRole("ADMIN"), (req, res) => {
         id: context.chapter.id,
         title: context.chapter.title,
         position: context.chapter.position,
-        illustrations: (context.chapterMeta.illustrations || []).map((illustration) => ({
-          ...illustration,
-          alt: automaticIllustrationAlt(context.chapter, illustration.afterSentenceId),
-        })),
+        illustrations: context.chapterMeta.illustrations || [],
         sentences: context.chapter.sentences.map((sentence) => ({
           id: sentence.id,
           position: sentence.position,
@@ -2176,7 +2179,6 @@ app.post(
     });
     if (!metadata.success || !validImagePlacement(context.chapter, metadata.data.afterSentenceId))
       return res.status(400).json({ message: "موضع الصورة غير صحيح" });
-    const alt = automaticIllustrationAlt(context.chapter, metadata.data.afterSentenceId);
     const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.alloc(0);
     const declaredMime = String(req.get("content-type") || "").split(";")[0].toLowerCase();
     if (!rawBody.length) return res.status(400).json({ message: "الملف ليس صورة صالحة" });
@@ -2187,6 +2189,7 @@ app.post(
     } catch {
       return res.status(400).json({ message: "تعذر التعرف على هذا الملف كصورة" });
     }
+    const alt = await illustrationAlt(body, mime, context.chapter, metadata.data.afterSentenceId);
 
     const { data: versions, error: versionError } = await supabaseAdmin
       .from("chapter_assets")
@@ -2267,9 +2270,9 @@ app.patch(
     }).safeParse(req.body);
     if (!parsed.success || !validImagePlacement(context.chapter, parsed.data.afterSentenceId || undefined))
       return res.status(400).json({ message: "موضع الصورة غير صحيح" });
-    const alt = automaticIllustrationAlt(context.chapter, parsed.data.afterSentenceId || undefined);
+    // Repositioning doesn't change the image itself, so the existing
+    // (vision-generated or fallback) alt text stays as-is.
     const updates: Record<string, unknown> = {
-      alt_text: alt,
       after_sentence_id: parsed.data.afterSentenceId || null,
       updated_at: new Date().toISOString(),
     };
@@ -2297,7 +2300,7 @@ app.patch(
     const illustration: ChapterIllustration = {
       id: asset.id,
       src: publicChapterAssetUrl(asset.bucket, asset.object_path),
-      alt,
+      alt: asset.alt_text || automaticIllustrationAlt(context.chapter, asset.after_sentence_id || undefined),
       afterSentenceId: asset.after_sentence_id || undefined,
       position: asset.position,
       storagePath: asset.bucket === "chapter-images" ? asset.object_path : undefined,
@@ -2347,6 +2350,7 @@ app.put(
       .maybeSingle();
     if (currentError) return res.status(503).json({ message: "تعذر قراءة بيانات الصورة" });
     if (!current) return res.status(404).json({ message: "الصورة غير موجودة" });
+    const alt = await illustrationAlt(body, mime, context.chapter, current.after_sentence_id || undefined);
     const objectPath = `${context.chapter.id}/${randomUUID()}.${imageExtension[mime]}`;
     const { error: uploadError } = await supabaseAdmin.storage
       .from("chapter-images")
@@ -2360,7 +2364,7 @@ app.put(
         content_type: mime,
         byte_size: Buffer.byteLength(body),
         checksum_sha256: createHash("sha256").update(body).digest("hex"),
-        alt_text: automaticIllustrationAlt(context.chapter, current.after_sentence_id || undefined),
+        alt_text: alt,
         updated_at: new Date().toISOString(),
       })
       .eq("id", current.id)
@@ -2375,7 +2379,7 @@ app.put(
     const illustration: ChapterIllustration = {
       id: asset.id,
       src: publicChapterAssetUrl(asset.bucket, asset.object_path),
-      alt: automaticIllustrationAlt(context.chapter, asset.after_sentence_id || undefined),
+      alt,
       afterSentenceId: asset.after_sentence_id || undefined,
       position: asset.position,
       storagePath: asset.object_path,
