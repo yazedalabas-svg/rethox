@@ -47,49 +47,6 @@ TITLE_OVERRIDES = {
     59: "الفصل 59",
 }
 
-# Original scene illustrations for the chapters that were restored from the
-# Arabic source.  Each one is anchored to the matching scene, not simply shown
-# at the top of the chapter.
-ILLUSTRATION_SPECS = {
-    24: {
-        "after_paragraph": 30,
-        "src": "/illustrations/rezero-arc-9/arc9-c024-p030.webp",
-        "alt": "بترا تقود عربة التنين عبر بحر الرمال وسوبارو المتخيّل إلى جوارها",
-    },
-    25: {
-        "after_paragraph": 2,
-        "src": "/illustrations/rezero-arc-9/arc9-c025-p002.webp",
-        "alt": "إميليا تطلق سحر الجليد في ساحة برج السجن",
-    },
-    26: {
-        "after_paragraph": 1,
-        "src": "/illustrations/rezero-arc-9/arc9-c026-p001.webp",
-        "alt": "ويلهيلم يواجه مقاتلة الساكورا القرمزية في مبارزة سيف",
-    },
-    27: {
-        "after_paragraph": 1,
-        "src": "/illustrations/rezero-arc-9/arc9-c027-p001.webp",
-        "alt": "ويلهيلم المنهك يستمع إلى كلمات طفل وسط الأنقاض",
-    },
-    28: {
-        "after_paragraph": 1,
-        "src": "/illustrations/rezero-arc-9/arc9-c028-p001.webp",
-        "alt": "مبارزة أسطورية بين محارب وتنين عتيق في العاصفة",
-    },
-    29: {
-        "after_paragraph": 61,
-        "src": "/illustrations/rezero-arc-9/arc9-c029-p061.webp",
-        "alt": "ويلهيلم يواجه هاينكل في غرفة مظلمة عند أسفل الطاولة",
-    },
-}
-
-for _chapter_number in range(1, 60):
-    ILLUSTRATION_SPECS.setdefault(_chapter_number, {
-        "after_paragraph": 1,
-        "src": f"/illustrations/rezero-arc-9/arc9-c{_chapter_number:03d}-p001.webp",
-        "alt": f"لوحة أصلية لمشهد من الفصل {_chapter_number} من الآرك التاسع",
-    })
-
 VOLUME39_HEADINGS = [
     (1, "الفصل الأول:"),
     (2, "الفصل الثاني:"),
@@ -267,7 +224,7 @@ def make_chapter(position: int, chapter_number: int | None, title: str, paragrap
     ]
     words = sum(len(sentence["text"].split()) for sentence in sentences)
     label = f"الفصل {chapter_number} — {title}" if chapter_number is not None else title
-    chapter = {
+    return {
         "id": f"ch-rezero-9-{position:03d}",
         "bookId": ARC9_BOOK_ID,
         "title": label,
@@ -278,17 +235,6 @@ def make_chapter(position: int, chapter_number: int | None, title: str, paragrap
         "volumePosition": volume_position,
         "sentences": sentences,
     }
-    spec = ILLUSTRATION_SPECS.get(chapter_number)
-    if spec and sentences:
-        paragraph_position = min(int(spec["after_paragraph"]), len(sentences))
-        chapter["illustrations"] = [{
-            "id": f"rz9-c{position:03d}-i01",
-            "src": spec["src"],
-            "alt": spec["alt"],
-            "afterSentenceId": sentences[paragraph_position - 1]["id"],
-            "position": 1,
-        }]
-    return chapter
 
 
 def read_all() -> list[dict]:
