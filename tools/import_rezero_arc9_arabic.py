@@ -51,7 +51,13 @@ TITLE_OVERRIDES = {
 # kept the prose but dropped the embedded media, so these anchors preserve the
 # original placement by matching the paragraph immediately before each image.
 ILLUSTRATION_SPECS: dict[int, list[dict[str, str]]] = {
-    1: [{"src": "/illustrations/rezero-arc-9/arc9-v39-01.jpeg", "alt": "غلاف المجلد 39"}],
+    1: [
+        {"src": "/illustrations/rezero-arc-9/arc9-v39-01.jpeg", "alt": "غلاف المجلد 39"},
+        {
+            "src": "/illustrations/rezero-arc-9/arc9-c001-01.jpg",
+            "alt": "صورة يورنا ويوغارد من الفصل الأول",
+        },
+    ],
     4: [{"src": "/illustrations/rezero-arc-9/arc9-v39-02.jpeg", "alt": "صورة الفصل 4 من المجلد 39", "after_text": "لقد انتهى الوقت الذي كانت فيه إميليا تنظر فقط إلى صديقتها"}],
     6: [{"src": "/illustrations/rezero-arc-9/arc9-v39-03.jpeg", "alt": "صورة الفصل 6 من المجلد 39", "after_text": "ضحك الثلاثة، بما فيهم سبيكا"}],
     7: [{"src": "/illustrations/rezero-arc-9/arc9-v39-04.jpeg", "alt": "صورة الفصل 7 من المجلد 39"}],
