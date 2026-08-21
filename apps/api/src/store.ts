@@ -13,7 +13,7 @@ const progressFile = resolve(dataDir, "runtime-progress.json");
 const sessionsFile = resolve(dataDir, "runtime-sessions.json");
 const deploySeed = resolve(process.cwd(), "data/deploy-seed.json");
 const visibleBookIds = new Set(
-  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-rezero-arc-7,book-rezero-arc-8,book-reverend-insanity,book-mushoku-tensei,book-reader-view")
+  (process.env.VISIBLE_BOOK_IDS || "book-rezero-arc-6,book-rezero-arc-7,book-rezero-arc-8,book-rezero-arc-9,book-reverend-insanity,book-mushoku-tensei,book-reader-view")
     .split(",")
     .map((id) => id.trim())
     .filter(Boolean),
