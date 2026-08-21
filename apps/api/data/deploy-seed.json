@@ -144907,7 +144907,16 @@
           "volumePosition": 2,
           "sentences": [],
           "sentenceCount": 195,
-          "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-39.json",
+          "illustrations": [
+            {
+              "id": "rz9-c002-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c002-01.jpg",
+              "alt": "صورة مصدرية من الفصل 2",
+              "afterSentenceId": "rz9-c002-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-003",
@@ -144920,7 +144929,16 @@
           "volumePosition": 3,
           "sentences": [],
           "sentenceCount": 273,
-          "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-39.json",
+          "illustrations": [
+            {
+              "id": "rz9-c003-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c003-01.jpg",
+              "alt": "صورة مصدرية من الفصل 3",
+              "afterSentenceId": "rz9-c003-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-004",
@@ -144938,6 +144956,13 @@
               "alt": "صورة الفصل 4 من المجلد 39",
               "afterSentenceId": "rz9-c004-p0278",
               "position": 1
+            },
+            {
+              "id": "rz9-c004-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c004-01.jpg",
+              "alt": "صورة مصدرية من الفصل 4",
+              "afterSentenceId": "rz9-c004-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -144955,7 +144980,8 @@
           "volumePosition": 5,
           "sentences": [],
           "sentenceCount": 378,
-          "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-39.json",
+          "illustrations": []
         },
         {
           "id": "ch-rezero-9-006",
@@ -144973,6 +144999,13 @@
               "alt": "صورة الفصل 6 من المجلد 39",
               "afterSentenceId": "rz9-c006-p0212",
               "position": 1
+            },
+            {
+              "id": "rz9-c006-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c006-01.jpg",
+              "alt": "صورة مصدرية من الفصل 6",
+              "afterSentenceId": "rz9-c006-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -144990,7 +145023,16 @@
           "volumePosition": 7,
           "sentences": [],
           "sentenceCount": 161,
-          "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-39.json",
+          "illustrations": [
+            {
+              "id": "rz9-c007-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-interlude-katya-01.png",
+              "alt": "صورة مصدرية من الأرك التاسع",
+              "afterSentenceId": "rz9-c007-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-008",
@@ -145008,6 +145050,13 @@
               "alt": "صورة الفصل 7 من المجلد 39",
               "afterSentenceId": "rz9-c008-p0001",
               "position": 1
+            },
+            {
+              "id": "rz9-c008-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c007-01.jpg",
+              "alt": "صورة مصدرية من الفصل 7",
+              "afterSentenceId": "rz9-c008-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145030,6 +145079,13 @@
               "alt": "صورة الفصل 8 من المجلد 39",
               "afterSentenceId": "rz9-c009-p0225",
               "position": 1
+            },
+            {
+              "id": "rz9-c009-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c008-01.jpg",
+              "alt": "صورة مصدرية من الفصل 8",
+              "afterSentenceId": "rz9-c009-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145052,6 +145108,13 @@
               "alt": "صورة الفصل 9 من المجلد 39",
               "afterSentenceId": "rz9-c010-p0052",
               "position": 1
+            },
+            {
+              "id": "rz9-c010-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c009-01.jpg",
+              "alt": "صورة مصدرية من الفصل 9",
+              "afterSentenceId": "rz9-c010-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145074,6 +145137,13 @@
               "alt": "صورة الفصل 10 من المجلد 39",
               "afterSentenceId": "rz9-c011-p0060",
               "position": 1
+            },
+            {
+              "id": "rz9-c011-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c010-01.jpg",
+              "alt": "صورة مصدرية من الفصل 10",
+              "afterSentenceId": "rz9-c011-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145103,6 +145173,13 @@
               "alt": "صورة ثانية للفصل 11 من المجلد 39",
               "afterSentenceId": "rz9-c012-p0349",
               "position": 2
+            },
+            {
+              "id": "rz9-c012-i03",
+              "src": "/illustrations/rezero-arc-9/arc9-c011-01.png",
+              "alt": "صورة مصدرية من الفصل 11",
+              "afterSentenceId": "rz9-c012-p0001",
+              "position": 3
             }
           ],
           "sentences": [],
@@ -145125,6 +145202,13 @@
               "alt": "صورة الفصل 12 من المجلد 39",
               "afterSentenceId": "rz9-c013-p0520",
               "position": 1
+            },
+            {
+              "id": "rz9-c013-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c012-01.jpg",
+              "alt": "صورة مصدرية من الفصل 12",
+              "afterSentenceId": "rz9-c013-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145182,6 +145266,13 @@
               "alt": "صورة إضافية من المجلد 39",
               "afterSentenceId": "rz9-c014-p0534",
               "position": 6
+            },
+            {
+              "id": "rz9-c014-i07",
+              "src": "/illustrations/rezero-arc-9/arc9-c013-01.png",
+              "alt": "صورة مصدرية من الفصل 13",
+              "afterSentenceId": "rz9-c014-p0001",
+              "position": 7
             }
           ],
           "sentences": [],
@@ -145199,7 +145290,16 @@
           "volumePosition": 15,
           "sentences": [],
           "sentenceCount": 85,
-          "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-39.json",
+          "illustrations": [
+            {
+              "id": "rz9-c015-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-interlude-scream-01.jpg",
+              "alt": "صورة مصدرية من الأرك التاسع",
+              "afterSentenceId": "rz9-c015-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-016",
@@ -145217,6 +145317,13 @@
               "alt": "غلاف المجلد 40",
               "afterSentenceId": "rz9-c016-p0001",
               "position": 1
+            },
+            {
+              "id": "rz9-c016-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c014-01.png",
+              "alt": "صورة مصدرية من الفصل 14",
+              "afterSentenceId": "rz9-c016-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145246,6 +145353,13 @@
               "alt": "صورة ثانية للفصل 15 من المجلد 40",
               "afterSentenceId": "rz9-c017-p0222",
               "position": 2
+            },
+            {
+              "id": "rz9-c017-i03",
+              "src": "/illustrations/rezero-arc-9/arc9-c015-01.jpg",
+              "alt": "صورة مصدرية من الفصل 15",
+              "afterSentenceId": "rz9-c017-p0001",
+              "position": 3
             }
           ],
           "sentences": [],
@@ -145263,7 +145377,16 @@
           "volumePosition": 3,
           "sentences": [],
           "sentenceCount": 321,
-          "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-40.json",
+          "illustrations": [
+            {
+              "id": "rz9-c018-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c016-01.jpg",
+              "alt": "صورة مصدرية من الفصل 16",
+              "afterSentenceId": "rz9-c018-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-019",
@@ -145303,6 +145426,13 @@
               "alt": "صورة الفصل 18 من المجلد 40",
               "afterSentenceId": "rz9-c020-p0281",
               "position": 1
+            },
+            {
+              "id": "rz9-c020-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c018-01.jpg",
+              "alt": "صورة مصدرية من الفصل 18",
+              "afterSentenceId": "rz9-c020-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145325,6 +145455,13 @@
               "alt": "صورة الفصل 19 من المجلد 40",
               "afterSentenceId": "rz9-c021-p0270",
               "position": 1
+            },
+            {
+              "id": "rz9-c021-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c019-01.jpg",
+              "alt": "صورة مصدرية من الفصل 19",
+              "afterSentenceId": "rz9-c021-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145342,7 +145479,16 @@
           "volumePosition": 7,
           "sentences": [],
           "sentenceCount": 377,
-          "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-40.json",
+          "illustrations": [
+            {
+              "id": "rz9-c022-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c020-01.jpg",
+              "alt": "صورة مصدرية من الفصل 20",
+              "afterSentenceId": "rz9-c022-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-023",
@@ -145367,6 +145513,13 @@
               "alt": "صورة ثانية للفصل 21 من المجلد 40",
               "afterSentenceId": "rz9-c023-p0330",
               "position": 2
+            },
+            {
+              "id": "rz9-c023-i03",
+              "src": "/illustrations/rezero-arc-9/arc9-c021-01.png",
+              "alt": "صورة مصدرية من الفصل 21",
+              "afterSentenceId": "rz9-c023-p0001",
+              "position": 3
             }
           ],
           "sentences": [],
@@ -145389,6 +145542,13 @@
               "alt": "صورة الفصل 22 من المجلد 40",
               "afterSentenceId": "rz9-c024-p0120",
               "position": 1
+            },
+            {
+              "id": "rz9-c024-i02",
+              "src": "/illustrations/rezero-arc-9/arc9-c022-01.jpg",
+              "alt": "صورة مصدرية من الفصل 22",
+              "afterSentenceId": "rz9-c024-p0001",
+              "position": 2
             }
           ],
           "sentences": [],
@@ -145453,6 +145613,13 @@
               "alt": "صورة إضافية من المجلد 40",
               "afterSentenceId": "rz9-c025-p0757",
               "position": 7
+            },
+            {
+              "id": "rz9-c025-i08",
+              "src": "/illustrations/rezero-arc-9/arc9-c023-01.jpg",
+              "alt": "صورة مصدرية من الفصل 23",
+              "afterSentenceId": "rz9-c025-p0001",
+              "position": 8
             }
           ],
           "sentences": [],
@@ -145470,7 +145637,16 @@
           "volumePosition": 1,
           "sentences": [],
           "sentenceCount": 281,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c026-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c024-01.jpg",
+              "alt": "صورة مصدرية من الفصل 24",
+              "afterSentenceId": "rz9-c026-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-027",
@@ -145483,7 +145659,16 @@
           "volumePosition": 2,
           "sentences": [],
           "sentenceCount": 228,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c027-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c025-01.jpg",
+              "alt": "صورة مصدرية من الفصل 25",
+              "afterSentenceId": "rz9-c027-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-028",
@@ -145496,7 +145681,16 @@
           "volumePosition": 3,
           "sentences": [],
           "sentenceCount": 136,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c028-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c026-01.png",
+              "alt": "صورة مصدرية من الفصل 26",
+              "afterSentenceId": "rz9-c028-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-029",
@@ -145509,7 +145703,16 @@
           "volumePosition": 4,
           "sentences": [],
           "sentenceCount": 220,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c029-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c027-01.jpg",
+              "alt": "صورة مصدرية من الفصل 27",
+              "afterSentenceId": "rz9-c029-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-030",
@@ -145522,7 +145725,8 @@
           "volumePosition": 5,
           "sentences": [],
           "sentenceCount": 110,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": []
         },
         {
           "id": "ch-rezero-9-031",
@@ -145535,7 +145739,16 @@
           "volumePosition": 6,
           "sentences": [],
           "sentenceCount": 93,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c031-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c029-01.jpg",
+              "alt": "صورة مصدرية من الفصل 29",
+              "afterSentenceId": "rz9-c031-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-032",
@@ -145548,7 +145761,16 @@
           "volumePosition": 7,
           "sentences": [],
           "sentenceCount": 213,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c032-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c030-01.jpg",
+              "alt": "صورة مصدرية من الفصل 30",
+              "afterSentenceId": "rz9-c032-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-033",
@@ -145561,7 +145783,16 @@
           "volumePosition": 8,
           "sentences": [],
           "sentenceCount": 260,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c033-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c031-01.jpg",
+              "alt": "صورة مصدرية من الفصل 31",
+              "afterSentenceId": "rz9-c033-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-034",
@@ -145574,7 +145805,16 @@
           "volumePosition": 9,
           "sentences": [],
           "sentenceCount": 275,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c034-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c032-01.jpg",
+              "alt": "صورة مصدرية من الفصل 32",
+              "afterSentenceId": "rz9-c034-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-035",
@@ -145587,7 +145827,16 @@
           "volumePosition": 10,
           "sentences": [],
           "sentenceCount": 159,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c035-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c033-01.jpg",
+              "alt": "صورة مصدرية من الفصل 33",
+              "afterSentenceId": "rz9-c035-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-036",
@@ -145600,7 +145849,16 @@
           "volumePosition": 11,
           "sentences": [],
           "sentenceCount": 291,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c036-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c034-01.jpg",
+              "alt": "صورة مصدرية من الفصل 34",
+              "afterSentenceId": "rz9-c036-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-037",
@@ -145649,7 +145907,16 @@
           "volumePosition": 13,
           "sentences": [],
           "sentenceCount": 234,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c038-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c036-01.jpg",
+              "alt": "صورة مصدرية من الفصل 36",
+              "afterSentenceId": "rz9-c038-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-039",
@@ -145662,7 +145929,16 @@
           "volumePosition": 14,
           "sentences": [],
           "sentenceCount": 240,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c039-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c037-01.jpg",
+              "alt": "صورة مصدرية من الفصل 37",
+              "afterSentenceId": "rz9-c039-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-040",
@@ -145675,7 +145951,16 @@
           "volumePosition": 15,
           "sentences": [],
           "sentenceCount": 289,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c040-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c038-01.jpg",
+              "alt": "صورة مصدرية من الفصل 38",
+              "afterSentenceId": "rz9-c040-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-041",
@@ -145688,7 +145973,16 @@
           "volumePosition": 16,
           "sentences": [],
           "sentenceCount": 217,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c041-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c039-01.png",
+              "alt": "صورة مصدرية من الفصل 39",
+              "afterSentenceId": "rz9-c041-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-042",
@@ -145701,7 +145995,16 @@
           "volumePosition": 17,
           "sentences": [],
           "sentenceCount": 224,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c042-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c040-01.jpg",
+              "alt": "صورة مصدرية من الفصل 40",
+              "afterSentenceId": "rz9-c042-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-043",
@@ -145714,7 +146017,16 @@
           "volumePosition": 18,
           "sentences": [],
           "sentenceCount": 175,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c043-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c041-01.jpg",
+              "alt": "صورة مصدرية من الفصل 41",
+              "afterSentenceId": "rz9-c043-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-044",
@@ -145727,7 +146039,16 @@
           "volumePosition": 19,
           "sentences": [],
           "sentenceCount": 263,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c044-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c042-01.jpg",
+              "alt": "صورة مصدرية من الفصل 42",
+              "afterSentenceId": "rz9-c044-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-045",
@@ -145740,7 +146061,16 @@
           "volumePosition": 20,
           "sentences": [],
           "sentenceCount": 163,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c045-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c043-01.jpg",
+              "alt": "صورة مصدرية من الفصل 43",
+              "afterSentenceId": "rz9-c045-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-046",
@@ -145753,7 +146083,16 @@
           "volumePosition": 21,
           "sentences": [],
           "sentenceCount": 210,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c046-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c044-01.jpg",
+              "alt": "صورة مصدرية من الفصل 44",
+              "afterSentenceId": "rz9-c046-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-047",
@@ -145766,7 +146105,16 @@
           "volumePosition": 22,
           "sentences": [],
           "sentenceCount": 266,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c047-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c045-01.jpg",
+              "alt": "صورة مصدرية من الفصل 45",
+              "afterSentenceId": "rz9-c047-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-048",
@@ -145779,7 +146127,16 @@
           "volumePosition": 23,
           "sentences": [],
           "sentenceCount": 356,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c048-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c046-01.jpg",
+              "alt": "صورة مصدرية من الفصل 46",
+              "afterSentenceId": "rz9-c048-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-049",
@@ -145792,7 +146149,8 @@
           "volumePosition": 24,
           "sentences": [],
           "sentenceCount": 185,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": []
         },
         {
           "id": "ch-rezero-9-050",
@@ -145805,7 +146163,16 @@
           "volumePosition": 25,
           "sentences": [],
           "sentenceCount": 281,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c050-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c048-01.jpg",
+              "alt": "صورة مصدرية من الفصل 48",
+              "afterSentenceId": "rz9-c050-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-051",
@@ -145818,7 +146185,8 @@
           "volumePosition": 26,
           "sentences": [],
           "sentenceCount": 203,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": []
         },
         {
           "id": "ch-rezero-9-052",
@@ -145831,7 +146199,16 @@
           "volumePosition": 27,
           "sentences": [],
           "sentenceCount": 341,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c052-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c050-01.jpg",
+              "alt": "صورة مصدرية من الفصل 50",
+              "afterSentenceId": "rz9-c052-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-053",
@@ -145844,7 +146221,16 @@
           "volumePosition": 28,
           "sentences": [],
           "sentenceCount": 410,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c053-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c051-01.jpg",
+              "alt": "صورة مصدرية من الفصل 51",
+              "afterSentenceId": "rz9-c053-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-054",
@@ -145857,7 +146243,16 @@
           "volumePosition": 29,
           "sentences": [],
           "sentenceCount": 272,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c054-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c052-01.jpg",
+              "alt": "صورة مصدرية من الفصل 52",
+              "afterSentenceId": "rz9-c054-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-055",
@@ -145870,7 +146265,16 @@
           "volumePosition": 30,
           "sentences": [],
           "sentenceCount": 281,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c055-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c053-01.jpg",
+              "alt": "صورة مصدرية من الفصل 53",
+              "afterSentenceId": "rz9-c055-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-056",
@@ -145883,7 +146287,16 @@
           "volumePosition": 31,
           "sentences": [],
           "sentenceCount": 326,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c056-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c054-01.jpg",
+              "alt": "صورة مصدرية من الفصل 54",
+              "afterSentenceId": "rz9-c056-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-057",
@@ -145896,7 +146309,16 @@
           "volumePosition": 32,
           "sentences": [],
           "sentenceCount": 244,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c057-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c055-01.jpg",
+              "alt": "صورة مصدرية من الفصل 55",
+              "afterSentenceId": "rz9-c057-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-058",
@@ -145909,7 +146331,16 @@
           "volumePosition": 33,
           "sentences": [],
           "sentenceCount": 555,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c058-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c056-01.jpg",
+              "alt": "صورة مصدرية من الفصل 56",
+              "afterSentenceId": "rz9-c058-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-059",
@@ -145922,7 +146353,16 @@
           "volumePosition": 34,
           "sentences": [],
           "sentenceCount": 229,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c059-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c057-01.jpg",
+              "alt": "صورة مصدرية من الفصل 57",
+              "afterSentenceId": "rz9-c059-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-060",
@@ -145935,7 +146375,16 @@
           "volumePosition": 35,
           "sentences": [],
           "sentenceCount": 297,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c060-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c058-01.jpg",
+              "alt": "صورة مصدرية من الفصل 58",
+              "afterSentenceId": "rz9-c060-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-061",
@@ -145948,7 +146397,16 @@
           "volumePosition": 36,
           "sentences": [],
           "sentenceCount": 221,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c061-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c059-01.jpg",
+              "alt": "صورة مصدرية من الفصل 59",
+              "afterSentenceId": "rz9-c061-p0001",
+              "position": 1
+            }
+          ]
         },
         {
           "id": "ch-rezero-9-062",
@@ -145961,7 +146419,16 @@
           "volumePosition": 37,
           "sentences": [],
           "sentenceCount": 299,
-          "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
+          "contentFile": "books/ReZero Arc 9/derived/volume-41.json",
+          "illustrations": [
+            {
+              "id": "rz9-c062-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-finale-01.png",
+              "alt": "صورة مصدرية من الأرك التاسع",
+              "afterSentenceId": "rz9-c062-p0001",
+              "position": 1
+            }
+          ]
         }
       ]
     }

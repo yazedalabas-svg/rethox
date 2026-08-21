@@ -96,6 +96,39 @@ ILLUSTRATION_SPECS: dict[int, list[dict[str, str]]] = {
     ],
 }
 
+# الصور الإضافية التي أعطاها مالك الموقع من صفحات Witch Cult المقابلة لكل فصل.
+# تلك الصفحات تعرض الصورة قبل النص، لذا يثبتها المستورد عند أول فقرة لتجنب
+# حرق أحداث الفصل على القارئ قبل أن يبدأ القراءة.
+EXTERNAL_ILLUSTRATION_FILES: dict[int | str, str] = {
+    2: "arc9-c002-01.jpg", 3: "arc9-c003-01.jpg", 4: "arc9-c004-01.jpg",
+    6: "arc9-c006-01.jpg", "interlude-katya": "arc9-interlude-katya-01.png",
+    7: "arc9-c007-01.jpg", 8: "arc9-c008-01.jpg", 9: "arc9-c009-01.jpg",
+    10: "arc9-c010-01.jpg", 11: "arc9-c011-01.png", 12: "arc9-c012-01.jpg",
+    13: "arc9-c013-01.png", 14: "arc9-c014-01.png", 15: "arc9-c015-01.jpg",
+    16: "arc9-c016-01.jpg", 18: "arc9-c018-01.jpg", 19: "arc9-c019-01.jpg",
+    20: "arc9-c020-01.jpg", 21: "arc9-c021-01.png", 22: "arc9-c022-01.jpg",
+    23: "arc9-c023-01.jpg", 24: "arc9-c024-01.jpg", 25: "arc9-c025-01.jpg",
+    26: "arc9-c026-01.png", 27: "arc9-c027-01.jpg", 29: "arc9-c029-01.jpg",
+    30: "arc9-c030-01.jpg", 31: "arc9-c031-01.jpg", 32: "arc9-c032-01.jpg",
+    33: "arc9-c033-01.jpg", 34: "arc9-c034-01.jpg",
+    36: "arc9-c036-01.jpg", 37: "arc9-c037-01.jpg", 38: "arc9-c038-01.jpg",
+    39: "arc9-c039-01.png", 40: "arc9-c040-01.jpg", 41: "arc9-c041-01.jpg",
+    42: "arc9-c042-01.jpg", 43: "arc9-c043-01.jpg", 44: "arc9-c044-01.jpg",
+    45: "arc9-c045-01.jpg", 46: "arc9-c046-01.jpg", 48: "arc9-c048-01.jpg",
+    50: "arc9-c050-01.jpg", 51: "arc9-c051-01.jpg", 52: "arc9-c052-01.jpg",
+    53: "arc9-c053-01.jpg", 54: "arc9-c054-01.jpg", 55: "arc9-c055-01.jpg",
+    56: "arc9-c056-01.jpg", 57: "arc9-c057-01.jpg", 58: "arc9-c058-01.jpg",
+    59: "arc9-c059-01.jpg", "interlude-scream": "arc9-interlude-scream-01.jpg",
+    "finale": "arc9-finale-01.png",
+}
+EXTERNAL_ILLUSTRATION_SPECS: dict[int | str, list[dict[str, str]]] = {
+    key: [{
+        "src": f"/illustrations/rezero-arc-9/{filename}",
+        "alt": f"صورة مصدرية من الفصل {key}" if isinstance(key, int) else "صورة مصدرية من الأرك التاسع",
+    }]
+    for key, filename in EXTERNAL_ILLUSTRATION_FILES.items()
+}
+
 VOLUME39_HEADINGS = [
     (1, "الفصل الأول:"),
     (2, "الفصل الثاني:"),
@@ -260,7 +293,15 @@ def extract_missing_chapter(url: str, number: int) -> list[str]:
     return unique
 
 
-def make_chapter(position: int, chapter_number: int | None, title: str, paragraphs: Iterable[str], volume: int, volume_position: int) -> dict:
+def make_chapter(
+    position: int,
+    chapter_number: int | None,
+    title: str,
+    paragraphs: Iterable[str],
+    volume: int,
+    volume_position: int,
+    illustration_key: int | str | None = None,
+) -> dict:
     cleaned = [compact(value) for value in paragraphs if compact(value)]
     sentences = [
         {
@@ -284,7 +325,8 @@ def make_chapter(position: int, chapter_number: int | None, title: str, paragrap
         "volumePosition": volume_position,
         "sentences": sentences,
     }
-    specs = ILLUSTRATION_SPECS.get(chapter_number, [])
+    source_key = chapter_number if illustration_key is None else illustration_key
+    specs = ILLUSTRATION_SPECS.get(chapter_number, []) + EXTERNAL_ILLUSTRATION_SPECS.get(source_key, [])
     if specs and sentences:
         illustrations = []
         for image_position, spec in enumerate(specs, start=1):
@@ -319,17 +361,23 @@ def read_all() -> list[dict]:
     position = 1
     volume_positions: dict[int, int] = {}
 
-    def add(chapter_number: int | None, title: str, paragraphs: list[str], volume: int) -> None:
+    def add(
+        chapter_number: int | None,
+        title: str,
+        paragraphs: list[str],
+        volume: int,
+        illustration_key: int | str | None = None,
+    ) -> None:
         nonlocal position
         volume_positions[volume] = volume_positions.get(volume, 0) + 1
-        chapters.append(make_chapter(position, chapter_number, title, paragraphs, volume, volume_positions[volume]))
+        chapters.append(make_chapter(position, chapter_number, title, paragraphs, volume, volume_positions[volume], illustration_key))
         position += 1
 
     # Volume 39 includes the short Katya Aurelie intermission between chapters 6 and 7.
     for number in range(1, 7):
         title, paragraphs = vol39[number]
         add(number, title, paragraphs, 39)
-    add(None, "فاصل — كاتيا أوريلي", vol39[7][1], 39)
+    add(None, "فاصل — كاتيا أوريلي", vol39[7][1], 39, "interlude-katya")
     for number in range(8, 15):
         actual = number - 1
         title, paragraphs = vol39[number]
@@ -342,7 +390,7 @@ def read_all() -> list[dict]:
             return archive.read(names[name]).decode("utf-8", errors="replace")
 
         vol40 = volume_chapters_text(read("REZERO VOL 40 AR.txt"), VOLUME40_HEADINGS, "REZERO VOL 40 AR.txt")
-        add(None, "فاصل — الصراخ", text_paragraphs(read("Intermission arc 9.txt"), skip_header=True), 39)
+        add(None, "فاصل — الصراخ", text_paragraphs(read("Intermission arc 9.txt"), skip_header=True), 39, "interlude-scream")
         for number in range(14, 24):
             title, paragraphs = vol40[number]
             add(number, title, paragraphs, 40)
@@ -369,7 +417,7 @@ def read_all() -> list[dict]:
                 title, paragraphs = split_zip_text(filenames[number], read(filenames[number]))[number]
             add(number, TITLE_OVERRIDES.get(number, title), paragraphs, 41)
         title, paragraphs = split_zip_text("الفصل الأخير.txt", read("الفصل الأخير.txt"))[60]
-        add(None, "الخاتمة — إعادة النسج", paragraphs, 41)
+        add(None, "الخاتمة — إعادة النسج", paragraphs, 41, "finale")
 
     return chapters
 
