@@ -2838,6 +2838,10 @@ function ReaderPage() {
   const sectionSentenceId = new URLSearchParams(location.search).get("section") || "";
   const targetSentenceId = new URLSearchParams(location.search).get("sentence") || "";
   const illustrationTarget = new URLSearchParams(location.search).get("image") || "";
+  // Navigation controls deliberately add this flag.  A new chapter must start
+  // at its opening sentence; restoring a previous chapter's saved spot is a
+  // separate action and is still used for direct "continue reading" links.
+  const forceChapterStart = new URLSearchParams(location.search).get("start") === "beginning";
   const { user, ready } = useAuth();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [book, setBook] = useState<any>(null);
@@ -3096,6 +3100,13 @@ function ReaderPage() {
   useEffect(() => {
     if (!chapterId || !ready) return;
     stopAllPlayback();
+    // Do this before the request starts and clear the old document.  Without
+    // both steps, React can scroll a still-rendered previous chapter using the
+    // new chapter's index, which looks like a random landing position.
+    readerBodyRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    window.scrollTo({ top: 0, behavior: "auto" });
+    setChapter(null);
+    setBook(null);
     chapterCacheRef.current = null;
     backgroundNarrationRef.current = null;
     currentSegmentRef.current = 0;
@@ -3118,9 +3129,12 @@ function ReaderPage() {
     } catch {
       setSavedSentenceIds(targetSentenceId ? [targetSentenceId] : []);
     }
-    setCurrentSentenceIndex(
-      Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0),
-    );
+    const openingIndex = forceChapterStart
+      ? 0
+      : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
+    currentSentenceIndexRef.current = openingIndex;
+    activeWordRef.current = "";
+    setCurrentSentenceIndex(openingIndex);
     let active = true;
     if (user) {
       void api<{ bookmarks: SavedBookmark[] }>("/bookmarks")
@@ -3141,8 +3155,10 @@ function ReaderPage() {
     }
     getChapterContent(chapterId, sectionSentenceId)
       .then((r) => {
-        let savedIndex = Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
-        let savedWordId = localStorage.getItem(`rethox-word-${chapterId}`) || "";
+        let savedIndex = forceChapterStart
+          ? 0
+          : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
+        let savedWordId = forceChapterStart ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
         if (targetSentenceId) {
           const foundIndex = r.chapter.sentences.findIndex((sentence) => sentence.id === targetSentenceId);
           if (foundIndex >= 0) {
@@ -3160,9 +3176,14 @@ function ReaderPage() {
           savedWordId = "";
         }
         savedIndex = Math.min(Math.max(0, savedIndex), Math.max(0, r.chapter.sentences.length - 1));
-        localStorage.setItem(`rethox-sentence-${chapterId}`, String(savedIndex));
-        if (savedWordId) localStorage.setItem(`rethox-word-${chapterId}`, savedWordId);
-        else localStorage.removeItem(`rethox-word-${chapterId}`);
+        // Merely opening a new chapter must not overwrite a genuine saved
+        // position from an earlier visit.  We persist again once the reader
+        // actually reads, scrolls or starts narration.
+        if (!forceChapterStart) {
+          localStorage.setItem(`rethox-sentence-${chapterId}`, String(savedIndex));
+          if (savedWordId) localStorage.setItem(`rethox-word-${chapterId}`, savedWordId);
+          else localStorage.removeItem(`rethox-word-${chapterId}`);
+        }
         currentSentenceIndexRef.current = savedIndex;
         activeWordRef.current = savedWordId;
         setCurrentSentenceIndex(savedIndex);
@@ -3202,7 +3223,7 @@ function ReaderPage() {
         localStorage.setItem("rethox-reading-history", JSON.stringify([entry, ...history].slice(0, 60)));
         // Progress sync must never delay showing the text.  It updates the
         // reading spot only when the reader did not explicitly choose a section.
-        if (user && !sectionSentenceId) {
+        if (user && !sectionSentenceId && !forceChapterStart) {
           void api<{ progress: Progress | null }>(`/progress/${r.book.id}`)
             .then((saved) => {
               if (!active) return;
@@ -3243,7 +3264,7 @@ function ReaderPage() {
       .then((items) => setChapterComments(items))
       .catch(() => setChapterComments([]));
     return () => { active = false; };
-  }, [chapterId, ready, sectionSentenceId, targetSentenceId, user?.id]);
+  }, [chapterId, forceChapterStart, ready, sectionSentenceId, targetSentenceId, user?.id]);
   // Reader chrome follows inactivity, not a separate mode. This keeps the
   // page calm by default while a simple mouse move, touch, or keyboard focus
   // immediately restores the controls for three seconds.
@@ -3365,8 +3386,8 @@ function ReaderPage() {
   };
   useEffect(() => {
     if (!chapter) return;
-    const savedWord = targetSentenceId || sectionSentenceId || illustrationTarget ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
-    const savedIndex = targetSentenceId || sectionSentenceId || illustrationTarget
+    const savedWord = forceChapterStart || targetSentenceId || sectionSentenceId || illustrationTarget ? "" : localStorage.getItem(`rethox-word-${chapterId}`) || "";
+    const savedIndex = forceChapterStart || targetSentenceId || sectionSentenceId || illustrationTarget
       ? (targetSentenceId ? Math.max(0, chapter.sentences.findIndex((sentence) => sentence.id === targetSentenceId)) : 0)
       : Number(localStorage.getItem(`rethox-sentence-${chapterId}`) || 0);
     const sectionStartSentenceId = sectionSentenceId
@@ -3395,7 +3416,7 @@ function ReaderPage() {
         setActiveWordId(savedWord);
       }
     });
-  }, [chapter?.id, chapterId, illustrationTarget, sectionSentenceId, targetSentenceId]);
+  }, [chapter?.id, chapterId, forceChapterStart, illustrationTarget, sectionSentenceId, targetSentenceId]);
   useEffect(
     () => () => {
       window.clearTimeout(focusControlsTimerRef.current);
@@ -4093,7 +4114,7 @@ function ReaderPage() {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const targetUrl = sectionSentenceId && book
       ? `/book/${book.slug}/volume/${target.id}`
-      : `/reader/${target.id}`;
+      : `/reader/${target.id}?start=beginning`;
     window.setTimeout(() => nav(targetUrl), reduceMotion ? 0 : 180);
   };
   const goToSectionPage = (target: ChapterSection | null) => {
