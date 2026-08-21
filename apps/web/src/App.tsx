@@ -367,8 +367,15 @@ const saveSettings = (settings: ReadingSettings) => {
   localStorage.setItem("rethox-playback-speed", String(settings.playbackSpeed));
   localStorage.setItem("rethox-volume", String(settings.volume));
 };
-const readHistory = (): ReadingHistoryItem[] => {
-  try { return JSON.parse(localStorage.getItem("rethox-reading-history") || "[]"); }
+// Reading history and completed-chapter stats are personal to an account, not
+// just a device: scope the storage key to the signed-in user so switching
+// accounts on the same browser doesn't show the previous account's stats.
+// Logged-out users keep the old unscoped key.
+const historyKey = (userId?: string) => `rethox-reading-history${userId ? `:${userId}` : ""}`;
+const completedChaptersKey = (userId?: string) => `rethox-completed-chapters${userId ? `:${userId}` : ""}`;
+const lastReadKey = (userId?: string) => `rethox-last-read${userId ? `:${userId}` : ""}`;
+const readHistory = (userId?: string): ReadingHistoryItem[] => {
+  try { return JSON.parse(localStorage.getItem(historyKey(userId)) || "[]"); }
   catch { return []; }
 };
 
@@ -850,6 +857,7 @@ function Shell() {
 }
 
 function Home() {
+  const { user } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
   const [lastRead, setLastRead] = useState<LastRead | null>(null);
   const [q, setQ] = useState("");
@@ -864,11 +872,11 @@ function Home() {
     if (ogTitle) ogTitle.content = "rethox — اقرأها. اسمعها. عشها.";
     if (ogDescription) ogDescription.content = description;
     try {
-      setLastRead(JSON.parse(localStorage.getItem("rethox-last-read") || "null"));
+      setLastRead(JSON.parse(localStorage.getItem(lastReadKey(user?.id)) || "null"));
     } catch {
       setLastRead(null);
     }
-  }, []);
+  }, [user?.id]);
   const filtered = books.filter(
     (b) =>
       (genre === "الكل" || b.genre === genre) &&
@@ -1278,7 +1286,7 @@ function BookPage() {
     : reviews;
   let completedBookChapters: string[] = [];
   try {
-    completedBookChapters = JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]");
+    completedBookChapters = JSON.parse(localStorage.getItem(completedChaptersKey(user?.id)) || "[]");
   } catch {}
   const chapterStatus = (chapter: ChapterMeta) => {
     if (completedBookChapters.includes(chapter.id)) return "";
@@ -2330,6 +2338,7 @@ function PaymentCallback() {
 }
 
 function SettingsPage() {
+  const { user } = useAuth();
   const [settings, setSettings] = useState<ReadingSettings>(readSettings);
   const [notice, setNotice] = useState("");
   const [voiceOptions, setVoiceOptions] = useState<VoiceOption[]>([]);
@@ -2346,7 +2355,7 @@ function SettingsPage() {
     window.setTimeout(() => setNotice(""), 1400);
   };
   const clearHistory = () => {
-    localStorage.removeItem("rethox-reading-history");
+    localStorage.removeItem(historyKey(user?.id));
     setNotice("تم مسح سجل القراءة من هذا الجهاز");
   };
   return (
@@ -2409,7 +2418,7 @@ function AccountPage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [readingListIds, setReadingListIds] = useState<string[]>([]);
   const [savedBookmarks, setSavedBookmarks] = useState<SavedBookmark[]>([]);
-  const [history] = useState<ReadingHistoryItem[]>(readHistory);
+  const [history, setHistory] = useState<ReadingHistoryItem[]>([]);
   const [profileName, setProfileName] = useState("");
   const [profileAvatar, setProfileAvatar] = useState("");
   const [profileMessage, setProfileMessage] = useState("");
@@ -2424,7 +2433,7 @@ function AccountPage() {
   const avatarDragRef = useRef<{ pointerId: number; x: number; y: number; offsetX: number; offsetY: number } | null>(null);
   const totalReadingSeconds = history.reduce((total, item) => total + (item.seconds || 0), 0);
   const completedCount = (() => {
-    try { return JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]").length; }
+    try { return JSON.parse(localStorage.getItem(completedChaptersKey(user?.id)) || "[]").length; }
     catch { return 0; }
   })();
   useEffect(() => {
@@ -2433,6 +2442,10 @@ function AccountPage() {
       setProfileAvatar(user.avatarUrl || "");
     }
   }, [user?.id]);
+  useEffect(() => {
+    if (!ready) return;
+    setHistory(readHistory(user?.id));
+  }, [ready, user?.id]);
   useEffect(() => () => {
     if (avatarEditorSrc) URL.revokeObjectURL(avatarEditorSrc);
   }, [avatarEditorSrc]);
@@ -2973,7 +2986,7 @@ function ReaderPage() {
         atChapterEndRef.current,
       ) / 100 * (chapter.sentences.length || 1);
       localStorage.setItem(
-        "rethox-last-read",
+        lastReadKey(user?.id),
         JSON.stringify({
           bookSlug: book.slug,
           bookTitle: book.title,
@@ -3197,7 +3210,7 @@ function ReaderPage() {
         setSectionNavigation(r.sectionNavigation || null);
         setActiveSentence(r.chapter.sentences[savedIndex] || r.chapter.sentences[0]);
         localStorage.setItem(
-          "rethox-last-read",
+          lastReadKey(user?.id),
           JSON.stringify({
             bookSlug: r.book.slug,
             bookTitle: r.book.title,
@@ -3209,7 +3222,7 @@ function ReaderPage() {
             wordId: savedWordId || undefined,
           }),
         );
-        const history = readHistory();
+        const history = readHistory(user?.id);
         const entry: ReadingHistoryItem = {
           bookSlug: r.book.slug,
           bookTitle: r.book.title,
@@ -3221,7 +3234,7 @@ function ReaderPage() {
           seconds: 0,
         };
         historyEntryRef.current = entry.visitedAt;
-        localStorage.setItem("rethox-reading-history", JSON.stringify([entry, ...history].slice(0, 60)));
+        localStorage.setItem(historyKey(user?.id), JSON.stringify([entry, ...history].slice(0, 60)));
         // Progress sync must never delay showing the text.  It updates the
         // reading spot only when the reader did not explicitly choose a section.
         if (user && !sectionSentenceId && !forceChapterStart) {
@@ -3330,10 +3343,10 @@ function ReaderPage() {
   useEffect(() => {
     if (!chapter) return;
     const timer = window.setInterval(() => {
-      const history = readHistory();
+      const history = readHistory(user?.id);
       const current = history.find((item) => item.visitedAt === historyEntryRef.current);
       if (current) current.seconds = (current.seconds || 0) + 15;
-      localStorage.setItem("rethox-reading-history", JSON.stringify(history));
+      localStorage.setItem(historyKey(user?.id), JSON.stringify(history));
     }, 15000);
     return () => window.clearInterval(timer);
   }, [chapter?.id]);
@@ -3507,11 +3520,11 @@ function ReaderPage() {
         rememberReadingSpot(Math.max(0, chapter.sentences.length - 1), "");
         try {
           const completed: string[] = JSON.parse(
-            localStorage.getItem("rethox-completed-chapters") || "[]",
+            localStorage.getItem(completedChaptersKey(user?.id)) || "[]",
           );
           if (!completed.includes(chapter.id)) {
             completed.push(chapter.id);
-            localStorage.setItem("rethox-completed-chapters", JSON.stringify(completed));
+            localStorage.setItem(completedChaptersKey(user?.id), JSON.stringify(completed));
           }
         } catch {}
       }
@@ -3525,10 +3538,10 @@ function ReaderPage() {
   useEffect(() => {
     if (!atChapterEnd || !chapter) return;
     try {
-      const completed: string[] = JSON.parse(localStorage.getItem("rethox-completed-chapters") || "[]");
+      const completed: string[] = JSON.parse(localStorage.getItem(completedChaptersKey(user?.id)) || "[]");
       if (!completed.includes(chapter.id)) {
         completed.push(chapter.id);
-        localStorage.setItem("rethox-completed-chapters", JSON.stringify(completed));
+        localStorage.setItem(completedChaptersKey(user?.id), JSON.stringify(completed));
       }
     } catch {}
   }, [atChapterEnd, chapter?.id]);
@@ -4386,7 +4399,7 @@ function ReaderPage() {
   let completedChapters: string[] = [];
   try {
     completedChapters = JSON.parse(
-      localStorage.getItem("rethox-completed-chapters") || "[]",
+      localStorage.getItem(completedChaptersKey(user?.id)) || "[]",
     );
   } catch {}
   const chapterProgressPercentage = chapterReadingPercentage(
