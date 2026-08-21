@@ -144863,7 +144863,7 @@
       "coverUrl": "/covers/rezero-arc-9.webp",
       "status": "PUBLISHED",
       "rating": 4.9,
-      "pageCount": 17572,
+      "pageCount": 17819,
       "contentUnitLabel": "فصل",
       "contentUnitLabelPlural": "فصول",
       "chapters": [
@@ -144876,6 +144876,15 @@
           "isSample": true,
           "volumeNumber": 39,
           "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz9-c001-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c001-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 1 من الآرك التاسع",
+              "afterSentenceId": "rz9-c001-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 225,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144889,6 +144898,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz9-c002-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c002-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 2 من الآرك التاسع",
+              "afterSentenceId": "rz9-c002-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 195,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144902,6 +144920,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz9-c003-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c003-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 3 من الآرك التاسع",
+              "afterSentenceId": "rz9-c003-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 273,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144915,6 +144942,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz9-c004-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c004-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 4 من الآرك التاسع",
+              "afterSentenceId": "rz9-c004-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 278,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144928,6 +144964,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz9-c005-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c005-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 5 من الآرك التاسع",
+              "afterSentenceId": "rz9-c005-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 378,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144941,6 +144986,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz9-c006-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c006-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 6 من الآرك التاسع",
+              "afterSentenceId": "rz9-c006-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 378,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144967,6 +145021,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz9-c008-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c007-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 7 من الآرك التاسع",
+              "afterSentenceId": "rz9-c008-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 188,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144980,6 +145043,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz9-c009-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c008-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 8 من الآرك التاسع",
+              "afterSentenceId": "rz9-c009-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 225,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -144993,6 +145065,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz9-c010-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c009-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 9 من الآرك التاسع",
+              "afterSentenceId": "rz9-c010-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 275,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -145006,6 +145087,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz9-c011-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c010-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 10 من الآرك التاسع",
+              "afterSentenceId": "rz9-c011-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 257,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -145019,6 +145109,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz9-c012-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c011-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 11 من الآرك التاسع",
+              "afterSentenceId": "rz9-c012-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 349,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -145032,6 +145131,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz9-c013-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c012-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 12 من الآرك التاسع",
+              "afterSentenceId": "rz9-c013-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 520,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -145045,6 +145153,15 @@
           "isSample": false,
           "volumeNumber": 39,
           "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz9-c014-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c013-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 13 من الآرك التاسع",
+              "afterSentenceId": "rz9-c014-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 534,
           "contentFile": "books/ReZero Arc 9/derived/volume-39.json"
@@ -145071,6 +145188,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz9-c016-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c014-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 14 من الآرك التاسع",
+              "afterSentenceId": "rz9-c016-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 374,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145084,6 +145210,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz9-c017-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c015-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 15 من الآرك التاسع",
+              "afterSentenceId": "rz9-c017-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 304,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145097,6 +145232,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz9-c018-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c016-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 16 من الآرك التاسع",
+              "afterSentenceId": "rz9-c018-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 321,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145110,6 +145254,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz9-c019-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c017-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 17 من الآرك التاسع",
+              "afterSentenceId": "rz9-c019-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 279,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145123,6 +145276,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz9-c020-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c018-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 18 من الآرك التاسع",
+              "afterSentenceId": "rz9-c020-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 303,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145136,6 +145298,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz9-c021-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c019-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 19 من الآرك التاسع",
+              "afterSentenceId": "rz9-c021-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 344,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145149,6 +145320,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz9-c022-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c020-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 20 من الآرك التاسع",
+              "afterSentenceId": "rz9-c022-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 377,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145162,6 +145342,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz9-c023-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c021-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 21 من الآرك التاسع",
+              "afterSentenceId": "rz9-c023-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 486,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145175,6 +145364,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz9-c024-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c022-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 22 من الآرك التاسع",
+              "afterSentenceId": "rz9-c024-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 324,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145188,6 +145386,15 @@
           "isSample": false,
           "volumeNumber": 40,
           "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz9-c025-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c023-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 23 من الآرك التاسع",
+              "afterSentenceId": "rz9-c025-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 757,
           "contentFile": "books/ReZero Arc 9/derived/volume-40.json"
@@ -145197,12 +145404,21 @@
           "bookId": "book-rezero-arc-9",
           "title": "الفصل 24 — عدو البشرية",
           "position": 26,
-          "durationMs": 1713120,
+          "durationMs": 2306090,
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 1,
+          "illustrations": [
+            {
+              "id": "rz9-c026-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c024-p030.webp",
+              "alt": "بترا تقود عربة التنين عبر بحر الرمال وسوبارو المتخيّل إلى جوارها",
+              "afterSentenceId": "rz9-c026-p0030",
+              "position": 1
+            }
+          ],
           "sentences": [],
-          "sentenceCount": 237,
+          "sentenceCount": 313,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
         },
         {
@@ -145210,12 +145426,21 @@
           "bookId": "book-rezero-arc-9",
           "title": "الفصل 25 — كانت إميليا غاضبة",
           "position": 27,
-          "durationMs": 1258610,
+          "durationMs": 1882970,
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 2,
+          "illustrations": [
+            {
+              "id": "rz9-c027-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c025-p002.webp",
+              "alt": "إميليا تطلق سحر الجليد في ساحة برج السجن",
+              "afterSentenceId": "rz9-c027-p0002",
+              "position": 1
+            }
+          ],
           "sentences": [],
-          "sentenceCount": 184,
+          "sentenceCount": 271,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
         },
         {
@@ -145223,12 +145448,21 @@
           "bookId": "book-rezero-arc-9",
           "title": "الفصل 26 — شيطان السيف ضد الساكورا القرمزية",
           "position": 28,
-          "durationMs": 1137780,
+          "durationMs": 1061240,
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 3,
+          "illustrations": [
+            {
+              "id": "rz9-c028-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c026-p001.webp",
+              "alt": "ويلهيلم يواجه مقاتلة الساكورا القرمزية في مبارزة سيف",
+              "afterSentenceId": "rz9-c028-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
-          "sentenceCount": 138,
+          "sentenceCount": 132,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
         },
         {
@@ -145236,12 +145470,21 @@
           "bookId": "book-rezero-arc-9",
           "title": "الفصل 27 — كلمات طفل",
           "position": 29,
-          "durationMs": 1440070,
+          "durationMs": 2182680,
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 4,
+          "illustrations": [
+            {
+              "id": "rz9-c029-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c027-p001.webp",
+              "alt": "ويلهيلم المنهك يستمع إلى كلمات طفل وسط الأنقاض",
+              "afterSentenceId": "rz9-c029-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
-          "sentenceCount": 200,
+          "sentenceCount": 304,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
         },
         {
@@ -145249,12 +145492,21 @@
           "bookId": "book-rezero-arc-9",
           "title": "الفصل 28 — مقطع من أسطورة",
           "position": 30,
-          "durationMs": 1408680,
+          "durationMs": 1330420,
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 5,
+          "illustrations": [
+            {
+              "id": "rz9-c030-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c028-p001.webp",
+              "alt": "مبارزة أسطورية بين محارب وتنين عتيق في العاصفة",
+              "afterSentenceId": "rz9-c030-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
-          "sentenceCount": 158,
+          "sentenceCount": 152,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
         },
         {
@@ -145262,12 +145514,21 @@
           "bookId": "book-rezero-arc-9",
           "title": "الفصل 29 — في أسفل الطاولة",
           "position": 31,
-          "durationMs": 486760,
+          "durationMs": 405060,
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 6,
+          "illustrations": [
+            {
+              "id": "rz9-c031-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c029-p061.webp",
+              "alt": "ويلهيلم يواجه هاينكل في غرفة مظلمة عند أسفل الطاولة",
+              "afterSentenceId": "rz9-c031-p0055",
+              "position": 1
+            }
+          ],
           "sentences": [],
-          "sentenceCount": 63,
+          "sentenceCount": 55,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
         },
         {
@@ -145279,6 +145540,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 7,
+          "illustrations": [
+            {
+              "id": "rz9-c032-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c030-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 30 من الآرك التاسع",
+              "afterSentenceId": "rz9-c032-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 213,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145292,6 +145562,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 8,
+          "illustrations": [
+            {
+              "id": "rz9-c033-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c031-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 31 من الآرك التاسع",
+              "afterSentenceId": "rz9-c033-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 260,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145305,6 +145584,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 9,
+          "illustrations": [
+            {
+              "id": "rz9-c034-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c032-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 32 من الآرك التاسع",
+              "afterSentenceId": "rz9-c034-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 275,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145318,6 +145606,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 10,
+          "illustrations": [
+            {
+              "id": "rz9-c035-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c033-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 33 من الآرك التاسع",
+              "afterSentenceId": "rz9-c035-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 159,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145331,6 +145628,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 11,
+          "illustrations": [
+            {
+              "id": "rz9-c036-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c034-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 34 من الآرك التاسع",
+              "afterSentenceId": "rz9-c036-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 291,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145344,6 +145650,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 12,
+          "illustrations": [
+            {
+              "id": "rz9-c037-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c035-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 35 من الآرك التاسع",
+              "afterSentenceId": "rz9-c037-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 423,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145357,6 +145672,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 13,
+          "illustrations": [
+            {
+              "id": "rz9-c038-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c036-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 36 من الآرك التاسع",
+              "afterSentenceId": "rz9-c038-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 234,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145370,6 +145694,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 14,
+          "illustrations": [
+            {
+              "id": "rz9-c039-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c037-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 37 من الآرك التاسع",
+              "afterSentenceId": "rz9-c039-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 240,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145383,6 +145716,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 15,
+          "illustrations": [
+            {
+              "id": "rz9-c040-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c038-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 38 من الآرك التاسع",
+              "afterSentenceId": "rz9-c040-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 289,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145396,6 +145738,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 16,
+          "illustrations": [
+            {
+              "id": "rz9-c041-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c039-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 39 من الآرك التاسع",
+              "afterSentenceId": "rz9-c041-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 217,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145409,6 +145760,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 17,
+          "illustrations": [
+            {
+              "id": "rz9-c042-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c040-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 40 من الآرك التاسع",
+              "afterSentenceId": "rz9-c042-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 224,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145422,6 +145782,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 18,
+          "illustrations": [
+            {
+              "id": "rz9-c043-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c041-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 41 من الآرك التاسع",
+              "afterSentenceId": "rz9-c043-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 175,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145435,6 +145804,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 19,
+          "illustrations": [
+            {
+              "id": "rz9-c044-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c042-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 42 من الآرك التاسع",
+              "afterSentenceId": "rz9-c044-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 263,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145448,6 +145826,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 20,
+          "illustrations": [
+            {
+              "id": "rz9-c045-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c043-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 43 من الآرك التاسع",
+              "afterSentenceId": "rz9-c045-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 163,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145461,6 +145848,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 21,
+          "illustrations": [
+            {
+              "id": "rz9-c046-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c044-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 44 من الآرك التاسع",
+              "afterSentenceId": "rz9-c046-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 210,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145474,6 +145870,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 22,
+          "illustrations": [
+            {
+              "id": "rz9-c047-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c045-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 45 من الآرك التاسع",
+              "afterSentenceId": "rz9-c047-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 266,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145487,6 +145892,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 23,
+          "illustrations": [
+            {
+              "id": "rz9-c048-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c046-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 46 من الآرك التاسع",
+              "afterSentenceId": "rz9-c048-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 356,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145500,6 +145914,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 24,
+          "illustrations": [
+            {
+              "id": "rz9-c049-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c047-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 47 من الآرك التاسع",
+              "afterSentenceId": "rz9-c049-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 185,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145513,6 +145936,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 25,
+          "illustrations": [
+            {
+              "id": "rz9-c050-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c048-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 48 من الآرك التاسع",
+              "afterSentenceId": "rz9-c050-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 281,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145526,6 +145958,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 26,
+          "illustrations": [
+            {
+              "id": "rz9-c051-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c049-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 49 من الآرك التاسع",
+              "afterSentenceId": "rz9-c051-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 203,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145539,6 +145980,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 27,
+          "illustrations": [
+            {
+              "id": "rz9-c052-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c050-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 50 من الآرك التاسع",
+              "afterSentenceId": "rz9-c052-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 341,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145552,6 +146002,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 28,
+          "illustrations": [
+            {
+              "id": "rz9-c053-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c051-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 51 من الآرك التاسع",
+              "afterSentenceId": "rz9-c053-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 410,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145565,6 +146024,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 29,
+          "illustrations": [
+            {
+              "id": "rz9-c054-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c052-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 52 من الآرك التاسع",
+              "afterSentenceId": "rz9-c054-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 272,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145578,6 +146046,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 30,
+          "illustrations": [
+            {
+              "id": "rz9-c055-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c053-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 53 من الآرك التاسع",
+              "afterSentenceId": "rz9-c055-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 281,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145591,6 +146068,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 31,
+          "illustrations": [
+            {
+              "id": "rz9-c056-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c054-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 54 من الآرك التاسع",
+              "afterSentenceId": "rz9-c056-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 326,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145604,6 +146090,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 32,
+          "illustrations": [
+            {
+              "id": "rz9-c057-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c055-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 55 من الآرك التاسع",
+              "afterSentenceId": "rz9-c057-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 244,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145617,6 +146112,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 33,
+          "illustrations": [
+            {
+              "id": "rz9-c058-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c056-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 56 من الآرك التاسع",
+              "afterSentenceId": "rz9-c058-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 555,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145630,6 +146134,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 34,
+          "illustrations": [
+            {
+              "id": "rz9-c059-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c057-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 57 من الآرك التاسع",
+              "afterSentenceId": "rz9-c059-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 229,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145643,6 +146156,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 35,
+          "illustrations": [
+            {
+              "id": "rz9-c060-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c058-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 58 من الآرك التاسع",
+              "afterSentenceId": "rz9-c060-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 297,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
@@ -145656,6 +146178,15 @@
           "isSample": false,
           "volumeNumber": 41,
           "volumePosition": 36,
+          "illustrations": [
+            {
+              "id": "rz9-c061-i01",
+              "src": "/illustrations/rezero-arc-9/arc9-c059-p001.webp",
+              "alt": "لوحة أصلية لمشهد من الفصل 59 من الآرك التاسع",
+              "afterSentenceId": "rz9-c061-p0001",
+              "position": 1
+            }
+          ],
           "sentences": [],
           "sentenceCount": 221,
           "contentFile": "books/ReZero Arc 9/derived/volume-41.json"
