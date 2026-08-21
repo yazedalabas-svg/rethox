@@ -47,6 +47,49 @@ TITLE_OVERRIDES = {
     59: "الفصل 59",
 }
 
+# Images extracted from the original Arabic DOCX files.  The TXT conversion
+# kept the prose but dropped the embedded media, so these anchors preserve the
+# original placement by matching the paragraph immediately before each image.
+ILLUSTRATION_SPECS: dict[int, list[dict[str, str]]] = {
+    1: [{"src": "/illustrations/rezero-arc-9/arc9-v39-01.jpeg", "alt": "غلاف المجلد 39"}],
+    4: [{"src": "/illustrations/rezero-arc-9/arc9-v39-02.jpeg", "alt": "صورة الفصل 4 من المجلد 39", "after_text": "لقد انتهى الوقت الذي كانت فيه إميليا تنظر فقط إلى صديقتها"}],
+    6: [{"src": "/illustrations/rezero-arc-9/arc9-v39-03.jpeg", "alt": "صورة الفصل 6 من المجلد 39", "after_text": "ضحك الثلاثة، بما فيهم سبيكا"}],
+    7: [{"src": "/illustrations/rezero-arc-9/arc9-v39-04.jpeg", "alt": "صورة الفصل 7 من المجلد 39"}],
+    8: [{"src": "/illustrations/rezero-arc-9/arc9-v39-05.jpeg", "alt": "صورة الفصل 8 من المجلد 39", "after_text": "مهما كانت العوائق"}],
+    9: [{"src": "/illustrations/rezero-arc-9/arc9-v39-06.jpeg", "alt": "صورة الفصل 9 من المجلد 39", "after_text": "كليند-سان؟"}],
+    10: [{"src": "/illustrations/rezero-arc-9/arc9-v39-07.jpeg", "alt": "صورة الفصل 10 من المجلد 39", "after_text": "آنسة فلام؟"}],
+    11: [
+        {"src": "/illustrations/rezero-arc-9/arc9-v39-08.jpeg", "alt": "صورة الفصل 11 من المجلد 39", "after_text": "بيترا: \"لهذا السبب أنا قلقة"},
+        {"src": "/illustrations/rezero-arc-9/arc9-v39-09.jpeg", "alt": "صورة ثانية للفصل 11 من المجلد 39", "after_text": "بدأت المعركة لإزالة ناتسوكي سوبارو"},
+    ],
+    12: [{"src": "/illustrations/rezero-arc-9/arc9-v39-10.jpeg", "alt": "صورة الفصل 12 من المجلد 39", "after_text": "في اللحظة التالية، مستهدفة الساحر والمحارب"}],
+    13: [
+        {"src": f"/illustrations/rezero-arc-9/arc9-v39-{number:02d}.jpeg", "alt": "صورة إضافية من المجلد 39", "after_text": "نهاية"}
+        for number in range(11, 17)
+    ],
+    14: [{"src": "/illustrations/rezero-arc-9/arc9-v40-01.jpeg", "alt": "غلاف المجلد 40"}],
+    15: [
+        {"src": "/illustrations/rezero-arc-9/arc9-v40-02.jpeg", "alt": "صورة الفصل 15 من المجلد 40"},
+        {"src": "/illustrations/rezero-arc-9/arc9-v40-03.jpeg", "alt": "صورة ثانية للفصل 15 من المجلد 40", "after_text": "الذكريات التي كانت من المحرمات"},
+    ],
+    17: [{"src": "/illustrations/rezero-arc-9/arc9-v40-04.jpeg", "alt": "صورة الفصل 17 من المجلد 40", "after_text": "احتضنت يي كتفيها النحيفتين"}],
+    18: [{"src": "/illustrations/rezero-arc-9/arc9-v40-05.jpeg", "alt": "صورة الفصل 18 من المجلد 40", "after_text": "الانتقام لفلام"}],
+    19: [{"src": "/illustrations/rezero-arc-9/arc9-v40-06.jpeg", "alt": "صورة الفصل 19 من المجلد 40", "after_text": "هذه المرأة، التي لا يمكن منافسة قدراتها"}],
+    21: [
+        {"src": "/illustrations/rezero-arc-9/arc9-v40-07.jpeg", "alt": "صورة الفصل 21 من المجلد 40", "after_text": "رئيسة سجن حديقة الزهور"},
+        {"src": "/illustrations/rezero-arc-9/arc9-v40-08.jpeg", "alt": "صورة ثانية للفصل 21 من المجلد 40", "after_text": "ببساطة بسبب ضخامة جسده"},
+    ],
+    22: [{"src": "/illustrations/rezero-arc-9/arc9-v40-09.jpeg", "alt": "صورة الفصل 22 من المجلد 40", "after_text": "انظر إلي"}],
+    23: [{"src": "/illustrations/rezero-arc-9/arc9-v40-10.jpeg", "alt": "صورة الفصل 23 من المجلد 40", "after_text": "داخل الزنزانة الانفرادية"}] + [
+        {"src": f"/illustrations/rezero-arc-9/arc9-v40-{number:02d}.jpeg", "alt": "صورة إضافية من المجلد 40", "after_text": "نهاية"} for number in range(11, 17)
+    ],
+    35: [
+        {"src": "/illustrations/rezero-arc-9/arc9-c035-01.jpeg", "alt": "الصورة الأولى للفصل 35",},
+        {"src": "/illustrations/rezero-arc-9/arc9-c035-02.jpeg", "alt": "الصورة الثانية للفصل 35", "after_text": "أريد أن أرد على الأشخاص الطيبين معي"},
+        {"src": "/illustrations/rezero-arc-9/arc9-c035-03.jpeg", "alt": "الصورة الثالثة للفصل 35", "after_text": "لأي سبب سعيد يُسمح لي بالعيش"},
+    ],
+}
+
 VOLUME39_HEADINGS = [
     (1, "الفصل الأول:"),
     (2, "الفصل الثاني:"),
@@ -224,7 +267,7 @@ def make_chapter(position: int, chapter_number: int | None, title: str, paragrap
     ]
     words = sum(len(sentence["text"].split()) for sentence in sentences)
     label = f"الفصل {chapter_number} — {title}" if chapter_number is not None else title
-    return {
+    chapter = {
         "id": f"ch-rezero-9-{position:03d}",
         "bookId": ARC9_BOOK_ID,
         "title": label,
@@ -235,6 +278,30 @@ def make_chapter(position: int, chapter_number: int | None, title: str, paragrap
         "volumePosition": volume_position,
         "sentences": sentences,
     }
+    specs = ILLUSTRATION_SPECS.get(chapter_number, [])
+    if specs and sentences:
+        illustrations = []
+        for image_position, spec in enumerate(specs, start=1):
+            anchor = 0
+            target = compact(spec.get("after_text", ""))
+            if target:
+                if target == "نهاية":
+                    anchor = len(sentences) - 1
+                else:
+                    anchor = next(
+                        (index for index, sentence in enumerate(sentences)
+                         if target in compact(sentence["text"])),
+                        0,
+                    )
+            illustrations.append({
+                "id": f"rz9-c{position:03d}-i{image_position:02d}",
+                "src": spec["src"],
+                "alt": spec["alt"],
+                "afterSentenceId": sentences[anchor]["id"],
+                "position": image_position,
+            })
+        chapter["illustrations"] = illustrations
+    return chapter
 
 
 def read_all() -> list[dict]:
