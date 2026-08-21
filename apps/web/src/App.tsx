@@ -2955,6 +2955,7 @@ function ReaderPage() {
   const sectionHighlightTimerRef = useRef(0);
   const focusControlsTimerRef = useRef(0);
   const rememberReadingSpot = (sentenceIndex: number, wordId = activeWordRef.current) => {
+    if (!chapter || chapter.id !== chapterId) return;
     const now = Date.now();
     if (
       lastSpotSaveRef.current.sentenceIndex === sentenceIndex &&
@@ -3441,9 +3442,13 @@ function ReaderPage() {
     atChapterEndRef.current = atChapterEnd;
   }, [atChapterEnd]);
   useEffect(() => {
+    // During chapter navigation React briefly renders the previous chapter
+    // with the new route id. Do not save that old index under the new chapter
+    // key, or a fresh chapter can open at an apparently random paragraph.
+    if (!chapter || chapter.id !== chapterId) return;
     rememberReadingSpot(currentSentenceIndex);
     currentSentenceIndexRef.current = currentSentenceIndex;
-  }, [currentSentenceIndex]);
+  }, [chapter?.id, chapterId, currentSentenceIndex]);
   useEffect(() => {
     if (!user || !chapter) return;
     const persistProgress = () => saveReadingProgress({
@@ -4114,7 +4119,7 @@ function ReaderPage() {
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const targetUrl = sectionSentenceId && book
       ? `/book/${book.slug}/volume/${target.id}`
-      : `/reader/${target.id}?start=beginning`;
+      : `/reader/${target.id}`;
     window.setTimeout(() => nav(targetUrl), reduceMotion ? 0 : 180);
   };
   const goToSectionPage = (target: ChapterSection | null) => {
