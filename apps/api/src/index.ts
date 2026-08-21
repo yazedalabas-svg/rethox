@@ -1203,19 +1203,10 @@ app.get("/api/chapters/:id/content", optionalAuth, (req: AuthRequest, res) => {
         };
       })()
     : chapter;
-  // For paid books, even the free sample chapter is capped to the first
-  // SAMPLE_SENTENCE_LIMIT sentences so guests can preview but not read the
-  // whole chapter for free.
-  const SAMPLE_SENTENCE_LIMIT = 40;
-  const isSampleCapped = !owns && chapterMeta.isSample && book.priceMinor > 0
-    && visibleChapter.sentences.length > SAMPLE_SENTENCE_LIMIT;
-  const finalChapter = isSampleCapped
-    ? {
-        ...visibleChapter,
-        sentences: visibleChapter.sentences.slice(0, SAMPLE_SENTENCE_LIMIT),
-        sampleTruncated: true,
-      }
-    : visibleChapter;
+  // The first chapter is the free preview and must be readable to its end.
+  // Paid chapters are still blocked above, and bundled volumes are still
+  // limited to the first free section by firstLockedSectionIndex.
+  const finalChapter = visibleChapter;
   const chapterIndex = book.chapters.findIndex((item) => item.id === chapterMeta.id);
   const chapterLink = (item: (typeof book.chapters)[number] | undefined) =>
     item
