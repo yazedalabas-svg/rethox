@@ -10,6 +10,7 @@ import pino from "pino";
 import { createHash, randomUUID } from "node:crypto";
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, utimes, writeFileSync } from "node:fs";
+import { cpus } from "node:os";
 import { dirname, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
@@ -40,6 +41,7 @@ import { createRelationalBackup, startBackupScheduler } from "./backup-service.j
 import { summaryProvider, illustrationAltProvider } from "./summary-provider.js";
 import { safeClientTimestamp, weightedBookProgress } from "./progress.js";
 import { TtsGenerationQueue } from "./tts-queue.js";
+import { PiperPool } from "./piper-pool.js";
 import { runProcess } from "./process-runner.js";
 import { clientHttpError } from "./http-errors.js";
 import { rotateRefreshSession } from "./refresh-sessions.js";
@@ -134,6 +136,10 @@ const ttsLimit = rateLimit({
   limit: Number(process.env.TTS_RATE_LIMIT || 240),
   standardHeaders: true,
   legacyHeaders: false,
+  // Without this the client's ApiError shows express-rate-limit's default
+  // English text, breaking the app's all-Arabic error messages right when the
+  // reader most needs to understand what happened.
+  message: { message: "طُلب صوت كثير في وقت قصير. انتظر قليلًا ثم حاول مجددًا" },
 });
 const orderLimit = rateLimit({
   windowMs: 10 * 60_000,
@@ -180,7 +186,7 @@ app.use("/api", (req, res, next) => {
 // generation surfaces as an error instead of silently switching voices.
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
 const ttsScript = resolve(rootDir, "tools/tts_edge.py");
-const piperScript = resolve(rootDir, "tools/tts_piper.py");
+const piperServerScript = resolve(rootDir, "tools/piper_server.py");
 const pythonCommand = process.platform === "win32" ? "python" : "python3";
 if (spawnSync(pythonCommand, ["-c", "import edge_tts"], { stdio: "ignore" }).status !== 0) {
   spawnSync(
@@ -195,6 +201,15 @@ const ttsCache = process.env.TTS_CACHE_DIR
 // Imported source files stay outside the web root; reading data and cover metadata live in the store.
 mkdirSync(ttsCache, { recursive: true });
 const ttsGenerationQueue = new TtsGenerationQueue(450);
+// Piper is local, CPU-only synthesis (no external rate limit to respect), so
+// unlike the Edge queue above it runs several jobs at once — one persistent
+// worker process per pool slot, model loaded once and reused (see
+// piper-pool.ts) instead of paying a fresh model-load per request. One slot
+// always stays reserved for foreground (interactive) requests so a reader
+// never queues behind a pool full of background pre-warming work.
+const piperPoolSize = Math.max(1, Number(process.env.PIPER_WORKERS) || Math.min(3, cpus().length - 1) || 1);
+const piperPool = new PiperPool(pythonCommand, [piperServerScript, "--voice-dir", piperVoiceDir], piperPoolSize);
+const piperQueue = new TtsGenerationQueue(0, piperPoolSize);
 const ttsCacheMaxBytes = Number(process.env.TTS_CACHE_MAX_BYTES || 600 * 1024 * 1024);
 let lastTtsCacheMaintenanceAt = 0;
 let ttsCacheMaintenance = Promise.resolve();
@@ -485,23 +500,22 @@ app.post("/api/tts", ttsLimit, async (req, res) => {
   const metaPath = resolve(ttsCache, `${key}.json`);
   try {
     if (!existsSync(audioPath) || !existsSync(metaPath)) {
-      await ttsGenerationQueue.run(key, async () => {
+      const queue = engine.kind === "piper" ? piperQueue : ttsGenerationQueue;
+      await queue.run(key, async () => {
         // A queued duplicate may have finished while this caller was waiting.
         if (existsSync(audioPath) && existsSync(metaPath)) return;
-        const generatorArgs = engine.kind === "piper"
-          ? [piperScript, "--out", audioPath, "--voice", voice, "--voice-dir", piperVoiceDir]
-          : [ttsScript, "--out", audioPath, "--voice", voice, "--rate", rate, "--pitch", pitch];
-        // Piper runs locally on CPU: it never fails from a network hiccup, so a
-        // retry would only repeat the same deterministic failure more slowly.
-        const attempts = engine.kind === "piper" ? 1 : 5;
+        if (engine.kind === "piper") {
+          // Local CPU synthesis on a warm worker never fails from a network
+          // hiccup, so a retry would only repeat the same deterministic
+          // failure more slowly.
+          await piperPool.synthesize({ voice, text: narrationText, out: audioPath, timeoutMs: 180_000 });
+          return;
+        }
+        const generatorArgs = [ttsScript, "--out", audioPath, "--voice", voice, "--rate", rate, "--pitch", pitch];
         let lastError: unknown;
-        for (let attempt = 0; attempt < attempts; attempt += 1) {
+        for (let attempt = 0; attempt < 5; attempt += 1) {
           try {
-            await runProcess(
-              pythonCommand,
-              generatorArgs,
-              { input: narrationText, timeoutMs: engine.kind === "piper" ? 180_000 : 90_000 },
-            );
+            await runProcess(pythonCommand, generatorArgs, { input: narrationText, timeoutMs: 90_000 });
             return;
           } catch (error) {
             lastError = error;
@@ -2922,3 +2936,12 @@ const bootstrap = async () => {
   );
 };
 bootstrap();
+
+// The Piper pool's workers are separate long-lived processes; make sure a
+// server restart or deploy doesn't leave them running as orphans.
+for (const signal of ["SIGTERM", "SIGINT"] as const) {
+  process.on(signal, () => {
+    piperPool.shutdown();
+    process.exit(0);
+  });
+}

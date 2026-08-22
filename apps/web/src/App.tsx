@@ -289,6 +289,12 @@ const narrationRetryDelayMs = (error: unknown, attempt: number) =>
   error instanceof ApiError && error.status === 429
     ? Math.min(30_000, 6_000 * attempt)
     : Math.min(10_000, 700 * 2 ** Math.min(attempt, 4));
+// The server already reports the real reason (rate limit, voice unavailable,
+// generation failure) and the correct narrator's name — show that instead of
+// a hardcoded message that always blamed "حامد" regardless of the selected
+// voice or the actual cause.
+const narrationErrorMessage = (error: unknown, fallback: string) =>
+  error instanceof ApiError ? error.message : fallback;
 type ChapterNarrationCache = {
   chapterId: string;
   /** Audio is voice-specific, so switching narrator must rebuild the cache. */
@@ -4029,9 +4035,9 @@ function ReaderPage() {
         ))
         : 0;
       await playFromSentenceWord(startSentenceIndex, startWordIndex, session);
-    } catch {
+    } catch (error) {
       if (session !== playbackSessionRef.current) return;
-      setPlayerError("تعذر تجهيز صوت حامد الآن. حاول مرة أخرى.");
+      setPlayerError(narrationErrorMessage(error, "تعذر تجهيز الصوت الآن. حاول مرة أخرى."));
     } finally {
       if (session === playbackSessionRef.current) setNarrationBusy(false);
     }
@@ -4057,10 +4063,10 @@ function ReaderPage() {
       previewAudioRef.current = audio;
       audio.addEventListener("playing", () => setPlayerError(""), { once: true });
       await audio.play();
-    } catch {
+    } catch (error) {
       if (session === playbackSessionRef.current) {
         setPlaying(false);
-        setPlayerError("تعذر تجهيز صوت حامد الآن. حاول مرة أخرى.");
+        setPlayerError(narrationErrorMessage(error, "تعذر تجهيز الصوت الآن. حاول مرة أخرى."));
       }
     }
   };
@@ -4080,13 +4086,13 @@ function ReaderPage() {
       setCurrentSentenceIndex(sentenceIndex);
       rememberReadingSpot(sentenceIndex, tokenId);
       await playFromSentenceWord(sentenceIndex, wordIndex, session);
-    } catch {
+    } catch (error) {
       if (session !== playbackSessionRef.current) {
-        setPlayerError("تعذر تجهيز صوت حامد لهذه الكلمة.");
+        setPlayerError(narrationErrorMessage(error, "تعذر تجهيز الصوت لهذه الكلمة."));
         return;
       }
       if (session === playbackSessionRef.current) {
-        setPlayerError("تعذر تجهيز صوت حامد لهذه الكلمة.");
+        setPlayerError(narrationErrorMessage(error, "تعذر تجهيز الصوت لهذه الكلمة."));
         return;
       }
       if (session === playbackSessionRef.current)
