@@ -1441,14 +1441,11 @@ button {
   padding: 11px;
 }
 .cart-cover {
+  width: 75px;
   height: 75px;
   border-radius: 7px;
-  color: #fff;
-  display: grid;
-  place-items: center;
-  font-family: "Noto Naskh Arabic";
-  font-size: 13px;
-  text-align: center;
+  background-size: cover;
+  background-position: center;
 }
 .cart-list h3 {
   margin: 0;

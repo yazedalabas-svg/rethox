@@ -2190,9 +2190,10 @@ function CartPage() {
           <div className="cart-list">
             {books.map((b) => (
               <article key={b.id}>
-                <div className={`cart-cover cover-${b.coverTheme}`}>
-                  {b.title}
-                </div>
+                <div
+                  className={`cart-cover cover-${b.coverTheme}`}
+                  style={b.coverUrl ? { backgroundImage: `url(${b.coverUrl})` } : undefined}
+                />
                 <div>
                   <h3>{b.title}</h3>
                   <p>
