@@ -911,12 +911,7 @@ function Home() {
               <a href="#new" className="btn primary">
                 ابدأ القراءة <ArrowLeft size={17} />
               </a>
-              <Link to="/book/city-of-mirrors" className="listen-link">
-                <span>
-                  <Play size={16} fill="currentColor" />
-                </span>
-                استمع إلى عينة
-              </Link>
+
             </div>
             <div className="hero-metrics">
               <div>
@@ -1063,9 +1058,7 @@ function Home() {
               اضغط على كلمة، اسمع نطقها، عدّل السرعة أو اطلب خلاصة. صممنا القارئ
               ليكون هادئًا في الخلفية وحاضرًا عندما تحتاجه.
             </p>
-            <Link to="/book/city-of-mirrors" className="text-link">
-              جرّب القارئ الآن <ArrowLeft size={15} />
-            </Link>
+
           </div>
         </div>
       </section>
