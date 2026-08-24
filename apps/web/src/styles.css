@@ -788,11 +788,11 @@ button {
   color:var(--purple);
 }
 .feature-row b {
-  font-size: 10px;
+  font-size: 15px;
 }
 .feature-row small {
   color:var(--muted);
-  font-size: 7px;
+  font-size: 12.5px;
   opacity: .9;
 }
 .catalog {
@@ -2868,7 +2868,7 @@ html:has(.reader-index.open) .theme-fab {
 .continue-copy { min-width:0; }
 .continue-copy .kicker { display:inline-flex;margin-bottom:6px;padding:5px 9px;border-radius:99px;background:rgba(115,86,216,.1); }
 .continue-copy h2 { overflow:hidden;margin:0;font-family:"Noto Naskh Arabic";font-size:25px;line-height:1.35;text-overflow:ellipsis;white-space:nowrap; }
-.continue-copy p { overflow:hidden;margin:2px 0 13px;color:var(--muted);font-size:9px;text-overflow:ellipsis;white-space:nowrap; }
+.continue-copy p { overflow:hidden;margin:2px 0 13px;color:var(--muted);font-size:13.5px;text-overflow:ellipsis;white-space:nowrap; }
 .continue-progress { height:6px;max-width:620px;border-radius:99px;background:color-mix(in srgb,var(--line) 80%,transparent);overflow:hidden; }
 .continue-progress span { display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--purple),#9a78e9);box-shadow:0 0 12px rgba(115,86,216,.25); }
 .continue-section>.btn { position:relative;z-index:1;min-width:155px;justify-content:center;border-radius:13px;box-shadow:0 10px 24px rgba(115,86,216,.2); }
