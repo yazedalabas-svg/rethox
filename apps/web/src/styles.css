@@ -506,6 +506,11 @@ button {
 .menu {
   display: none;
 }
+/* The reader header carries its own light/dark button; without this the
+   floating page-level toggle stacked a second moon over the same screen. */
+html:has(.reader) .theme-fab {
+  display: none;
+}
 .theme-fab {
   position: fixed;
   left: 18px;
@@ -1767,9 +1772,15 @@ button {
 .history-list b { font-size:10px; }
 .history-list small,.history-list time,.history-list p { color:var(--muted);font-size:7px; }
 .reader {
+  /* dvh, not vh: a phone asking for the desktop site reports a tall fake
+     viewport, so a vh-sized shell put the player row below the visible area
+     and the audio bar simply vanished. dvh tracks what is actually on screen. */
   height: 100vh;
+  height: 100dvh;
   display: grid;
-  grid-template-rows: 66px 1fr 88px;
+  /* The player row is auto, not a fixed 88px: it keeps its natural height when
+     it fits and is never the row that gets clipped when it does not. */
+  grid-template-rows: 66px minmax(0, 1fr) auto;
   background: var(--bg);
   overflow: hidden;
 }
@@ -3144,7 +3155,6 @@ html:has(.reader:not(.focus-controls-visible)) .theme-fab {
 
 /* Reader controls: two clear voice choices and a spoiler treatment that stays
    inside the visual language of the rest of the site. */
-html:has(.reader) .theme-fab { top:100px;right:68px;bottom:auto;left:auto;width:42px;height:42px;border-radius:12px;box-shadow:none; }
 .spoiler-curtain { min-height:0;margin-top:8px;border:1px solid rgba(174,56,65,.24);border-radius:10px;background:rgba(174,56,65,.05);color:#a73545; }
 .spoiler-cover,.spoiler-reveal { width:100%;min-height:0!important;padding:11px 13px!important;border:0!important;background:transparent!important;color:inherit!important;text-align:right;font-family:inherit; }
 .spoiler-cover { display:flex!important;align-items:center!important;gap:7px!important; }
@@ -3183,15 +3193,14 @@ html:has(.reader) .theme-fab { top:100px;right:68px;bottom:auto;left:auto;width:
   .reader-head { grid-template-columns:38px minmax(0,1fr) 38px;gap:6px;padding:0 9px; }
   .reader-head b { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px; }
   .reader-head small { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:7px; }
-  .reader-body { width:100%;padding:32px 14px 170px;overscroll-behavior:contain;scroll-padding-block:90px 160px;overflow-x:hidden; }
+  .reader-body { width:100%;padding:32px 14px 170px;padding-left:40px;overscroll-behavior:contain;scroll-padding-block:90px 160px;overflow-x:hidden; }
   .reader-body>article { width:100%;max-width:100%; }
   .reader-body article { line-height:2.15; }
   .reader-body article>p { margin-bottom:22px; }
   .reader-body article>p.rezero-iconic-line { width:100%;max-width:18ch;margin:50px auto 56px;padding:50px 12px 28px;font-size:clamp(29px,8vw,40px); }
   .reader-body article>p>button,
   .reader-body article>p>.reader-bidi-run>button { padding:1px 2px; }
-  .reader-tools { display:flex;top:70px;right:8px;left:54px;max-width:calc(100vw - 62px);overflow-x:auto;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);scrollbar-width:none; }
-  html:has(.reader) .theme-fab { top:70px;right:auto;left:8px;bottom:auto;width:38px;height:38px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12); }
+  .reader-tools { display:flex;top:62px;right:8px;left:54px;max-width:calc(100vw - 62px);overflow-x:auto;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.12);scrollbar-width:none; }
   .reader-tools button { flex:0 0 44px;width:44px;height:44px;border-bottom:0;border-left:1px solid var(--line); }
   .reader-index { z-index:40;width:100vw;padding:18px 14px calc(18px + env(safe-area-inset-bottom)); }
   .reader-index>div { min-height:44px;margin-bottom:10px; }
@@ -3217,6 +3226,29 @@ html:has(.reader) .theme-fab { top:100px;right:68px;bottom:auto;left:auto;width:
   .reply-form { grid-template-columns:minmax(0,1fr) auto; }
   .reply-form input { min-width:0;min-height:44px; }
   .reply-form button { min-width:52px;min-height:44px; }
+}
+
+/* A phone set to "request desktop site" keeps a coarse pointer but reports a
+   viewport wide enough to skip every rule above, so the reader fell back to the
+   mouse-sized desktop layout on a hand-held screen: controls too small to hit,
+   text running close to the edges, and the audio bar pushed out of reach.
+   These rules restore touch ergonomics without assuming a narrow viewport. */
+@media (pointer: coarse) and (min-width: 601px) {
+  .reader-head { padding-inline: 14px; }
+  .reader-head button { min-width: 44px; min-height: 44px; }
+  /* A lower gutter floor than the desktop 80px, so the text column itself gets
+     the width back, plus bottom room so the last paragraph is never left
+     sitting underneath the player. */
+  .reader-body { padding: 44px max(34px, calc((100vw - 840px) / 2)) 190px; scroll-padding-block: 90px 190px; }
+  .reader-body article { line-height: 2.3; }
+  .reader-body article > p { margin-bottom: 26px; }
+  .reader-tools { top: 66px; }
+  .reader-tools button { width: 48px; height: 48px; }
+  /* Keep the bar clear of the home indicator / gesture area, which the desktop
+     layout has no reason to account for. */
+  .player { padding-bottom: env(safe-area-inset-bottom); }
+  .player-controls button { min-width: 44px; min-height: 44px; }
+  .speech-controls select { min-height: 44px; }
 }
 
 a.google-auth { text-decoration:none; }
@@ -3344,7 +3376,9 @@ html[data-identity="studio"][data-theme="light"] .reader > .player .main-play:ho
 }
 
 @media (max-width: 760px) {
-  .scroll-rail { display:none; }
+  /* Slimmer than the desktop rail so the gutter reserved for it below stays
+     small, but still a 24px-wide drag target. */
+  .scroll-rail { left:6px;width:24px;height:46vh; }
   .chapter-search { top:64px; }
   .save-toast { bottom:190px;width:max-content;max-width:calc(100vw - 30px); }
 }

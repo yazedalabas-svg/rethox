@@ -691,6 +691,10 @@ function LockedChapterPrompt({
     document.body,
   );
 }
+type ThemeValue = { dark: boolean; toggleTheme: () => void };
+const ThemeContext = createContext<ThemeValue>(null!);
+const useTheme = () => useContext(ThemeContext);
+
 function ThemeProvider({ children }: { children: ReactNode }) {
   const [dark, setDark] = useState(
     () => localStorage.getItem("rethox-theme") === "dark",
@@ -705,7 +709,10 @@ function ThemeProvider({ children }: { children: ReactNode }) {
     window.setTimeout(() => document.documentElement.classList.remove("theme-changing"), 360);
   };
   return (
-    <>
+    <ThemeContext.Provider value={{ dark, toggleTheme }}>
+      {/* The reader draws its own theme button in its header, so this floating
+          one is hidden there (see `html:has(.reader) .theme-fab` in the CSS)
+          rather than rendering a second moon over the page. */}
       <button
         className="theme-fab"
         onClick={toggleTheme}
@@ -714,7 +721,7 @@ function ThemeProvider({ children }: { children: ReactNode }) {
         {dark ? <Sun size={18} /> : <Moon size={18} />}
       </button>
       {children}
-    </>
+    </ThemeContext.Provider>
   );
 }
 
@@ -862,6 +869,27 @@ function Shell() {
   );
 }
 
+/**
+ * The genre vocabulary the shelf filters by, in the order a reader expects to
+ * scan it. A label only becomes a chip once a book in the catalogue carries it
+ * (see `genres` below), so this list can grow ahead of the content without ever
+ * putting a dead filter on screen.
+ */
+const CATEGORY_TAXONOMY = [
+  "فانتازيا",
+  "إيسيكاي",
+  "أكشن",
+  "مغامرة",
+  "دراما",
+  "زراعة",
+  "فانتازيا حضرية",
+  "خيال علمي",
+  "غموض",
+  "رومانسي",
+  "رعب",
+  "رواية مترجمة",
+];
+
 function Home() {
   const { user } = useAuth();
   const [books, setBooks] = useState<Book[]>([]);
@@ -883,9 +911,27 @@ function Home() {
       setLastRead(null);
     }
   }, [user?.id]);
+  // Chips come from the catalogue crossed with the taxonomy above, instead of
+  // the fixed list they replaced: that list advertised genres no book carried,
+  // so those chips could only ever return an empty shelf. Restricting to the
+  // taxonomy keeps series names ("ري:زيرو") out of what is a genre filter,
+  // and ordering by how many books carry a label puts the real shelves first.
+  const genres = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const book of books)
+      for (const label of new Set([book.genre, ...book.tags].filter(Boolean)))
+        if (CATEGORY_TAXONOMY.includes(label))
+          counts.set(label, (counts.get(label) || 0) + 1);
+    return [
+      "الكل",
+      ...[...counts.entries()]
+        .sort((a, b) => b[1] - a[1] || CATEGORY_TAXONOMY.indexOf(a[0]) - CATEGORY_TAXONOMY.indexOf(b[0]))
+        .map(([label]) => label),
+    ];
+  }, [books]);
   const filtered = books.filter(
     (b) =>
-      (genre === "الكل" || b.genre === genre) &&
+      (genre === "الكل" || b.genre === genre || b.tags.includes(genre)) &&
       `${b.title} ${b.author} ${b.tags.join(" ")}`.includes(q),
   );
   return (
@@ -1016,7 +1062,7 @@ function Home() {
           </div>
           <div className="genres">
             <Filter size={15} />
-            {["الكل", "فانتازيا", "خيال علمي", "أدب"].map((x) => (
+            {genres.map((x) => (
               <button
                 key={x}
                 onClick={() => setGenre(x)}
@@ -2856,6 +2902,7 @@ function ReaderPage() {
   // separate action and is still used for direct "continue reading" links.
   const forceChapterStart = new URLSearchParams(location.search).get("start") === "beginning";
   const { user, ready } = useAuth();
+  const { dark, toggleTheme } = useTheme();
   const [chapter, setChapter] = useState<Chapter | null>(null);
   const [book, setBook] = useState<any>(null);
   const [chapterNav, setChapterNav] = useState<{
@@ -4477,9 +4524,10 @@ function ReaderPage() {
           ></span>
         </div>
         <button
-          onClick={() => document.querySelector<HTMLButtonElement>(".theme-fab")?.click()}
+          onClick={toggleTheme}
+          aria-label={dark ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"}
         >
-          <Moon />
+          {dark ? <Sun /> : <Moon />}
         </button>
       </header>
       <main className="reader-body" ref={readerBodyRef}>
@@ -5783,7 +5831,15 @@ function AdminPage() {
           </label>
           <label>
             النوع
-            <input name="genre" required />
+            {/* Suggests the shelf's own taxonomy so a new book lands in a
+                filterable category, while still allowing a new genre to be
+                typed in for content the taxonomy has not caught up with. */}
+            <input name="genre" list="genre-taxonomy" required />
+            <datalist id="genre-taxonomy">
+              {CATEGORY_TAXONOMY.map((label) => (
+                <option key={label} value={label} />
+              ))}
+            </datalist>
           </label>
           <label>
             السعر
